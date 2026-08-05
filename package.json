@@ -1,0 +1,57 @@
+{
+  "name": "graphkeeper",
+  "version": "0.1.0",
+  "description": "Grounded, auditable memory for coding agents.",
+  "type": "module",
+  "main": "./dist/src/cli.js",
+  "types": "./dist/src/cli.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/src/cli.d.ts",
+      "import": "./dist/src/cli.js"
+    }
+  },
+  "bin": {
+    "graphkeeper": "./dist/src/cli.js"
+  },
+  "files": [
+    "dist/src",
+    "scripts/validate.sh",
+    "templates",
+    "examples",
+    "LICENSE",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "npm run build && node scripts/run-tests.mjs",
+    "test:unit": "npm run build && node scripts/run-tests.mjs dist/tests/unit",
+    "test:integration": "npm run build && node scripts/run-tests.mjs dist/tests/integration",
+    "test:e2e": "npm run build && node scripts/run-tests.mjs dist/tests/e2e",
+    "test:security": "npm run build && node scripts/run-tests.mjs dist/tests/security",
+    "test:performance": "npm run build && node scripts/run-tests.mjs dist/tests/performance",
+    "package:smoke": "npm pack --dry-run",
+    "prepack": "npm run build",
+    "release:verify": "npm run typecheck && npm test && npm run package:smoke",
+    "prepublishOnly": "npm run release:verify"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [
+    "ai-agents",
+    "developer-tools",
+    "memory",
+    "git"
+  ],
+  "license": "MIT",
+  "private": false,
+  "publishConfig": {
+    "access": "public"
+  },
+  "devDependencies": {
+    "@types/node": "^18.19.0",
+    "typescript": "^5.9.0"
+  }
+}

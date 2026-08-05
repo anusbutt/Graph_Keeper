@@ -1,0 +1,30 @@
+[
+  {
+    "id": "claim_0a1b2c3d",
+    "subject": "test_payments_flaky",
+    "predicate": "has_failure",
+    "object": "timeout_failure",
+    "confidence": 1,
+    "source": {
+      "kind": "tool_output",
+      "command": "npm test -- payments",
+      "exit_code": 1,
+      "ref": "evidence/agent-guidance.log#L1-L3",
+      "captured": "2026-07-21T09:14:22Z"
+    },
+    "produced_by": "run_2026-07-21-guidance_a1",
+    "created": "2026-07-21T09:15:22Z"
+  },
+  {
+    "id": "claim_1a2b3c4d",
+    "subject": "service_api_timeout",
+    "predicate": "likely_cause",
+    "object": "dependency_latency",
+    "source": {
+      "kind": "inference",
+      "basis": "The observed retry pattern is consistent with dependency latency."
+    },
+    "produced_by": "run_2026-07-21-guidance_a1",
+    "created": "2026-07-21T09:15:52Z"
+  }
+]

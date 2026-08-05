@@ -1,0 +1,17 @@
+[
+  {
+    "id": "run_2026-07-21-guidance_a1",
+    "started": "2026-07-21T09:14:22Z",
+    "tool": "coding_agent",
+    "task": "triage payments timeout",
+    "evidence": [
+      "evidence/agent-guidance.log"
+    ],
+    "claims_written": [
+      "claim_0a1b2c3d",
+      "claim_1a2b3c4d"
+    ],
+    "ended": "2026-07-21T09:16:22Z",
+    "verdict": "inconclusive"
+  }
+]

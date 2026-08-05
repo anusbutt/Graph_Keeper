@@ -1,0 +1,16 @@
+[
+  {
+    "id": "run_2026-07-21-invalid_fork",
+    "started": "2026-07-21T09:14:22Z",
+    "tool": "correction-fixture",
+    "evidence": [],
+    "claims_written": [
+      "claim_11111111",
+      "claim_22222222",
+      "claim_33333333",
+      "claim_44444444"
+    ],
+    "ended": "2026-07-21T09:17:22Z",
+    "verdict": "failed"
+  }
+]

@@ -1,0 +1,32 @@
+[
+  {
+    "id": "claim_c1c1c1c1",
+    "subject": "test_payments_flaky",
+    "predicate": "has_failure",
+    "object": "timeout",
+    "source": {
+      "kind": "tool_output",
+      "command": "npm test -- payments",
+      "exit_code": 1,
+      "ref": "evidence/test-output.log#L1-L3",
+      "captured": "2026-07-21T09:14:22Z"
+    },
+    "produced_by": "run_2026-07-21-overlap",
+    "created": "2026-07-21T09:15:22Z"
+  },
+  {
+    "id": "claim_d2d2d2d2",
+    "subject": "test_payments_flaky",
+    "predicate": "has_error_code",
+    "object": "etimedout",
+    "source": {
+      "kind": "tool_output",
+      "command": "npm test -- payments",
+      "exit_code": 1,
+      "ref": "evidence/test-output.log#L2-L4",
+      "captured": "2026-07-21T09:14:22Z"
+    },
+    "produced_by": "run_2026-07-21-overlap",
+    "created": "2026-07-21T09:15:52Z"
+  }
+]

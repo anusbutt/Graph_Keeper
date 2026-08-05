@@ -1,0 +1,47 @@
+[
+  {
+    "id": "claim_11111111",
+    "subject": "test_payments_flaky",
+    "predicate": "has_status",
+    "object": "failing",
+    "confidence": 1,
+    "source": {
+      "kind": "tool_output",
+      "command": "npm test -- payments",
+      "exit_code": 1,
+      "ref": "evidence/initial-failure.log#L1-L3",
+      "captured": "2026-07-21T09:15:00Z"
+    },
+    "produced_by": "run_2026-07-21-initial_failure",
+    "created": "2026-07-21T09:15:30Z"
+  },
+  {
+    "id": "claim_22222222",
+    "subject": "test_payments_flaky",
+    "predicate": "has_status",
+    "object": "passing_with_utc_default",
+    "confidence": 1,
+    "source": {
+      "kind": "tool_output",
+      "command": "TZ=UTC npm test -- payments",
+      "exit_code": 0,
+      "ref": "evidence/utc-rerun.log#L1-L3",
+      "captured": "2026-07-21T09:20:00Z"
+    },
+    "produced_by": "run_2026-07-21-utc_rerun",
+    "supersedes": "claim_11111111",
+    "created": "2026-07-21T09:20:30Z"
+  },
+  {
+    "id": "claim_33333333",
+    "subject": "test_payments_flaky",
+    "predicate": "likely_cause",
+    "object": "timezone_dependency",
+    "source": {
+      "kind": "inference",
+      "basis": "The result changed when the process timezone changed."
+    },
+    "produced_by": "run_2026-07-21-utc_rerun",
+    "created": "2026-07-21T09:20:45Z"
+  }
+]

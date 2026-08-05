@@ -1,0 +1,12 @@
+[
+  {
+    "id": "test_payments_flaky",
+    "type": "test",
+    "aliases": ["payments test", "flaky payments test"],
+    "source_docs": [
+      "evidence/initial-failure.log#L1-L3",
+      "evidence/utc-rerun.log#L1-L3"
+    ],
+    "first_seen": "2026-07-21T09:14:00Z"
+  }
+]

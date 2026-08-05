@@ -1,0 +1,40 @@
+[
+  {
+    "id": "claim_11111111",
+    "subject": "test_payments_flaky",
+    "predicate": "has_status",
+    "object": "failing",
+    "source": {
+      "kind": "inference",
+      "basis": "initial triage"
+    },
+    "produced_by": "run_2026-07-21-valid_chain",
+    "created": "2026-07-21T09:14:22Z"
+  },
+  {
+    "id": "claim_22222222",
+    "subject": "test_payments_flaky",
+    "predicate": "has_status",
+    "object": "intermittent",
+    "source": {
+      "kind": "inference",
+      "basis": "rerun narrowed the failure mode"
+    },
+    "produced_by": "run_2026-07-21-valid_chain",
+    "created": "2026-07-21T09:15:22Z",
+    "supersedes": "claim_11111111"
+  },
+  {
+    "id": "claim_33333333",
+    "subject": "test_payments_flaky",
+    "predicate": "has_status",
+    "object": "passing_with_utc_default",
+    "source": {
+      "kind": "inference",
+      "basis": "UTC configuration removed the failure"
+    },
+    "produced_by": "run_2026-07-21-valid_chain",
+    "created": "2026-07-21T09:16:22Z",
+    "supersedes": "claim_22222222"
+  }
+]

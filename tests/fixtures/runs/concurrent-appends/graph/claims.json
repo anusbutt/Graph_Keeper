@@ -1,0 +1,32 @@
+[
+  {
+    "id": "claim_a0a0a0a0",
+    "subject": "test_payments_flaky",
+    "predicate": "has_linux_status",
+    "object": "passing",
+    "source": {
+      "kind": "tool_output",
+      "command": "npm test -- payments --platform linux",
+      "exit_code": 0,
+      "ref": "evidence/agent-a.log#L1-L1",
+      "captured": "2026-07-21T09:05:00Z"
+    },
+    "produced_by": "run_2026-07-21-agent_a",
+    "created": "2026-07-21T09:06:00Z"
+  },
+  {
+    "id": "claim_b0b0b0b0",
+    "subject": "test_payments_flaky",
+    "predicate": "has_windows_status",
+    "object": "failing",
+    "source": {
+      "kind": "tool_output",
+      "command": "npm test -- payments --platform windows",
+      "exit_code": 1,
+      "ref": "evidence/agent-b.log#L1-L2",
+      "captured": "2026-07-21T09:05:30Z"
+    },
+    "produced_by": "run_2026-07-21-agent_b",
+    "created": "2026-07-21T09:06:30Z"
+  }
+]

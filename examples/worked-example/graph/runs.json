@@ -1,0 +1,22 @@
+[
+  {
+    "id": "run_2026-07-21-initial_failure",
+    "started": "2026-07-21T09:14:00Z",
+    "tool": "coding_agent",
+    "task": "reproduce payments test failure",
+    "evidence": ["evidence/initial-failure.log"],
+    "claims_written": ["claim_11111111"],
+    "ended": "2026-07-21T09:16:00Z",
+    "verdict": "failed"
+  },
+  {
+    "id": "run_2026-07-21-utc_rerun",
+    "started": "2026-07-21T09:19:00Z",
+    "tool": "coding_agent",
+    "task": "rerun payments test with UTC default",
+    "evidence": ["evidence/utc-rerun.log"],
+    "claims_written": ["claim_22222222", "claim_33333333"],
+    "ended": "2026-07-21T09:21:00Z",
+    "verdict": "passed"
+  }
+]

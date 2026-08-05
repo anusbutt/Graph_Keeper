@@ -1,0 +1,3 @@
+command: npm test -- payments
+payments test: failed
+error: expected completed response before timeout

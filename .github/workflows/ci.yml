@@ -1,0 +1,89 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality-unix:
+    name: quality-${{ matrix.platform }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: ubuntu
+            os: ubuntu-latest
+          - platform: macos
+            os: macos-latest
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: npm
+      - name: Install jq on Linux
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y jq
+      - name: Install jq on macOS
+        if: runner.os == 'macOS'
+        run: brew install jq
+      - name: Install dependencies
+        run: npm ci
+      - name: Build and typecheck
+        run: npm run build && npm run typecheck
+      - name: Test
+        run: npm test
+      - name: Shell syntax
+        run: sh -n scripts/validate.sh && sh -n templates/pre-commit
+      - name: Check and doctor worked example
+        run: |
+          mkdir -p graph evidence
+          cp -R examples/worked-example/graph/. graph/
+          cp -R examples/worked-example/evidence/. evidence/
+          node dist/src/cli.js check
+          node dist/src/cli.js doctor
+      - name: Package smoke
+        run: npm run package:smoke
+
+  quality-windows-git-bash:
+    name: quality-windows-git-bash
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: npm
+      - name: Install jq
+        shell: pwsh
+        run: choco install jq -y --no-progress
+      - name: Install dependencies
+        run: npm ci
+      - name: Build and typecheck
+        run: npm run build && npm run typecheck
+      - name: Test in Git Bash
+        run: npm test
+      - name: Shell syntax
+        run: sh -n scripts/validate.sh && sh -n templates/pre-commit
+      - name: Check and doctor worked example
+        run: |
+          mkdir -p graph evidence
+          cp -R examples/worked-example/graph/. graph/
+          cp -R examples/worked-example/evidence/. evidence/
+          node dist/src/cli.js check
+          node dist/src/cli.js doctor
+      - name: Package smoke
+        run: npm run package:smoke

@@ -1,0 +1,16 @@
+[
+  {
+    "id": "run_2026-07-21-agent_a",
+    "started": "2026-07-21T09:00:00Z",
+    "tool": "coding_agent",
+    "evidence": ["evidence/agent-a.log"],
+    "claims_written": ["claim_a0a0a0a0"]
+  },
+  {
+    "id": "run_2026-07-21-agent_b",
+    "started": "2026-07-21T09:00:30Z",
+    "tool": "coding_agent",
+    "evidence": ["evidence/agent-b.log"],
+    "claims_written": ["claim_b0b0b0b0"]
+  }
+]

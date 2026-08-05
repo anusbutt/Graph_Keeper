@@ -1,0 +1,39 @@
+[
+  {
+    "id": "existing_alias",
+    "input": "payments test",
+    "expected_action": "reuse_entity",
+    "entity_id": "test_payments_flaky"
+  },
+  {
+    "id": "new_entity",
+    "input": "API timeout service",
+    "expected_action": "create_entity",
+    "entity_id": "service_api_timeout"
+  },
+  {
+    "id": "tool_output",
+    "input": "Captured failing payments test output",
+    "expected_action": "write_tool_output_claim",
+    "claim_id": "claim_0a1b2c3d",
+    "evidence_path": "evidence/agent-guidance.log"
+  },
+  {
+    "id": "inference",
+    "input": "Timeout pattern suggests dependency latency",
+    "expected_action": "write_inference_claim",
+    "claim_id": "claim_1a2b3c4d"
+  },
+  {
+    "id": "structured_evidence",
+    "input": "Diagnostic includes retry_delays_ms and attempt counts",
+    "expected_action": "keep_detail_in_evidence",
+    "claim_id": "claim_0a1b2c3d",
+    "evidence_path": "evidence/agent-guidance.log"
+  },
+  {
+    "id": "session_chatter",
+    "input": "rewrite the entire client",
+    "expected_action": "exclude_to_progress_notes"
+  }
+]

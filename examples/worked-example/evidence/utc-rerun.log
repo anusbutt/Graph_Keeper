@@ -1,0 +1,3 @@
+command: TZ=UTC npm test -- payments
+payments test: passed
+summary: 1 passed, 0 failed

@@ -1,0 +1,17 @@
+[
+  {
+    "id": "claim_10101010",
+    "subject": "test_payments_flaky",
+    "predicate": "has_status",
+    "object": "under_observation",
+    "source": {
+      "kind": "tool_output",
+      "command": "npm test -- payments",
+      "exit_code": 1,
+      "ref": "evidence/initial-check.log#L1-L2",
+      "captured": "2026-07-01T08:05:00Z"
+    },
+    "produced_by": "run_2026-07-01-long_triage",
+    "created": "2026-07-01T08:06:00Z"
+  }
+]

@@ -1,0 +1,59 @@
+name: Feature request
+description: Propose a bounded GraphKeeper improvement with evidence and tradeoffs.
+title: "[Feature]: "
+labels:
+  - "type:feature"
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem and user outcome
+      description: Describe the concrete workflow problem, not only a preferred solution.
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: Proposed scope and non-goals
+      description: State what is included, excluded, and whether it fits the documented v1 boundary.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence and examples
+      description: Provide reproducible examples, measurements, or user reports supporting the need.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Include the current workaround and why a smaller change is insufficient.
+    validations:
+      required: true
+  - type: dropdown
+    id: compatibility
+    attributes:
+      label: Schema and v1 compatibility
+      options:
+        - Additive and within v1 scope
+        - Behavior change requiring migration analysis
+        - Future work outside v1 scope
+        - Unsure
+    validations:
+      required: true
+  - type: textarea
+    id: constitution
+    attributes:
+      label: Constitutional impact
+      description: Explain effects on append-only history, evidence grounding, security, portability, and zero runtime dependencies.
+    validations:
+      required: true
+  - type: checkboxes
+    id: boundaries
+    attributes:
+      label: Boundary confirmation
+      options:
+        - label: I identified any database, hosted service, authentication, UI, telemetry, or multi-repository implications.
+          required: true

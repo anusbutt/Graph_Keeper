@@ -1,0 +1,3 @@
+command: npm test -- payments
+exit: 1
+result: timeout after 5000ms

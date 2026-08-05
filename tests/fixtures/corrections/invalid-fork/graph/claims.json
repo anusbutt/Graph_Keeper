@@ -1,0 +1,41 @@
+[
+  {
+    "id": "claim_11111111",
+    "subject": "test_payments_flaky",
+    "predicate": "has_status",
+    "object": "failing",
+    "source": { "kind": "inference", "basis": "initial triage" },
+    "produced_by": "run_2026-07-21-invalid_fork",
+    "created": "2026-07-21T09:14:22Z"
+  },
+  {
+    "id": "claim_22222222",
+    "subject": "test_payments_flaky",
+    "predicate": "has_status",
+    "object": "intermittent",
+    "source": { "kind": "inference", "basis": "first correction" },
+    "produced_by": "run_2026-07-21-invalid_fork",
+    "created": "2026-07-21T09:15:22Z",
+    "supersedes": "claim_11111111"
+  },
+  {
+    "id": "claim_33333333",
+    "subject": "test_payments_flaky",
+    "predicate": "has_status",
+    "object": "passing_with_utc_default",
+    "source": { "kind": "inference", "basis": "chain extension" },
+    "produced_by": "run_2026-07-21-invalid_fork",
+    "created": "2026-07-21T09:16:22Z",
+    "supersedes": "claim_22222222"
+  },
+  {
+    "id": "claim_44444444",
+    "subject": "test_payments_flaky",
+    "predicate": "has_status",
+    "object": "permanently_failing",
+    "source": { "kind": "inference", "basis": "competing correction" },
+    "produced_by": "run_2026-07-21-invalid_fork",
+    "created": "2026-07-21T09:17:22Z",
+    "supersedes": "claim_11111111"
+  }
+]

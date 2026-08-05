@@ -1,0 +1,76 @@
+name: Bug report
+description: Report reproducible GraphKeeper behavior or a diagnostic mismatch.
+title: "[Bug]: "
+labels:
+  - "type:bug"
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping improve GraphKeeper. Remove secrets and personal data from
+        graph records, evidence, command output, and diagnostics before submitting.
+  - type: input
+    id: version
+    attributes:
+      label: GraphKeeper version
+      description: Output from graphkeeper --version or the package version under test.
+      placeholder: 0.1.0
+    validations:
+      required: true
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Supported environment
+      options:
+        - Linux
+        - macOS
+        - Windows through Git Bash
+        - Windows through WSL
+        - Unsupported environment
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment and prerequisite versions
+      description: Include Node, npm, Git, jq, and POSIX shell versions.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal reproduction
+      description: List exact steps, fixture shape, selected staged/worktree mode, and commands.
+      placeholder: |
+        1. Initialize an empty Git repository.
+        2. Run graphkeeper init.
+        3. ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+    validations:
+      required: true
+  - type: textarea
+    id: diagnostics
+    attributes:
+      label: GraphKeeper diagnostics
+      description: Paste redacted graphkeeper check and graphkeeper doctor output, including every GKxxx code and exit code.
+      render: text
+    validations:
+      required: true
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Safety confirmation
+      options:
+        - label: I removed secrets, credentials, regulated data, and unnecessary personal information.
+          required: true

@@ -1,0 +1,12 @@
+[
+  {
+    "id": "run_2026-07-21-overlap",
+    "started": "2026-07-21T09:14:00Z",
+    "tool": "coding_agent",
+    "task": "capture overlapping diagnostics",
+    "evidence": ["evidence/test-output.log"],
+    "claims_written": ["claim_c1c1c1c1", "claim_d2d2d2d2"],
+    "ended": "2026-07-21T09:16:00Z",
+    "verdict": "failed"
+  }
+]

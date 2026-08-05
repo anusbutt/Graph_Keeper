@@ -1,0 +1,15 @@
+[
+  {
+    "id": "run_2026-07-21-invalid_cycle",
+    "started": "2026-07-21T09:14:22Z",
+    "tool": "correction-fixture",
+    "evidence": [],
+    "claims_written": [
+      "claim_11111111",
+      "claim_22222222",
+      "claim_33333333"
+    ],
+    "ended": "2026-07-21T09:16:22Z",
+    "verdict": "failed"
+  }
+]

@@ -1,0 +1,33 @@
+[
+  {
+    "id": "supported",
+    "statement": "The payments test passes when TZ is UTC.",
+    "candidate_claim_id": "claim_22222222",
+    "expected_decision": "APPROVE",
+    "expected_claim_ids": ["claim_22222222"],
+    "expected_output": "APPROVE\n- \"The payments test passes when TZ is UTC.\" — claim_22222222"
+  },
+  {
+    "id": "inference_only",
+    "statement": "The payments failure is caused by a timezone dependency.",
+    "candidate_claim_id": "claim_33333333",
+    "expected_decision": "REVISE",
+    "expected_claim_ids": [],
+    "expected_output": "REVISE\n- \"The payments failure is caused by a timezone dependency.\" — missing active tool-output external evidence: support is inference-only"
+  },
+  {
+    "id": "unsupported",
+    "statement": "The payments test is owned by the reliability team.",
+    "expected_decision": "REVISE",
+    "expected_claim_ids": [],
+    "expected_output": "REVISE\n- \"The payments test is owned by the reliability team.\" — missing active tool-output external evidence: no matching active claim"
+  },
+  {
+    "id": "superseded",
+    "statement": "The payments test currently fails.",
+    "candidate_claim_id": "claim_11111111",
+    "expected_decision": "REVISE",
+    "expected_claim_ids": [],
+    "expected_output": "REVISE\n- \"The payments test currently fails.\" — missing active tool-output external evidence: only matching claim is superseded"
+  }
+]

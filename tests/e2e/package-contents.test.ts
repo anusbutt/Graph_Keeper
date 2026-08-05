@@ -1,0 +1,96 @@
+import assert from 'node:assert/strict';
+import { access, mkdir, mkdtemp, readFile, rm } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import test from 'node:test';
+
+import { runProcess } from '../../src/lib/process.js';
+
+const projectRoot = fileURLToPath(new URL('../../../', import.meta.url));
+
+function npmInvocation(args: readonly string[]): {
+  readonly command: string;
+  readonly args: readonly string[];
+} {
+  if (process.platform !== 'win32') return { command: 'npm', args };
+  return {
+    command: process.execPath,
+    args: [join(dirname(process.execPath), 'node_modules', 'npm', 'bin', 'npm-cli.js'), ...args],
+  };
+}
+
+interface PackManifest {
+  readonly filename: string;
+  readonly files: ReadonlyArray<{ readonly path: string; readonly mode: number }>;
+}
+
+test('release tarball contains every runtime asset and excludes development-only files', {
+  timeout: 60_000,
+}, async (t) => {
+  const temporary = await mkdtemp(join(tmpdir(), 'graphkeeper-pack-'));
+  t.after(() => rm(temporary, { recursive: true, force: true }));
+  const invocation = npmInvocation(['pack', '--json', '--pack-destination', temporary]);
+  const packed = await runProcess(invocation.command, invocation.args, {
+    cwd: projectRoot,
+    timeoutMs: 45_000,
+  });
+  assert.equal(packed.exitCode, 0, packed.stderr || packed.stdout);
+  const manifests = JSON.parse(packed.stdout) as PackManifest[];
+  const manifest = manifests[0];
+  assert.ok(manifest, 'npm pack must return one manifest');
+  const paths = new Set(manifest.files.map((file) => file.path));
+
+  for (const required of [
+    'dist/src/cli.js',
+    'scripts/validate.sh',
+    'templates/pre-commit',
+    'templates/SKILL.md',
+    'templates/graph/SCHEMA.md',
+    'examples/reviewer.md',
+    'examples/worked-example/graph/claims.json',
+    'examples/worked-example/evidence/initial-failure.log',
+    'LICENSE',
+    'README.md',
+  ]) {
+    assert.ok(paths.has(required), 'expected tarball asset: ' + required);
+  }
+
+  for (const excludedPrefix of [
+    'src/',
+    'tests/',
+    'specs/',
+    'history/',
+    '.github/',
+    'node_modules/',
+  ]) {
+    assert.equal(
+      [...paths].some((path) => path.startsWith(excludedPrefix)),
+      false,
+      'development files must be excluded: ' + excludedPrefix,
+    );
+  }
+  for (const excludedFile of ['CLAUDE.md', 'tsconfig.json']) {
+    assert.equal(paths.has(excludedFile), false, 'development file must be excluded: ' + excludedFile);
+  }
+  assert.equal(paths.has('scripts/run-tests.mjs'), false, 'test runner must not ship');
+
+  const extracted = join(temporary, 'extracted');
+  await mkdir(extracted);
+  const archive = join(temporary, manifest.filename);
+  const unpacked = await runProcess('tar', ['-xf', archive, '-C', extracted], {
+    cwd: temporary,
+    timeoutMs: 20_000,
+  });
+  assert.equal(unpacked.exitCode, 0, unpacked.stderr);
+  const packageRoot = join(extracted, 'package');
+  const help = await runProcess(process.execPath, [join(packageRoot, 'dist', 'src', 'cli.js'), '--help'], {
+    cwd: packageRoot,
+    timeoutMs: 10_000,
+  });
+  assert.equal(help.exitCode, 0, help.stderr);
+  assert.match(help.stdout, /GraphKeeper - grounded, auditable memory/);
+  assert.match(help.stdout, /graphkeeper doctor/);
+  assert.match(await readFile(join(packageRoot, 'scripts', 'validate.sh'), 'utf8'), /GraphKeeper: validation passed/);
+  await access(join(packageRoot, 'templates', 'pre-commit'));
+});

@@ -1,0 +1,22 @@
+[
+  {
+    "id": "test_payments_flaky",
+    "type": "test",
+    "aliases": [
+      "payments test",
+      "payment suite"
+    ],
+    "source_docs": [
+      "evidence/agent-guidance.log#L1-L3"
+    ],
+    "first_seen": "2026-07-21T09:14:22Z"
+  },
+  {
+    "id": "service_api_timeout",
+    "type": "service",
+    "aliases": [
+      "API timeout service"
+    ],
+    "first_seen": "2026-07-21T09:14:22Z"
+  }
+]

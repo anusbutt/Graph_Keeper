@@ -1,0 +1,10 @@
+[
+  {
+    "id": "run_2026-07-01-long_triage",
+    "started": "2026-07-01T08:00:00Z",
+    "tool": "coding_agent",
+    "task": "observe intermittent payments failure",
+    "evidence": ["evidence/initial-check.log"],
+    "claims_written": ["claim_10101010"]
+  }
+]
