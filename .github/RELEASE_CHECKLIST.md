@@ -32,7 +32,7 @@ Registry observation on 2026-08-05: `npm view graphkeeper name version dist-tags
 - [ ] Confirm it excludes source, tests, specifications, history, GitHub administration, `node_modules`, and contributor-only scripts.
 - [ ] Extract the tarball and run `node package/dist/src/cli.js --help` and `--version`.
 - [ ] Install that exact tarball into a clean directory with `npm install <tarball>` and run the `init`, `check`, `query`, and `doctor` smoke journey.
-- [ ] Record the tarball filename, SHA-1/SHA-512 integrity values from `npm pack --json`, byte sizes, command durations, and any approved exceptions in `specs/001-graphkeeper-v1/verification.md`.
+- [ ] Record the tarball filename, SHA-1/SHA-512 integrity values from `npm pack --json`, byte sizes, command durations, and any approved exceptions in the signed GitHub release notes or attached release record.
 
 ## 4. Publish deliberately
 
