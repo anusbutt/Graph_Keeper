@@ -102,6 +102,10 @@ checks only shape and safe path segments; it does not open the target.
 evidence/, is line-addressable text, and that the line range is positive, ordered, and
 within the actual line count.
 
+[GUIDANCE] When reporting retrieved memory, reproduce source.ref exactly in its
+repository-relative evidence/<path>#L<start>-L<end> form. Do not replace it with an
+absolute host path, which is non-portable and is not the canonical reference.
+
 [DOCTOR] Duplicate JSON object keys are invalid and are detected from raw JSON by
 doctor. Ordinary parsed-object validation cannot preserve duplicate keys.
 
@@ -160,6 +164,10 @@ run is immutable, including its identity, task, evidence, and claims_written set
 - `failed`: the run completed and its intended check failed.
 - `inconclusive`: the available result cannot support a conclusive verdict.
 - `aborted`: the run stopped before it could complete.
+
+[GUIDANCE] A verdict describes the producing run and its stated task, not the overall
+status of the claim subject or repository. For example, passed on a test-discovery run
+means discovery completed successfully; it does not mean the project test suite passed.
 
 [GUIDANCE] An inconclusive or aborted run may have no claims. Never invent a successful
 claim merely to populate claims_written.

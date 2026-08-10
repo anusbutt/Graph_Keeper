@@ -43,10 +43,32 @@ test('initializes both unborn and clean committed Git repositories', async () =>
       assert.match(result.stdout, /CREATE graph\/entities\.json/);
       assert.deepEqual(JSON.parse(await readFile(join(fixture.root, 'graph', 'claims.json'), 'utf8')), []);
       assert.equal((await stat(join(fixture.root, 'evidence'))).isDirectory(), true);
+      assert.match(
+        await readFile(join(fixture.root, '.agents', 'skills', 'graphkeeper', 'SKILL.md'), 'utf8'),
+        /^---\nname: graphkeeper\n/,
+      );
+      await assert.rejects(readFile(join(fixture.root, 'SKILL.md'), 'utf8'));
+      await assert.rejects(readFile(join(fixture.root, 'AGENTS.md'), 'utf8'));
+      await assert.rejects(readFile(join(fixture.root, 'CLAUDE.md'), 'utf8'));
       assert.match(await readFile(join(fixture.root, '.git', 'hooks', 'pre-commit'), 'utf8'), /GraphKeeper managed hook/);
     } finally {
       await fixture.cleanup();
     }
+  }
+});
+
+test('explicit Codex integration creates the managed AGENTS.md block through the CLI', async () => {
+  const fixture = await createRepositoryFixture();
+  try {
+    const result = await runInit(fixture.root, ['--integrate', 'codex']);
+    assert.equal(result.exitCode, EXIT_SUCCESS, result.stderr);
+    assert.match(result.stdout, /CREATE AGENTS\.md/);
+    const agents = await readFile(join(fixture.root, 'AGENTS.md'), 'utf8');
+    assert.match(agents, /<!-- graphkeeper:codex:start -->/);
+    assert.match(agents, /invoke `\$graphkeeper`/);
+    assert.equal((agents.match(/graphkeeper:codex:start/g) ?? []).length, 1);
+  } finally {
+    await fixture.cleanup();
   }
 });
 
@@ -144,5 +166,41 @@ test('destination conflicts fail recoverably without replacing the conflict', as
     await assert.rejects(stat(join(fixture.root, 'graph', 'claims.json')));
   } finally {
     await fixture.cleanup();
+  }
+});
+
+test('discoverable skill destination conflicts fail without replacing the conflict', async () => {
+  const fixture = await createRepositoryFixture();
+  try {
+    const conflict = join(fixture.root, '.agents', 'skills', 'graphkeeper', 'SKILL.md');
+    await mkdir(conflict, { recursive: true });
+    const result = await runInit(fixture.root);
+    assert.equal(result.exitCode, EXIT_OPERATIONAL);
+    assert.match(result.stderr, /wrong type.*preserved/is);
+    assert.equal((await stat(conflict)).isDirectory(), true);
+    await assert.rejects(stat(join(fixture.root, 'graph', 'claims.json')));
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+test('invalid init integration grammar returns GK002 without repository mutation', async () => {
+  for (const args of [
+    ['--integrate'],
+    ['--integrate', 'claude'],
+    ['--force', '--force'],
+    ['--integrate', 'codex', '--integrate', 'codex'],
+    ['--unknown'],
+  ]) {
+    const fixture = await createRepositoryFixture();
+    try {
+      const result = await runInit(fixture.root, args);
+      assert.equal(result.exitCode, EXIT_USAGE, args.join(' '));
+      assert.match(result.stderr, /GK002/);
+      await assert.rejects(stat(join(fixture.root, 'graph', 'claims.json')));
+      await assert.rejects(stat(join(fixture.root, 'AGENTS.md')));
+    } finally {
+      await fixture.cleanup();
+    }
   }
 });

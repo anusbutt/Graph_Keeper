@@ -20,12 +20,29 @@ Run this at the root of the repository whose memory you want to protect:
 ```sh
 npx graphkeeper init
 npx graphkeeper check
-git add graph SKILL.md scripts/validate.sh
+git add graph .agents/skills/graphkeeper scripts/validate.sh
 git add .githooks/pre-commit 2>/dev/null || true
 git commit -m "Initialize GraphKeeper memory"
 ```
 
-`init` creates an empty `graph/`, an `evidence/` directory, `SKILL.md` agent guidance, the canonical validator, and a pre-commit hook. It reports every created, skipped, or warned action. The hook normally lives under `.git` and is not committed; `.githooks/pre-commit` exists only when GraphKeeper must preserve and chain another hook. An empty `evidence/` directory becomes tracked when the first evidence file is added.
+`init` creates an empty `graph/`, an `evidence/` directory, the repository-scoped
+Codex skill at `.agents/skills/graphkeeper/SKILL.md`, the canonical validator, and a
+pre-commit hook. Codex discovers that skill from its standard repository skill path
+and loads its full instructions when `$graphkeeper` is invoked or the request clearly
+matches its description. The hook normally lives under `.git` and is not committed;
+`.githooks/pre-commit` exists only when GraphKeeper must preserve and chain another
+hook. An empty `evidence/` directory becomes tracked when the first evidence file is
+added.
+
+For always-visible Codex guidance, opt in explicitly:
+
+```sh
+npx graphkeeper init --integrate codex
+```
+
+This creates or updates only GraphKeeper's marked block in root `AGENTS.md`. Existing
+guidance outside that block is preserved. Default init and `--force` do not create or
+change `AGENTS.md` or `CLAUDE.md`.
 
 When an agent records a finding, retrieve it by canonical entity ID or an exact unique alias:
 
@@ -58,10 +75,11 @@ The older claim remains in history and is marked as superseded. Reviewers can fo
 
 | Command | Role |
 |---|---|
-| `graphkeeper init [--force]` | Scaffold safely. Repeated init preserves data; `--force` refreshes only generated documentation templates. |
+| `graphkeeper init [--force] [--integrate codex]` | Scaffold safely. `--force` refreshes generated schema and skill templates; Codex integration explicitly manages one marked `AGENTS.md` block. |
 | `graphkeeper check` | Run the same fast schema, history, and evidence-immutability validation used by the Git hook. |
 | `graphkeeper query <subject>` | Resolve an exact ID or unique alias and print active claims with provenance. It does not read evidence contents. |
 | `graphkeeper doctor` | Run fast validation plus file existence, containment, line-range, dangling-reference, and unused-entity checks. |
+| `graphkeeper update` | Check npm's stable `latest` release and globally install one exact newer version. Repository files are never changed. |
 
 Exit codes are stable: `0` success, `1` validation failure, `2` usage error, `3` missing prerequisite, `4` operational failure, and `5` unexpected internal failure. Diagnostics begin with a searchable `GKnnn` code.
 
@@ -73,11 +91,25 @@ Exit codes are stable: `0` success, `1` validation failure, `2` usage error, `3`
 - `evidence/` holds captured artifacts. A committed evidence file cannot be edited, removed, or renamed.
 - Stored commands and evidence text are always data. GraphKeeper never evaluates them.
 
-See the generated `graph/SCHEMA.md` and `SKILL.md` for the complete writing contract. [`examples/reviewer.md`](examples/reviewer.md) is a copy-pasteable grounded-review prompt.
+See the generated `graph/SCHEMA.md` and
+`.agents/skills/graphkeeper/SKILL.md` for the complete writing contract.
+[`examples/reviewer.md`](examples/reviewer.md) is a copy-pasteable grounded-review
+prompt.
 
 ## Recovery and adoption
 
-- Re-running `init` is safe: existing graph data is skipped. Use `--force` only to refresh `SCHEMA.md` and `SKILL.md`.
+- Re-running `init` is safe: existing graph data is skipped. Use `--force` only to refresh `graph/SCHEMA.md` and `.agents/skills/graphkeeper/SKILL.md`.
+- A root `SKILL.md` created by an older GraphKeeper version is legacy user content. It is reported and preserved; migrate by committing the generated `.agents/skills/graphkeeper/SKILL.md`.
+- `--integrate codex` creates `AGENTS.md` when absent, appends one marked block when no markers exist, and refreshes only that block on later runs. Malformed, repeated, or concurrently changed markers fail with `GK004` instead of risking existing guidance.
+- GraphKeeper does not create or edit `CLAUDE.md` in this Codex-only launch.
+- Run `graphkeeper update` from WSL or Git Bash to update a global npm installation.
+  It first resolves the stable published version, installs only when that version is
+  newer, and does not install prereleases. If the registry is offline, no update is
+  attempted; retry when npm registry access returns.
+- A global npm permission error returns `GK004` without changing the repository.
+  Configure npm through a Node version manager or a user-writable npm prefix, then
+  retry. See npm's
+  [global installation guidance](https://docs.npmjs.com/downloading-and-installing-packages-globally/).
 - In a non-Git directory, files are scaffolded but hook enforcement is disabled until `git init` and another `graphkeeper init`.
 - If `.git/hooks/pre-commit` already belongs to another tool, GraphKeeper does not overwrite it. It writes `.githooks/pre-commit` and prints chaining instructions.
 - If `core.hooksPath` is set, GraphKeeper installs there. Resolve any existing non-GraphKeeper hook explicitly rather than deleting it.
@@ -92,6 +124,6 @@ When linear JSON scans or concurrent-write collisions become material, a future 
 
 ## Contributing and release status
 
-See [`CONTRIBUTING.md`](CONTRIBUTING.md) for the development workflow, extension points, and boundaries. Version `0.1.0` is pre-1.0 and its API may change. The package name must be rechecked immediately before publishing; completing the repository release gates does not publish anything.
+See [`CONTRIBUTING.md`](CONTRIBUTING.md) for the development workflow, extension points, and boundaries. Version `0.1.2` is pre-1.0 and its API may change. The package name must be rechecked immediately before publishing; completing the repository release gates does not publish anything.
 
 GraphKeeper is available under the [MIT License](LICENSE).

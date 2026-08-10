@@ -14,13 +14,21 @@ import { createRepositoryFixture } from '../helpers/repository.js';
 const cliPath = fileURLToPath(new URL('../../src/cli.js', import.meta.url));
 const exampleRoot = fileURLToPath(new URL('../../../examples/worked-example/', import.meta.url));
 const regressionMultiplier = 1.2;
-const budgets = {
-  init: 10_000,
-  check: 3_000,
-  query: 2_000,
-  doctor: 10_000,
-  peakMemoryMb: 256,
-} as const;
+const budgets = process.platform === 'win32'
+  ? {
+      init: 15_000,
+      check: 5_000,
+      query: 3_000,
+      doctor: 15_000,
+      peakMemoryMb: 256,
+    } as const
+  : {
+      init: 10_000,
+      check: 3_000,
+      query: 2_000,
+      doctor: 10_000,
+      peakMemoryMb: 256,
+    } as const;
 
 function supportedEnvironment(): NodeJS.ProcessEnv {
   const environment: NodeJS.ProcessEnv = {

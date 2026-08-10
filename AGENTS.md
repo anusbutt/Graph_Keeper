@@ -38,6 +38,7 @@ npm test
 Useful focused gates are:
 
 ```sh
+npm run test:functional
 npm run test:unit
 npm run test:integration
 npm run test:e2e
@@ -90,6 +91,11 @@ The package is ESM, uses npm, targets Node.js >=18, and starts at version 0.1.0.
 templates, examples, documentation, and the license. Recheck package-name
 availability and run the release checklist before publication. Never publish from a
 test or contributor workflow automatically.
+
+`npm run release:verify` is the deterministic publish gate: typecheck, functional
+and security tests, and package smoke. Performance benchmarks remain mandatory in
+their dedicated CI jobs and release-checklist step, but are isolated from
+`prepublishOnly` so temporary machine load cannot make publication nondeterministic.
 
 ## Review checklist
 

@@ -77,7 +77,15 @@ test('reports malformed JSON without attempting relationship checks', async () =
 test('reports a missing jq prerequisite before reading repository data', async () => {
   const fixture = await createValidatorFixture();
   try {
-    const result = await runValidator(fixture, '--worktree', { ...process.env, PATH: '' });
+    const fakeBin = join(fixture.root, 'fake-bin');
+    const fakeGit = join(fakeBin, 'git');
+    await mkdir(fakeBin, { recursive: true });
+    await writeFile(fakeGit, '#!/bin/sh\nexit 0\n', 'utf8');
+    await chmod(fakeGit, 0o755);
+    const result = await runValidator(fixture, '--worktree', {
+      ...process.env,
+      PATH: fakeBin,
+    });
     assert.equal(result.exitCode, 3);
     assert.match(result.stderr, /GK003 jq 1\.6 or newer is required/);
   } finally {

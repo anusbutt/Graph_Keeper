@@ -7,7 +7,7 @@ import { findGitRoot } from '../lib/git.js';
 import { parseClaims, parseEntities, type Claim, type Entity } from '../lib/records.js';
 import { runProcess } from '../lib/process.js';
 
-const DEFAULT_TIMEOUT_MS = 5_000;
+const DEFAULT_TIMEOUT_MS = 15_000;
 const ACTIVE_CLAIMS_PROGRAM = [
   '[.[] | select(has("supersedes")) | .supersedes] as $superseded',
   '| [.[]',

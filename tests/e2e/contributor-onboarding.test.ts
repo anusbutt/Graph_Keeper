@@ -68,11 +68,15 @@ test('a clean source snapshot completes onboarding gates and a query recipe with
     GRAPHKEEPER_ONBOARDING_NESTED: '1',
   };
   delete nestedEnvironment.NODE_TEST_CONTEXT;
+  const packageMetadata = JSON.parse(
+    await readFile(join(projectRoot, 'package.json'), 'utf8'),
+  ) as { readonly version: string };
+  const version = packageMetadata.version.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   for (const [args, timeoutMs, expected] of [
     [['run', 'test:unit'], 120_000, /tests [0-9]+/],
-    [['run', 'typecheck'], 60_000, /> graphkeeper@0\.1\.0 typecheck/],
-    [['run', 'package:smoke'], 60_000, /graphkeeper-0\.1\.0\.tgz/],
-    [['ls', '--all'], 60_000, /graphkeeper@0\.1\.0/],
+    [['run', 'typecheck'], 60_000, new RegExp('> graphkeeper@' + version + ' typecheck')],
+    [['run', 'package:smoke'], 60_000, new RegExp('graphkeeper-' + version + '\\.tgz')],
+    [['ls', '--all'], 60_000, new RegExp('graphkeeper@' + version)],
   ] as const) {
     const invocation = npmInvocation(args);
     const result = await runProcess(invocation.command, invocation.args, {

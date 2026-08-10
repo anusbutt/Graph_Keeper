@@ -4,6 +4,16 @@ import test from 'node:test';
 
 const skillUrl = new URL('../../../templates/SKILL.md', import.meta.url);
 
+test('has Codex-discoverable frontmatter with retrieval and recording triggers', async () => {
+  const skill = await readFile(skillUrl, 'utf8');
+  const match = /^---\n([\s\S]*?)\n---\n/.exec(skill);
+  assert.ok(match, 'skill must start with YAML frontmatter');
+  const metadata = match[1]?.split('\n').filter(Boolean) ?? [];
+  assert.deepEqual(metadata.map((line) => line.split(':', 1)[0]), ['name', 'description']);
+  assert.equal(metadata[0], 'name: graphkeeper');
+  assert.match(metadata[1] ?? '', /retrieve.*record.*durable.*evidence-backed.*repository/is);
+});
+
 test('defines the vendor-neutral write, correct, resolve-identity, and exclude workflow', async () => {
   const skill = await readFile(skillUrl, 'utf8');
   for (const heading of ['Write', 'Correct', 'Resolve identity', 'Exclude']) {
@@ -60,4 +70,14 @@ test('teaches the complete run and evidence lifecycle including interruption and
   assert.match(skill, /do not\s+invent.*claim/is);
   assert.match(skill, /committed evidence.*immutable/is);
   assert.match(skill, /concurrent.*unique run ID/is);
+});
+
+test('teaches portable evidence citations and precise run-verdict reporting', async () => {
+  const skill = await readFile(skillUrl, 'utf8');
+  assert.match(skill, /^## Report retrieved memory$/m);
+  assert.match(skill, /repository-relative source\.ref.*line range/is);
+  assert.match(skill, /do not.*absolute host path/is);
+  assert.match(skill, /verdict.*outcome.*producing run.*stated task/is);
+  assert.match(skill, /passed.*does not imply.*test suite passed/is);
+  assert.match(skill, /tool_output or inference/is);
 });

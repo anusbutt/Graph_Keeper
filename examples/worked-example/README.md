@@ -20,6 +20,12 @@ Installed-package users can run `npx graphkeeper check` and
 `npx graphkeeper doctor` instead. Both commands should succeed, and doctor should
 report zero errors and zero warnings.
 
+In a fresh installed-package repository, run `npx graphkeeper init` first. Codex
+discovers the generated `.agents/skills/graphkeeper/SKILL.md`; repositories that also
+want a short always-visible activation reminder can opt in with
+`npx graphkeeper init --integrate codex`. Neither form changes `CLAUDE.md`, and the
+default form leaves `AGENTS.md` untouched.
+
 ## Query the durable subject
 
 Run:

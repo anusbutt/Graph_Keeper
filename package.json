@@ -1,6 +1,6 @@
 {
   "name": "graphkeeper",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "description": "Grounded, auditable memory for coding agents.",
   "type": "module",
   "main": "./dist/src/cli.js",
@@ -26,6 +26,7 @@
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "npm run build && node scripts/run-tests.mjs",
+    "test:functional": "npm run build && node scripts/run-tests.mjs dist/tests/unit dist/tests/integration dist/tests/e2e dist/tests/security",
     "test:unit": "npm run build && node scripts/run-tests.mjs dist/tests/unit",
     "test:integration": "npm run build && node scripts/run-tests.mjs dist/tests/integration",
     "test:e2e": "npm run build && node scripts/run-tests.mjs dist/tests/e2e",
@@ -33,7 +34,7 @@
     "test:performance": "npm run build && node scripts/run-tests.mjs dist/tests/performance",
     "package:smoke": "npm pack --dry-run",
     "prepack": "npm run build",
-    "release:verify": "npm run typecheck && npm test && npm run package:smoke",
+    "release:verify": "npm run typecheck && npm run test:functional && npm run package:smoke",
     "prepublishOnly": "npm run release:verify"
   },
   "engines": {

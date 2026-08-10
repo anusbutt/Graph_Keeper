@@ -55,6 +55,7 @@ test('contribution guide specifies test-first workflow and complete quality gate
     'npm run build',
     'npm run typecheck',
     'npm test',
+    'npm run test:functional',
     'npm run test:security',
     'npm run test:performance',
     'npm run package:smoke',
@@ -109,7 +110,14 @@ test('CI and repository settings cover all supported platforms and governance', 
   }
   assert.match(ci, /windows-git-bash/is);
   assert.match(ci, /shell:\s*bash/);
-  for (const command of ['npm run build', 'npm test', 'check', 'doctor', 'package:smoke']) {
+  for (const command of [
+    'npm run build',
+    'npm run test:functional',
+    'npm run test:performance',
+    'check',
+    'doctor',
+    'package:smoke',
+  ]) {
     assert.match(ci, new RegExp(command.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
   }
 
@@ -120,4 +128,5 @@ test('CI and repository settings cover all supported platforms and governance', 
   assert.match(settings, /Default branch.*main/is);
   assert.match(settings, /Branch protection.*required status checks/is);
   assert.match(settings, /quality-ubuntu.*quality-macos.*quality-windows/is);
+  assert.match(settings, /performance-ubuntu.*performance-windows-git-bash/is);
 });
