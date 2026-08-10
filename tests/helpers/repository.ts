@@ -1,4 +1,4 @@
-import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
+import { mkdir, mkdtemp, realpath, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { dirname, join, resolve, sep } from 'node:path';
 import { spawn } from 'node:child_process';
@@ -56,7 +56,7 @@ export async function createRepositoryFixture(
   initializeGit = true,
   prefix = 'graphkeeper-test-',
 ): Promise<RepositoryFixture> {
-  const root = await mkdtemp(join(tmpdir(), prefix));
+  const root = await realpath(await mkdtemp(join(tmpdir(), prefix)));
   const git = (args: readonly string[]) => runCommand('git', args, root);
 
   if (initializeGit) {
