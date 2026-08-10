@@ -116,6 +116,27 @@ test('query maps jq selection timeout to an operational error', async (t) => {
   assert.match(result.stderr, /GK004 query selection timed out after 321 ms/);
 });
 
+test('query uses a fifteen-second default timeout for validation and selection', async (t) => {
+  const fixture = await createValidatorFixture();
+  t.after(fixture.cleanup);
+  await fixture.writeGraph([entity], [validClaim], [validRun]);
+  const observedTimeouts: number[] = [];
+
+  const result = await query({
+    cwd: fixture.root,
+    subject: entity.id,
+    runner: async (command, _args, options) => {
+      observedTimeouts.push(options.timeoutMs ?? -1);
+      return command === 'sh'
+        ? { exitCode: 0, stdout: 'GraphKeeper: validation passed\n', stderr: '' }
+        : { exitCode: 0, stdout: JSON.stringify([validClaim]), stderr: '' };
+    },
+  });
+
+  assert.equal(result.exitCode, 0, result.stderr);
+  assert.deepEqual(observedTimeouts, [15_000, 15_000]);
+});
+
 test('query applies its timeout to validation and never selects after validation timeout', async (t) => {
   const fixture = await createValidatorFixture();
   t.after(fixture.cleanup);

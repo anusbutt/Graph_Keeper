@@ -81,4 +81,8 @@ test('includes canonical open, closed, verdict, and evidence-provenance examples
   }
   assert.match(schema, /source\.ref.*run.*evidence/is);
   assert.match(schema, /overlap.*valid/is);
+  assert.match(schema, /reproduce source\.ref exactly.*repository-relative/is);
+  assert.match(schema, /do not replace it with an.*absolute host path/is);
+  assert.match(schema, /verdict describes.*producing run.*stated task/is);
+  assert.match(schema, /passed.*test-discovery run.*does not mean.*test suite passed/is);
 });

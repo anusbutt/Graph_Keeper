@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { access, cp, mkdtemp, rm } from 'node:fs/promises';
+import { access, copyFile, cp, mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { delimiter, dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -61,14 +61,15 @@ test('a tarball installs in a clean directory and runs init, check, query, and d
   assert.equal(packed.exitCode, 0, packed.stderr || packed.stdout);
   const manifest = (JSON.parse(packed.stdout) as PackManifest[])[0];
   assert.ok(manifest);
-  const archive = join(packingRoot, manifest.filename);
+  const archive = join(installationRoot, manifest.filename);
+  await copyFile(join(packingRoot, manifest.filename), archive);
 
   const installInvocation = npmInvocation([
     'install',
     '--ignore-scripts',
     '--no-audit',
     '--no-fund',
-    archive,
+    './' + manifest.filename,
   ]);
   const installed = await runProcess(installInvocation.command, installInvocation.args, {
     cwd: installationRoot,
@@ -87,6 +88,9 @@ test('a tarball installs in a clean directory and runs init, check, query, and d
     [cli, ...args],
     { cwd: repository.root, env: supportedEnvironment(), timeoutMs },
   );
+  const help = await runCli(['--help']);
+  assert.equal(help.exitCode, 0, help.stderr);
+  assert.match(help.stdout, /graphkeeper update/);
   const initialized = await runCli(['init']);
   assert.equal(initialized.exitCode, 0, initialized.stderr);
   assert.match(initialized.stdout, /CREATE graph\/entities\.json/);

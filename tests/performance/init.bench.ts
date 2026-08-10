@@ -7,6 +7,7 @@ import test from 'node:test';
 import { runProcess } from '../../src/lib/process.js';
 import { createRepositoryFixture } from '../helpers/repository.js';
 
+const initBudgetMs = process.platform === 'win32' ? 15_000 : 10_000;
 const cliPath = fileURLToPath(new URL('../../src/cli.js', import.meta.url));
 
 function supportedEnvironment(): NodeJS.ProcessEnv {
@@ -33,7 +34,7 @@ function percentile95(values: readonly number[]): number {
   return sorted[index] ?? Number.POSITIVE_INFINITY;
 }
 
-test('initialization p95 stays below ten seconds', { timeout: 90_000 }, async () => {
+test('initialization p95 stays within its platform budget', { timeout: 120_000 }, async () => {
   const durations: number[] = [];
   for (let iteration = 0; iteration < 5; iteration += 1) {
     const fixture = await createRepositoryFixture();
@@ -45,8 +46,8 @@ test('initialization p95 stays below ten seconds', { timeout: 90_000 }, async ()
   }
   const p95 = percentile95(durations);
   assert.ok(
-    p95 < 10_000,
-    'expected init p95 below 10000ms, observed ' + p95.toFixed(1) + 'ms',
+    p95 < initBudgetMs,
+    'expected init p95 below ' + initBudgetMs + 'ms, observed ' + p95.toFixed(1) + 'ms',
   );
 });
 

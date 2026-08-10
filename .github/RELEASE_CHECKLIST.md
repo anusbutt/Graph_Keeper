@@ -18,7 +18,7 @@ Registry observation on 2026-08-05: `npm view graphkeeper name version dist-tags
 - [ ] Record `node --version`, `npm --version`, `git --version`, `jq --version`, and `sh --version`. Node must be 18 or newer and jq 1.6 or newer.
 - [ ] Run `npm ci`.
 - [ ] Run `npm run typecheck`.
-- [ ] Run `npm test`.
+- [ ] Run `npm run test:functional`.
 - [ ] Run `npm run test:security` and review every aggregate regression result.
 - [ ] Run `npm run test:performance` and compare the reported p95/RSS values with the fixed budgets and the 20-percent release regression gates.
 - [ ] Run `npm ls --all`; investigate missing, invalid, or unexpected dependencies.
@@ -37,7 +37,7 @@ Registry observation on 2026-08-05: `npm view graphkeeper name version dist-tags
 ## 4. Publish deliberately
 
 - [ ] Confirm the npm account, organization, package ownership, 2FA, provenance policy, and public access with the release owner.
-- [ ] Run `npm publish --dry-run --access public` and inspect the final notice. This invokes `prepublishOnly`, which reruns the release verification gate.
+- [ ] Run `npm publish --dry-run --access public` and inspect the final notice. This invokes `prepublishOnly`, which reruns the deterministic typecheck, functional/security, and package-smoke gate; performance evidence comes from the separate benchmark step and required CI jobs.
 - [ ] Obtain the architecture/validator publish decision.
 - [ ] From the clean candidate commit, run `npm publish --access public` once. Do not retry blindly after a timeout; query the registry first.
 - [ ] Verify `npm view graphkeeper@<version> dist --json`, install from the registry in a new directory, and rerun `graphkeeper --version`, `init`, `check`, `query`, and `doctor`.

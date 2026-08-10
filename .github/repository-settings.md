@@ -39,6 +39,8 @@ Protect `main` with these required status checks:
 - `quality-ubuntu`
 - `quality-macos`
 - `quality-windows-git-bash`
+- `performance-ubuntu`
+- `performance-windows-git-bash`
 
 Require branches to be current before merge, one approving review, resolved
 conversations, and linear history. Block force pushes and branch deletion. Apply the

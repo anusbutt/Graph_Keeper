@@ -1,11 +1,13 @@
 #!/usr/bin/env node
 
-import { pathToFileURL } from 'node:url';
+import { realpathSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 
 import { check } from './commands/check.js';
 import { doctor } from './commands/doctor.js';
 import { initialize } from './commands/init.js';
 import { query } from './commands/query.js';
+import { updateGraphKeeper } from './commands/update.js';
 import {
   EXIT_CODES,
   GraphKeeperError,
@@ -24,17 +26,18 @@ export interface CliIO {
   readonly stderr: (message: string) => void;
 }
 
-const VERSION = '0.1.0';
-const COMMANDS = new Set(['init', 'check', 'query', 'doctor']);
+const VERSION = '0.1.2';
+const COMMANDS = new Set(['init', 'check', 'query', 'doctor', 'update']);
 
 const USAGE = [
   'GraphKeeper - grounded, auditable memory for coding agents',
   '',
   'Usage:',
-  '  graphkeeper init [--force]',
+  '  graphkeeper init [--force] [--integrate codex]',
   '  graphkeeper check',
   '  graphkeeper query <subject>',
   '  graphkeeper doctor',
+  '  graphkeeper update',
   '  graphkeeper --help',
   '  graphkeeper --version',
 ].join('\n');
@@ -43,6 +46,34 @@ const processIO: CliIO = {
   stdout: (message) => process.stdout.write(message + '\n'),
   stderr: (message) => process.stderr.write(message + '\n'),
 };
+
+export interface ParsedInitArguments {
+  readonly force: boolean;
+  readonly integrateCodex: boolean;
+}
+
+export function parseInitArguments(
+  args: readonly string[],
+): ParsedInitArguments | null {
+  let force = false;
+  let integrateCodex = false;
+  for (let index = 0; index < args.length; index += 1) {
+    const argument = args[index];
+    if (argument === '--force') {
+      if (force) return null;
+      force = true;
+      continue;
+    }
+    if (argument === '--integrate') {
+      if (integrateCodex || args[index + 1] !== 'codex') return null;
+      integrateCodex = true;
+      index += 1;
+      continue;
+    }
+    return null;
+  }
+  return { force, integrateCodex };
+}
 
 function forwardOutput(output: string, write: (message: string) => void): void {
   const lines = output.replace(/\r\n/g, '\n').split('\n');
@@ -75,17 +106,19 @@ export async function run(
 
   if (command === 'init') {
     const initArguments = argv.slice(1);
-    if (
-      initArguments.length > 1
-      || (initArguments.length === 1 && initArguments[0] !== '--force')
-    ) {
-      io.stderr(diagnostic('GK002', 'init accepts only the optional --force flag'));
+    const parsed = parseInitArguments(initArguments);
+    if (parsed === null) {
+      io.stderr(diagnostic(
+        'GK002',
+        'init accepts --force and --integrate codex at most once each',
+      ));
       return EXIT_USAGE;
     }
     try {
       const report = await initialize({
         cwd,
-        force: initArguments[0] === '--force',
+        force: parsed.force,
+        integrateCodex: parsed.integrateCodex,
       });
       for (const action of report.actions) {
         const message = action.kind.toUpperCase() + ' ' + action.target + ': ' + action.reason;
@@ -138,13 +171,48 @@ export async function run(
     return report.exitCode;
   }
 
+  if (command === 'update') {
+    if (argv.length !== 1) {
+      io.stderr(diagnostic('GK002', 'update does not accept arguments'));
+      return EXIT_USAGE;
+    }
+    try {
+      const report = await updateGraphKeeper({ currentVersion: VERSION });
+      if (report.status === 'updated') {
+        io.stdout(
+          'GraphKeeper updated globally from '
+            + report.currentVersion + ' to ' + report.latestVersion,
+        );
+      } else if (report.status === 'current') {
+        io.stdout('GraphKeeper ' + report.currentVersion + ' is already current');
+      } else {
+        io.stdout(
+          'GraphKeeper ' + report.currentVersion
+            + ' is newer than npm latest ' + report.latestVersion + '; no change made',
+        );
+      }
+      return EXIT_SUCCESS;
+    } catch (error: unknown) {
+      if (error instanceof GraphKeeperError) {
+        io.stderr(diagnostic(error.code, error.message, error.context));
+        return error.exitCode;
+      }
+      throw error;
+    }
+  }
+
   io.stderr('Command not implemented in this phase: ' + command);
   return EXIT_INTERNAL;
 }
 
 function isEntrypoint(): boolean {
   const entry = process.argv[1];
-  return entry !== undefined && import.meta.url === pathToFileURL(entry).href;
+  if (entry === undefined) return false;
+  try {
+    return realpathSync(entry) === realpathSync(fileURLToPath(import.meta.url));
+  } catch {
+    return false;
+  }
 }
 
 if (isEntrypoint()) {

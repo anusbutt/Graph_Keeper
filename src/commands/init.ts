@@ -52,6 +52,7 @@ export interface InitWriteHooks {
 export interface InitializeOptions {
   readonly cwd: string;
   readonly force: boolean;
+  readonly integrateCodex?: boolean;
   readonly environment?: InitEnvironment;
   readonly writeHooks?: InitWriteHooks;
 }
@@ -60,6 +61,14 @@ export interface InitReport {
   readonly root: string;
   readonly isGitRepository: boolean;
   readonly actions: readonly ScaffoldAction[];
+}
+
+export type CodexGuidanceActionKind = 'create' | 'append' | 'refresh' | 'skip';
+
+export interface CodexGuidanceContentPlan {
+  readonly kind: CodexGuidanceActionKind;
+  readonly content: string;
+  readonly expected: string | null;
 }
 
 interface ScaffoldTarget {
@@ -75,13 +84,90 @@ interface HookPlan {
   readonly fallbackKind: 'create' | 'skip' | 'blocked';
 }
 
+interface CodexGuidanceFilePlan extends CodexGuidanceContentPlan {
+  readonly destination: string;
+}
+
+const codexStartMarker = '<!-- graphkeeper:codex:start -->';
+const codexEndMarker = '<!-- graphkeeper:codex:end -->';
+
+function codexGuidanceBlock(newline: string): string {
+  return [
+    codexStartMarker,
+    '## GraphKeeper memory',
+    '',
+    'Before repeating repository investigation, invoke `$graphkeeper` to check',
+    'existing durable findings. Record new durable, evidence-backed findings through',
+    'that skill.',
+    codexEndMarker,
+  ].join(newline);
+}
+
+function occurrenceCount(content: string, value: string): number {
+  let count = 0;
+  let offset = 0;
+  while (true) {
+    const found = content.indexOf(value, offset);
+    if (found === -1) return count;
+    count += 1;
+    offset = found + value.length;
+  }
+}
+
+export function planCodexGuidanceContent(
+  existing: string | null,
+): CodexGuidanceContentPlan {
+  if (existing === null) {
+    return {
+      kind: 'create',
+      content: codexGuidanceBlock('\n') + '\n',
+      expected: null,
+    };
+  }
+
+  const newline = existing.includes('\r\n') ? '\r\n' : '\n';
+  const block = codexGuidanceBlock(newline);
+  const startCount = occurrenceCount(existing, codexStartMarker);
+  const endCount = occurrenceCount(existing, codexEndMarker);
+  if (startCount === 0 && endCount === 0) {
+    const separator = existing.length === 0
+      ? ''
+      : existing.endsWith(newline + newline)
+        ? ''
+        : existing.endsWith(newline)
+          ? newline
+          : newline + newline;
+    return {
+      kind: 'append',
+      content: existing + separator + block + newline,
+      expected: existing,
+    };
+  }
+  if (startCount !== 1 || endCount !== 1) {
+    throw operational('AGENTS.md contains malformed or repeated GraphKeeper Codex markers');
+  }
+
+  const start = existing.indexOf(codexStartMarker);
+  const endStart = existing.indexOf(codexEndMarker);
+  if (start > endStart) {
+    throw operational('AGENTS.md contains reversed GraphKeeper Codex markers');
+  }
+  const end = endStart + codexEndMarker.length;
+  const content = existing.slice(0, start) + block + existing.slice(end);
+  return {
+    kind: content === existing ? 'skip' : 'refresh',
+    content,
+    expected: existing,
+  };
+}
+
 const scaffoldTargets: readonly ScaffoldTarget[] = [
   { target: 'graph/entities.json', refreshable: false },
   { target: 'graph/claims.json', refreshable: false },
   { target: 'graph/runs.json', refreshable: false },
   { target: 'evidence', refreshable: false },
   { target: 'graph/SCHEMA.md', refreshable: true },
-  { target: 'SKILL.md', refreshable: true },
+  { target: '.agents/skills/graphkeeper/SKILL.md', refreshable: true },
   { target: 'scripts/validate.sh', refreshable: false },
 ];
 
@@ -207,6 +293,14 @@ export async function planScaffold(
     }
   }
 
+  if (await pathExists(resolve(root, 'SKILL.md'))) {
+    actions.push({
+      kind: 'warn',
+      target: 'SKILL.md',
+      reason: 'legacy root guidance was preserved; Codex discovers the generated skill under .agents/skills/graphkeeper',
+    });
+  }
+
   if (!options.isGitRepository) {
     actions.push({
       kind: 'warn',
@@ -218,9 +312,13 @@ export async function planScaffold(
 }
 
 function sourcePath(target: string): string {
-  return target === 'scripts/validate.sh'
-    ? resolve(packageRoot, 'scripts', 'validate.sh')
-    : resolve(packageRoot, 'templates', target);
+  if (target === 'scripts/validate.sh') {
+    return resolve(packageRoot, 'scripts', 'validate.sh');
+  }
+  if (target === '.agents/skills/graphkeeper/SKILL.md') {
+    return resolve(packageRoot, 'templates', 'SKILL.md');
+  }
+  return resolve(packageRoot, 'templates', target);
 }
 
 function targetMode(target: string): number {
@@ -249,6 +347,27 @@ async function validateDestinationShapes(root: string): Promise<void> {
       throw operational('Unable to inspect destination ' + entry.target, error);
     }
   }
+}
+
+async function prepareCodexGuidancePlan(root: string): Promise<CodexGuidanceFilePlan> {
+  const destination = resolveContainedPath(root, 'AGENTS.md');
+  let existing: string | null = null;
+  try {
+    const information = await lstat(destination);
+    if (!information.isFile()) {
+      throw operational('Existing AGENTS.md path has the wrong type and was preserved');
+    }
+    existing = await readFile(destination, 'utf8');
+  } catch (error: unknown) {
+    if (error instanceof GraphKeeperError) throw error;
+    if (!(error instanceof Error && 'code' in error && error.code === 'ENOENT')) {
+      throw operational('Unable to inspect AGENTS.md', error);
+    }
+  }
+  return {
+    ...planCodexGuidanceContent(existing),
+    destination,
+  };
 }
 
 async function loadRequiredAssets(
@@ -377,6 +496,7 @@ async function atomicRefresh(
   content: string,
   mode: number,
   hooks: InitWriteHooks,
+  expectedCurrent?: string,
 ): Promise<void> {
   await mkdir(dirname(target), { recursive: true, mode: 0o755 });
   const temporary = temporarySibling(target);
@@ -384,10 +504,67 @@ async function atomicRefresh(
     await writeFile(temporary, content, { encoding: 'utf8', flag: 'wx', mode });
     await chmod(temporary, mode);
     await hooks.beforeCommit?.(relativeTarget, 'refresh');
+    if (expectedCurrent !== undefined) {
+      let current: string;
+      try {
+        current = await readFile(target, 'utf8');
+      } catch (error: unknown) {
+        throw operational(relativeTarget + ' changed concurrently and was preserved', error);
+      }
+      if (current !== expectedCurrent) {
+        throw operational(relativeTarget + ' changed concurrently and was preserved');
+      }
+    }
     await rename(temporary, target);
   } finally {
     await rm(temporary, { force: true });
   }
+}
+
+async function applyCodexGuidancePlan(
+  plan: CodexGuidanceFilePlan,
+  hooks: InitWriteHooks,
+): Promise<ScaffoldAction> {
+  if (plan.kind === 'skip') {
+    return {
+      kind: 'skip',
+      target: 'AGENTS.md',
+      reason: 'GraphKeeper Codex integration is already current',
+    };
+  }
+  if (plan.kind === 'create') {
+    const created = await atomicCreate(
+      plan.destination,
+      'AGENTS.md',
+      plan.content,
+      0o644,
+      hooks,
+    );
+    if (!created) {
+      throw operational('AGENTS.md changed concurrently and was preserved');
+    }
+    return {
+      kind: 'create',
+      target: 'AGENTS.md',
+      reason: 'GraphKeeper Codex integration block created',
+    };
+  }
+
+  await atomicRefresh(
+    plan.destination,
+    'AGENTS.md',
+    plan.content,
+    0o644,
+    hooks,
+    plan.expected ?? undefined,
+  );
+  return {
+    kind: plan.kind === 'append' ? 'refresh' : plan.kind,
+    target: 'AGENTS.md',
+    reason: plan.kind === 'append'
+      ? 'GraphKeeper Codex integration block appended'
+      : 'GraphKeeper Codex integration block refreshed',
+  };
 }
 
 async function createEvidenceDirectory(target: string): Promise<boolean> {
@@ -479,12 +656,18 @@ export async function initialize(options: InitializeOptions): Promise<InitReport
     isGitRepository,
   });
   await validateDestinationShapes(root);
+  const codexGuidancePlan = options.integrateCodex
+    ? await prepareCodexGuidancePlan(root)
+    : null;
   const assets = await loadRequiredAssets(plan);
   const hookPlan = isGitRepository ? await prepareHookPlan(root) : null;
   const hooks = options.writeHooks ?? {};
   const completed: ScaffoldAction[] = [];
 
   try {
+    if (codexGuidancePlan !== null) {
+      completed.push(await applyCodexGuidancePlan(codexGuidancePlan, hooks));
+    }
     for (const action of plan) {
       if (action.kind === 'skip' || action.kind === 'warn') {
         completed.push(action);

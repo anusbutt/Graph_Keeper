@@ -43,6 +43,7 @@ test('release tarball contains every runtime asset and excludes development-only
 
   for (const required of [
     'dist/src/cli.js',
+    'dist/src/commands/update.js',
     'scripts/validate.sh',
     'templates/pre-commit',
     'templates/SKILL.md',
@@ -77,8 +78,7 @@ test('release tarball contains every runtime asset and excludes development-only
 
   const extracted = join(temporary, 'extracted');
   await mkdir(extracted);
-  const archive = join(temporary, manifest.filename);
-  const unpacked = await runProcess('tar', ['-xf', archive, '-C', extracted], {
+  const unpacked = await runProcess('tar', ['-xf', manifest.filename, '-C', extracted], {
     cwd: temporary,
     timeoutMs: 20_000,
   });
@@ -91,6 +91,11 @@ test('release tarball contains every runtime asset and excludes development-only
   assert.equal(help.exitCode, 0, help.stderr);
   assert.match(help.stdout, /GraphKeeper - grounded, auditable memory/);
   assert.match(help.stdout, /graphkeeper doctor/);
+  assert.match(help.stdout, /graphkeeper update/);
   assert.match(await readFile(join(packageRoot, 'scripts', 'validate.sh'), 'utf8'), /GraphKeeper: validation passed/);
+  assert.match(
+    await readFile(join(packageRoot, 'templates', 'SKILL.md'), 'utf8'),
+    /^---\nname: graphkeeper\ndescription: .+\n---\n/,
+  );
   await access(join(packageRoot, 'templates', 'pre-commit'));
 });

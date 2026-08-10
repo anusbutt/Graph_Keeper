@@ -57,10 +57,19 @@ change, and finish with the complete quality gates below.
   ambiguous, corrected, and hostile inputs as applicable.
 - `src/commands/doctor.ts` and `src/lib/evidence.ts` own deep graph and physical
   evidence inspection.
+- `src/commands/update.ts` owns stable-version comparison and the fixed npm registry
+  and exact global-install argument arrays. It must remain independent of repository
+  data and must never use a shell.
 - The canonical validator is `scripts/validate.sh`. The pre-commit hook and
   `graphkeeper check` both invoke it; do not duplicate validation logic in TypeScript.
 - `templates/graph/SCHEMA.md` is the shipped record contract.
-- `templates/SKILL.md` is vendor-neutral agent guidance.
+- `templates/SKILL.md` is vendor-neutral agent guidance packaged to
+  `.agents/skills/graphkeeper/SKILL.md` for the initial Codex integration. Its YAML
+  frontmatter contains only `name` and a trigger-focused `description`.
+- `src/commands/init.ts` owns the optional GraphKeeper marker block in `AGENTS.md`.
+  Default and forced initialization must preserve `AGENTS.md`, `CLAUDE.md`, and
+  legacy root `SKILL.md` content. Never manage text outside the two GraphKeeper
+  markers.
 - `tests/integration` contains rule-isolated repository fixtures. A new validation
   rule needs both an accepting test and a rejecting test, in staged and worktree modes
   when selection behavior matters.
@@ -70,6 +79,12 @@ change, and finish with the complete quality gates below.
 Rules in shipped guidance use three labels: `HOOK` for fast mechanical enforcement,
 `DOCTOR` for deep inspection, and `GUIDANCE` for behavior that software cannot infer.
 Keep those labels accurate when changing documentation.
+
+Changes to skill discovery or integration require both accepted and rejected tests:
+validate generated frontmatter and package contents; preserve existing guidance
+byte-for-byte; cover LF, CRLF, and no-final-newline files; reject malformed markers,
+wrong destination types, duplicate flags, unsupported integration targets, and
+concurrent edits before replacement.
 
 ## Version 1 boundaries
 
@@ -88,6 +103,7 @@ Run these before opening a pull request:
 
     npm run build
     npm run typecheck
+    npm run test:functional
     npm test
     npm run test:security
     npm run test:performance
@@ -97,9 +113,11 @@ Run these before opening a pull request:
     sh -n templates/pre-commit
     git diff --check
 
-`npm test` already includes all compiled tests and benchmarks; the explicit security
-and performance commands are useful for focused evidence. CI repeats the gates on
-Linux, macOS, and Windows through Git Bash.
+`npm test` includes all compiled tests and benchmarks for a complete local check.
+`npm run release:verify` deliberately runs the deterministic functional, security,
+and package gates; performance budgets run separately in dedicated Ubuntu and
+Windows/Git Bash CI jobs. This keeps performance regressions visible without making
+publication depend on temporary workstation load.
 
 ## Pull requests and labels
 
@@ -122,6 +140,9 @@ Use the narrowest useful labels:
 - Interrupted or repeated initialization: fix the reported cause and rerun
   `graphkeeper init`. Initialization is idempotent, and `--force` refreshes generated
   documentation only.
+- Codex adoption: use `graphkeeper init --integrate codex` only when the repository
+  wants always-visible activation guidance. A malformed or repeated marker pair must
+  fail with `GK004`; repair the markers deliberately instead of replacing the file.
 - Existing pre-commit hook: preserve the existing hook and chain the generated
   `.githooks/pre-commit` wrapper as instructed by `graphkeeper init`; never overwrite
   third-party hook content.
@@ -134,6 +155,9 @@ Use the narrowest useful labels:
 - CLI rollback: install the previous npm version and rerun check and doctor. Generated
   graph data remains under Git control; do not roll back by deleting append-only
   claims or committed evidence.
+- Update failure: confirm WSL or Git Bash, npm availability, registry access, and a
+  user-writable global npm prefix. The command never falls back to local dependency
+  installation or another package manager.
 
 ## Known scaling boundaries
 
@@ -141,6 +165,11 @@ The documented v1 ceiling is 10,000 claims, 2,000 entities, and 1,000 runs on a 
 SSD reference environment. Query and doctor benchmarks also enforce a 256 MB peak
 memory ceiling. A performance regression over 20 percent requires investigation before
 release; correctness checks may never be skipped to recover speed.
+The Unix reference budgets remain 10 seconds for initialization and doctor and 2
+seconds for a 10,000-claim query. Windows/Git Bash budgets are 15 seconds for
+initialization and doctor and 3 seconds for that query, reflecting process and
+filesystem overhead rather than a different correctness standard.
+
 
 Concurrent contributors resolve JSON conflicts through ordinary Git review. Random
 claim and run suffixes reduce collisions but do not provide automatic merge handling.
@@ -156,10 +185,12 @@ and run lifecycle semantics, plus evidence immutability and stable diagnostics. 
 should measure where the 10,000-claim JSON ceiling becomes limiting and identify a
 reversible migration boundary for a later specification.
 
-## Two-harness compatibility
+## Agent-harness compatibility
 
 The shipped `templates/SKILL.md` and `templates/graph/SCHEMA.md` are the interface for
-all agent harnesses. A command-capable harness may invoke the CLI directly. A
+agent harnesses. The initial launch installs the skill only in Codex's repository
+skill path and supports execution through WSL or Git Bash; other harness adapters are
+future, explicit changes. A command-capable harness may invoke the CLI directly. A
 file-editing harness may update the documented JSON and evidence files, then invoke
 `graphkeeper check`. Both must read and write the same records without vendor-specific
 fields or conversion. Compatibility tests query one unchanged graph through both

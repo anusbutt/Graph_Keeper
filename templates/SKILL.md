@@ -1,3 +1,8 @@
+---
+name: graphkeeper
+description: Retrieve and record durable, evidence-backed repository knowledge with GraphKeeper before repeating investigation or preserving verified findings.
+---
+
 # Using GraphKeeper
 
 GraphKeeper is vendor-neutral durable memory for stable project findings. The graph is
@@ -52,6 +57,16 @@ behavioral responsibility that software cannot infer reliably.
   provenance is understandable without session history.
 - [HOOK] Run graphkeeper check or the installed commit hook before accepting the graph
   change.
+
+## Report retrieved memory
+
+- [GUIDANCE] Cite a claim's evidence exactly as the repository-relative source.ref,
+  including its inclusive line range. Do not expand it to an absolute host path.
+- [GUIDANCE] Describe verdict as the outcome of the producing run and its stated task.
+  A passed discovery or validation run does not imply that the subject, application,
+  or complete test suite passed.
+- [GUIDANCE] Keep the claim's supported fact separate from run status, and identify
+  whether its source is tool_output or inference.
 
 ## Track a run
 

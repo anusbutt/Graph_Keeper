@@ -36,6 +36,7 @@ test('baseline schema and agent guidance are useful and placeholder-free', async
   assert.match(schema, /append-only/i);
   assert.match(skill, /evidence\//);
   assert.match(skill, /never execute/i);
+  assert.match(skill, /^---\nname: graphkeeper\ndescription: .+\n---\n/);
 });
 
 test('pre-commit is a minimal marked wrapper around staged validation', async () => {
