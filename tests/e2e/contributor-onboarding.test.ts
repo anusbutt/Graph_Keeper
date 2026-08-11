@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { copyFile, cp, mkdir, readFile, symlink, writeFile } from 'node:fs/promises';
+import { copyFile, cp, mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import test from 'node:test';
@@ -58,16 +58,18 @@ test('a clean source snapshot completes onboarding gates and a query recipe with
   assert.equal((await fixture.git(['status', '--porcelain'])).stdout, '');
 
   const started = performance.now();
-  await symlink(
-    join(projectRoot, 'node_modules'),
-    join(fixture.root, 'node_modules'),
-    process.platform === 'win32' ? 'junction' : 'dir',
-  );
   const nestedEnvironment: NodeJS.ProcessEnv = {
     ...process.env,
     GRAPHKEEPER_ONBOARDING_NESTED: '1',
   };
   delete nestedEnvironment.NODE_TEST_CONTEXT;
+  const install = npmInvocation(['ci']);
+  const installed = await runProcess(install.command, install.args, {
+    cwd: fixture.root,
+    env: nestedEnvironment,
+    timeoutMs: 120_000,
+  });
+  assert.equal(installed.exitCode, 0, installed.stderr || installed.stdout);
   const packageMetadata = JSON.parse(
     await readFile(join(projectRoot, 'package.json'), 'utf8'),
   ) as { readonly version: string };
