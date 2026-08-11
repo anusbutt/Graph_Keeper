@@ -150,7 +150,7 @@ When linear JSON scans or concurrent-write collisions become material, a future 
 See [`CONTRIBUTING.md`](CONTRIBUTING.md) for the development workflow, extension points,
 and boundaries, [`SUPPORT.md`](.github/SUPPORT.md) for usage help, and
 [`SECURITY.md`](.github/SECURITY.md) for private vulnerability reporting. Version
-`0.1.2` is pre-1.0 and its API may change. Release ownership and the target version
+`0.1.3` is pre-1.0 and its API may change. Release ownership and the target version
 must be verified immediately before publishing; completing the repository release
 gates does not publish anything.
 

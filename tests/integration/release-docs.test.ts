@@ -34,6 +34,7 @@ test('npm metadata points to the canonical public repository and support channel
     homepage?: string;
     bugs?: { url?: string };
     repository?: { type?: string; url?: string };
+    bin?: Record<string, string>;
     keywords?: string[];
   };
 
@@ -46,9 +47,31 @@ test('npm metadata points to the canonical public repository and support channel
     type: 'git',
     url: 'git+https://github.com/anusbutt/Graph_Keeper.git',
   });
+  assert.deepEqual(manifest.bin, { graphkeeper: 'dist/src/cli.js' });
   for (const keyword of ['ai-agents', 'coding-agents', 'knowledge-graph', 'provenance']) {
     assert.ok(manifest.keywords?.includes(keyword), `missing npm keyword: ${keyword}`);
   }
+});
+
+test('release version stays aligned across package, lockfile, CLI, README, and changelog', async () => {
+  const manifest = JSON.parse(await readFile(join(projectRoot, 'package.json'), 'utf8')) as {
+    version?: string;
+  };
+  const lockfile = JSON.parse(await readFile(join(projectRoot, 'package-lock.json'), 'utf8')) as {
+    version?: string;
+    packages?: Record<string, { version?: string }>;
+  };
+  const cli = await readFile(join(projectRoot, 'src/cli.ts'), 'utf8');
+  const readme = await readFile(join(projectRoot, 'README.md'), 'utf8');
+  const changelog = await readFile(join(projectRoot, 'CHANGELOG.md'), 'utf8');
+  const version = manifest.version;
+
+  assert.equal(version, '0.1.3');
+  assert.equal(lockfile.version, version);
+  assert.equal(lockfile.packages?.['']?.version, version);
+  assert.match(cli, new RegExp("const VERSION = '" + version?.replaceAll('.', '\\.') + "';"));
+  assert.match(readme, new RegExp('Version\\s+`' + version?.replaceAll('.', '\\.') + '`'));
+  assert.match(changelog, new RegExp('## \\[' + version?.replaceAll('.', '\\.') + '\\] - 2026-08-11'));
 });
 
 test('release carries the MIT terms for GraphKeeper contributors', async () => {

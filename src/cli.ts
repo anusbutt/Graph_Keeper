@@ -26,7 +26,7 @@ export interface CliIO {
   readonly stderr: (message: string) => void;
 }
 
-const VERSION = '0.1.2';
+const VERSION = '0.1.3';
 const COMMANDS = new Set(['init', 'check', 'query', 'doctor', 'update']);
 
 const USAGE = [

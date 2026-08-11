@@ -53,7 +53,13 @@ test('a tarball installs in a clean directory and runs init, check, query, and d
     await rm(installationRoot, { recursive: true, force: true });
   });
 
-  const packInvocation = npmInvocation(['pack', '--json', '--pack-destination', packingRoot]);
+  const packInvocation = npmInvocation([
+    'pack',
+    '--dry-run=false',
+    '--json',
+    '--pack-destination',
+    packingRoot,
+  ]);
   const packed = await runProcess(packInvocation.command, packInvocation.args, {
     cwd: projectRoot,
     timeoutMs: 45_000,
@@ -66,6 +72,7 @@ test('a tarball installs in a clean directory and runs init, check, query, and d
 
   const installInvocation = npmInvocation([
     'install',
+    '--dry-run=false',
     '--ignore-scripts',
     '--no-audit',
     '--no-fund',
@@ -91,6 +98,9 @@ test('a tarball installs in a clean directory and runs init, check, query, and d
   const help = await runCli(['--help']);
   assert.equal(help.exitCode, 0, help.stderr);
   assert.match(help.stdout, /graphkeeper update/);
+  const version = await runCli(['--version']);
+  assert.equal(version.exitCode, 0, version.stderr);
+  assert.equal(version.stdout, '0.1.3\n');
   const initialized = await runCli(['init']);
   assert.equal(initialized.exitCode, 0, initialized.stderr);
   assert.match(initialized.stdout, /CREATE graph\/entities\.json/);
