@@ -3,6 +3,9 @@ contact_links:
   - name: Report a security vulnerability
     url: https://github.com/anusbutt/Graph_Keeper/security/advisories/new
     about: Send suspected vulnerabilities privately instead of opening a public issue.
+  - name: Ask a question or discuss an idea
+    url: https://github.com/anusbutt/Graph_Keeper/discussions
+    about: Use Q&A, Ideas, or Design discussions before opening an actionable work item.
   - name: Read installation and usage guidance
     url: https://github.com/anusbutt/Graph_Keeper#readme
     about: Check prerequisites, supported platforms, commands, and recovery guidance.

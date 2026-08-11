@@ -23,6 +23,7 @@ test('release README covers onboarding, operation, recovery, limits, and future 
     /graphkeeper doctor/,
     /Native PowerShell is not supported/i,
     /## Recovery and adoption/,
+    /github\.com\/anusbutt\/Graph_Keeper\/discussions/,
     /10,000 claims, 2,000 entities, and 1,000 runs/,
     /SQLite or PostgreSQL/,
   ]) assert.match(readme, contract);

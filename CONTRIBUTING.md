@@ -144,6 +144,13 @@ publication depend on temporary workstation load.
 
 ## Pull requests and labels
 
+A question, early idea, or unresolved architecture tradeoff belongs in
+[GitHub Discussions](https://github.com/anusbutt/Graph_Keeper/discussions). Discussion
+does not authorize implementation or commit the project to a roadmap change. Once the
+maintainer accepts a direction, summarize the actionable scope in an issue before
+opening a pull request. Link the pull request with `Closes #<issue>` when it fully
+resolves that work.
+
 A pull request must explain the user-visible outcome, include failing-then-passing
 tests, update documentation, state schema compatibility, and confirm constitutional
 compliance. Include observed commands and results. Never hide skipped tests or weaken
