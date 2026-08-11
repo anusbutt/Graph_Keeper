@@ -3,3 +3,9 @@ dist/
 coverage/
 *.tgz
 .DS_Store
+
+# Local development and SDD artifacts
+/.codex/
+/.specify/
+/specs/
+/history/

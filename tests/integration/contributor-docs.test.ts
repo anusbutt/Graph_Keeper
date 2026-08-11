@@ -47,6 +47,31 @@ test('contribution guide defines v1 scope and concrete extension points', async 
   assert.match(guide, /validation\s+rule.*accepting\s+test.*rejecting\s+test/is);
 });
 
+test('contribution guide explains the complete runtime flow and ownership boundaries', async () => {
+  const guide = await read('CONTRIBUTING.md');
+  for (const command of ['init', 'check', 'query', 'doctor', 'update']) {
+    assert.match(guide, new RegExp('^' + command + '\\s+[-=]>', 'm'));
+  }
+  assert.match(guide, /init.*prerequisite.*templates.*Git hook.*Codex/is);
+  assert.match(guide, /query.*check.*entity resolution.*jq/is);
+  assert.match(guide, /doctor.*check.*graph-reference.*physical evidence/is);
+  assert.match(guide, /update.*npm registry.*global install.*no repository changes/is);
+  assert.match(guide, /shell validator.*commit-time authority/is);
+  assert.match(guide, /TypeScript record parsers\s+are.*read-only consumers.*do not\s+replace/is);
+  assert.match(guide, /graphkeeper doctor.*adds physical evidence.*do not run.*fast hook/is);
+});
+
+test('contribution guide fixes the supported platform and agent-adapter contract', async () => {
+  const guide = await read('CONTRIBUTING.md');
+  assert.match(guide, /graph.*schema.*CLI remain vendor-neutral/is);
+  assert.match(guide, /Codex is currently the only\s+generated agent adapter/is);
+  assert.match(guide, /\.agents\/skills\/graphkeeper/is);
+  assert.match(guide, /--integrate codex.*AGENTS\.md/is);
+  assert.match(guide, /Linux.*macOS.*directly/is);
+  assert.match(guide, /Windows.*WSL.*Git Bash/is);
+  assert.match(guide, /native PowerShell.*outside.*v1 runtime boundary/is);
+});
+
 test('contribution guide specifies test-first workflow and complete quality gates', async () => {
   const guide = await read('CONTRIBUTING.md');
   assert.match(guide, /failing test.*before.*implementation/is);

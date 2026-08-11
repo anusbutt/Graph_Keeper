@@ -51,6 +51,29 @@ change, and finish with the complete quality gates below.
 
 ## Architecture and extension points
 
+The public commands share one repository-local data model but take deliberately
+different paths through it:
+
+```text
+init   -> prerequisite probes -> templates and graph files -> Git hook -> optional Codex guidance
+check  -> scripts/validate.sh --worktree
+query  -> check -> exact entity resolution -> jq active-claim selection
+doctor -> check -> graph-reference checks -> physical evidence inspection
+update -> npm registry lookup -> exact global install (no repository changes)
+```
+
+The shell validator is the commit-time authority: both the pre-commit hook and
+`graphkeeper check` execute `scripts/validate.sh`. The TypeScript record parsers are
+read-only consumers used after validation and by deeper inspection; they do not
+replace the shell validator. `graphkeeper doctor` adds physical evidence and graph
+integrity checks that intentionally do not run in the fast hook path.
+
+The graph, schema, and CLI remain vendor-neutral. Codex is currently the only
+generated agent adapter: initialization writes the repository skill under
+`.agents/skills/graphkeeper/`, and `--integrate codex` may manage one marked block in
+`AGENTS.md`. Linux and macOS run GraphKeeper directly. Windows runs it through WSL or
+Git Bash; native PowerShell remains outside the v1 runtime boundary.
+
 - `src/cli.ts` owns public command dispatch and argument usage.
 - `src/commands/query.ts` owns entity resolution, active-claim selection, and query
   output. Query recipe changes require unit or integration cases for positive, empty,
