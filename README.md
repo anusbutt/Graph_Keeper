@@ -8,6 +8,8 @@ Grounded, auditable memory for coding agents—stored beside the code, protected
 
 Agents forget context and can repeat stale conclusions. GraphKeeper gives every durable finding a stable subject, provenance, and history. The store is plain JSON plus immutable evidence files, so humans can diff it, `jq` can query it, and a pre-commit hook can stop accidental rewrites.
 
+![How GraphKeeper gives coding agents durable project memory](https://raw.githubusercontent.com/anusbutt/Graph_Keeper/main/docs/assets/graphkeeper-overview.png)
+
 ## Prerequisites
 
 - Node.js 18 or newer and npm
