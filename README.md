@@ -149,6 +149,13 @@ When linear JSON scans or concurrent-write collisions become material, a future 
 
 ## Contributing and release status
 
+Use [GitHub Discussions](https://github.com/anusbutt/Graph_Keeper/discussions) for
+usage questions, early ideas, architecture conversations, and real-world show-and-tell.
+Use [GitHub Issues](https://github.com/anusbutt/Graph_Keeper/issues) for reproducible
+bugs and clearly bounded work. The
+[pinned welcome discussion](https://github.com/anusbutt/Graph_Keeper/discussions/6)
+explains the categories and how an accepted direction becomes an actionable issue.
+
 See [`CONTRIBUTING.md`](CONTRIBUTING.md) for the development workflow, extension points,
 and boundaries, [`SUPPORT.md`](.github/SUPPORT.md) for usage help, and
 [`SECURITY.md`](.github/SECURITY.md) for private vulnerability reporting. Version

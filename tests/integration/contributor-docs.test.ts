@@ -130,6 +130,7 @@ test('issue and pull-request templates require actionable engineering context', 
   const issueConfig = await read('.github/ISSUE_TEMPLATE/config.yml');
   assert.match(issueConfig, /blank_issues_enabled:\s*false/);
   assert.match(issueConfig, /security\/advisories\/new/);
+  assert.match(issueConfig, /github\.com\/anusbutt\/Graph_Keeper\/discussions/);
 
   const security = await read('.github/SECURITY.md');
   assert.match(security, /supported versions.*latest published/is);
@@ -138,8 +139,13 @@ test('issue and pull-request templates require actionable engineering context', 
 
   const support = await read('.github/SUPPORT.md');
   assert.match(support, /README.*contributor guide/is);
+  assert.match(support, /Q&A.*Ideas.*Design discussions.*Show and tell/is);
   assert.match(support, /bug report.*feature request/is);
   assert.match(support, /SECURITY\.md/);
+
+  const guide = await read('CONTRIBUTING.md');
+  assert.match(guide, /GitHub Discussions.*does not authorize implementation/is);
+  assert.match(guide, /accepts? a direction.*actionable scope.*issue/is);
 });
 
 test('CI and repository settings cover all supported platforms and governance', async () => {
@@ -164,6 +170,8 @@ test('CI and repository settings cover all supported platforms and governance', 
   assert.match(settings, /Description/);
   assert.match(settings, /Topics/);
   assert.match(settings, /Labels/);
+  assert.match(settings, /Discussions.*Announcements.*Q&A.*Ideas.*Design discussions.*Show and tell/is);
+  assert.match(settings, /Welcome to GraphKeeper Discussions/);
   assert.match(settings, /Default branch.*main/is);
   assert.match(settings, /Branch protection.*required status checks/is);
   assert.match(settings, /quality-ubuntu.*quality-macos.*quality-windows/is);

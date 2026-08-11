@@ -36,6 +36,23 @@ squash merging so each pull request has one reviewable integration commit.
 | `breaking-schema` | Incompatible record interpretation |
 | `good first issue` | Bounded work with explicit acceptance checks |
 
+## Discussions
+
+Repository Discussions are enabled for open community conversation. Keep these
+categories:
+
+- `Announcements` for maintainer and release news
+- `Q&A` for installation, usage, recovery, and integration help
+- `Ideas` for possible improvements that are not yet roadmap commitments
+- `Design discussions` for architecture, tradeoffs, and future boundaries
+- `Show and tell` for real repository workflows and experiments
+
+Pin
+[`Welcome to GraphKeeper Discussions`](https://github.com/anusbutt/Graph_Keeper/discussions/6)
+globally. Route reproducible bugs and accepted, bounded work to Issues; route suspected
+vulnerabilities to private security reporting. An accepted discussion direction must
+be summarized as an actionable issue before implementation begins.
+
 ## Branch protection and required status checks
 
 Protect `main` with these required status checks:
