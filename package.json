@@ -2,6 +2,14 @@
   "name": "graphkeeper",
   "version": "0.1.2",
   "description": "Grounded, auditable memory for coding agents.",
+  "homepage": "https://github.com/anusbutt/Graph_Keeper#readme",
+  "bugs": {
+    "url": "https://github.com/anusbutt/Graph_Keeper/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/anusbutt/Graph_Keeper.git"
+  },
   "type": "module",
   "main": "./dist/src/cli.js",
   "types": "./dist/src/cli.d.ts",
@@ -42,9 +50,16 @@
   },
   "keywords": [
     "ai-agents",
+    "cli",
+    "coding-agents",
     "developer-tools",
+    "git",
+    "knowledge-graph",
+    "local-first",
     "memory",
-    "git"
+    "provenance",
+    "typescript",
+    "validation"
   ],
   "license": "MIT",
   "private": false,

@@ -7,6 +7,10 @@ documents intent; it does not grant automation permission to mutate repository s
 
 Grounded, auditable, Git-backed memory for coding agents.
 
+## Website
+
+`https://www.npmjs.com/package/graphkeeper`
+
 ## Topics
 
 `ai-agents`, `developer-tools`, `git`, `knowledge-graph`, `memory`, `provenance`,
@@ -42,13 +46,18 @@ Protect `main` with these required status checks:
 - `performance-ubuntu`
 - `performance-windows-git-bash`
 
-Require branches to be current before merge, one approving review, resolved
-conversations, and linear history. Block force pushes and branch deletion. Apply the
-rules to administrators, with emergency bypass limited to repository owners and
-followed by a documented incident review.
+Require every change to use a pull request, including maintainer changes. Required
+approvals are `0` while GraphKeeper has one maintainer because pull-request authors
+cannot approve their own work. Require branches to be current before manual merge,
+all status checks to pass, resolved conversations, and linear history. Disable
+auto-merge, force pushes, and branch deletion, and apply the rules to administrators.
+The repository owner remains the only account with merge permission. When a second
+trusted maintainer receives write access, require at least one approval from someone
+other than the pull-request author.
 
 ## Security and access
 
 Grant the CI workflow read-only repository contents permission. Store no publish token
-until the release checklist is approved. Enable secret scanning and dependency alerts;
-GraphKeeper itself sends no telemetry and uses no hosted runtime service.
+until the release checklist is approved. Enable private vulnerability reporting,
+secret scanning, and dependency alerts; GraphKeeper itself sends no telemetry and uses
+no hosted runtime service.

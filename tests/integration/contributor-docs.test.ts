@@ -126,6 +126,20 @@ test('issue and pull-request templates require actionable engineering context', 
   assert.match(pullRequest, /tests.*documentation.*schema compatibility.*constitution/is);
   assert.match(pullRequest, /npm test/);
   assert.match(pullRequest, /package:smoke/);
+
+  const issueConfig = await read('.github/ISSUE_TEMPLATE/config.yml');
+  assert.match(issueConfig, /blank_issues_enabled:\s*false/);
+  assert.match(issueConfig, /security\/advisories\/new/);
+
+  const security = await read('.github/SECURITY.md');
+  assert.match(security, /supported versions.*latest published/is);
+  assert.match(security, /security\/advisories\/new/);
+  assert.match(security, /do not.*public issue/is);
+
+  const support = await read('.github/SUPPORT.md');
+  assert.match(support, /README.*contributor guide/is);
+  assert.match(support, /bug report.*feature request/is);
+  assert.match(support, /SECURITY\.md/);
 });
 
 test('CI and repository settings cover all supported platforms and governance', async () => {
@@ -154,4 +168,7 @@ test('CI and repository settings cover all supported platforms and governance', 
   assert.match(settings, /Branch protection.*required status checks/is);
   assert.match(settings, /quality-ubuntu.*quality-macos.*quality-windows/is);
   assert.match(settings, /performance-ubuntu.*performance-windows-git-bash/is);
+  assert.match(settings, /approvals are `0`.*one maintainer/is);
+  assert.match(settings, /manual merge/is);
+  assert.match(settings, /auto-merge/is);
 });
