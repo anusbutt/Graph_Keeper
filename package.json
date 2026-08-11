@@ -1,6 +1,6 @@
 {
   "name": "graphkeeper",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Grounded, auditable memory for coding agents.",
   "homepage": "https://github.com/anusbutt/Graph_Keeper#readme",
   "bugs": {
@@ -20,13 +20,14 @@
     }
   },
   "bin": {
-    "graphkeeper": "./dist/src/cli.js"
+    "graphkeeper": "dist/src/cli.js"
   },
   "files": [
     "dist/src",
     "scripts/validate.sh",
     "templates",
     "examples",
+    "CHANGELOG.md",
     "LICENSE",
     "README.md"
   ],

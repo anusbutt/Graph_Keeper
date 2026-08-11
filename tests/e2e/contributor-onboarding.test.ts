@@ -63,6 +63,10 @@ test('a clean source snapshot completes onboarding gates and a query recipe with
     GRAPHKEEPER_ONBOARDING_NESTED: '1',
   };
   delete nestedEnvironment.NODE_TEST_CONTEXT;
+  for (const name of Object.keys(nestedEnvironment)) {
+    if (name.toLowerCase() === 'npm_config_dry_run') delete nestedEnvironment[name];
+  }
+  nestedEnvironment.npm_config_dry_run = 'false';
   const install = npmInvocation(['ci']);
   const installed = await runProcess(install.command, install.args, {
     cwd: fixture.root,

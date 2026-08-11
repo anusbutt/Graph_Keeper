@@ -30,7 +30,13 @@ test('release tarball contains every runtime asset and excludes development-only
 }, async (t) => {
   const temporary = await mkdtemp(join(tmpdir(), 'graphkeeper-pack-'));
   t.after(() => rm(temporary, { recursive: true, force: true }));
-  const invocation = npmInvocation(['pack', '--json', '--pack-destination', temporary]);
+  const invocation = npmInvocation([
+    'pack',
+    '--dry-run=false',
+    '--json',
+    '--pack-destination',
+    temporary,
+  ]);
   const packed = await runProcess(invocation.command, invocation.args, {
     cwd: projectRoot,
     timeoutMs: 45_000,
@@ -51,6 +57,7 @@ test('release tarball contains every runtime asset and excludes development-only
     'examples/reviewer.md',
     'examples/worked-example/graph/claims.json',
     'examples/worked-example/evidence/initial-failure.log',
+    'CHANGELOG.md',
     'LICENSE',
     'README.md',
   ]) {
