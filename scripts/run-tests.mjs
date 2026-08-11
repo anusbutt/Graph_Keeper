@@ -36,6 +36,9 @@ const isPerformanceTest = (file) => file.endsWith('.bench.js')
   || file.includes(sep + 'performance' + sep);
 const benchmarks = files.filter(isPerformanceTest);
 const tests = files.filter((file) => !isPerformanceTest(file));
+const isPackagingTest = (file) => file.includes(sep + 'e2e' + sep + 'package-');
+const packagingTests = tests.filter(isPackagingTest);
+const regularTests = tests.filter((file) => !isPackagingTest(file));
 
 function run(filesToRun, extraArgs = []) {
   if (filesToRun.length === 0) return 0;
@@ -50,8 +53,11 @@ if (files.length === 0) {
   process.stdout.write('No compiled test files found.\n');
   process.exitCode = 0;
 } else {
-  const testStatus = run(tests);
-  process.exitCode = testStatus === 0
-    ? run(benchmarks, ['--test-concurrency=1'])
+  const testStatus = run(regularTests);
+  const packagingStatus = testStatus === 0
+    ? run(packagingTests, ['--test-concurrency=1'])
     : testStatus;
+  process.exitCode = packagingStatus === 0
+    ? run(benchmarks, ['--test-concurrency=1'])
+    : packagingStatus;
 }
