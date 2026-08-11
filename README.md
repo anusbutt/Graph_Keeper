@@ -1,5 +1,9 @@
 # GraphKeeper
 
+[![CI](https://github.com/anusbutt/Graph_Keeper/actions/workflows/ci.yml/badge.svg)](https://github.com/anusbutt/Graph_Keeper/actions/workflows/ci.yml)
+[![npm](https://img.shields.io/npm/v/graphkeeper.svg)](https://www.npmjs.com/package/graphkeeper)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
 Grounded, auditable memory for coding agents—stored beside the code, protected by Git, and traceable to evidence.
 
 Agents forget context and can repeat stale conclusions. GraphKeeper gives every durable finding a stable subject, provenance, and history. The store is plain JSON plus immutable evidence files, so humans can diff it, `jq` can query it, and a pre-commit hook can stop accidental rewrites.
@@ -12,6 +16,25 @@ Agents forget context and can repeat stale conclusions. GraphKeeper gives every 
 - jq 1.6 or newer ([install jq](https://jqlang.github.io/jq/download/))
 
 Linux and macOS are supported directly. On Windows, run GraphKeeper in WSL or Git Bash, with `jq` available on `PATH`. Native PowerShell is not supported in v1.
+
+## Installation
+
+Run the current stable release without a permanent installation:
+
+```sh
+npx graphkeeper@latest --help
+```
+
+For repeated use, install the CLI globally:
+
+```sh
+npm install --global graphkeeper
+graphkeeper --help
+```
+
+The package is published as [`graphkeeper`](https://www.npmjs.com/package/graphkeeper).
+GraphKeeper has no runtime npm dependencies; Git, a POSIX `sh`, and jq remain required
+system prerequisites.
 
 ## Two-minute quickstart
 
@@ -124,6 +147,11 @@ When linear JSON scans or concurrent-write collisions become material, a future 
 
 ## Contributing and release status
 
-See [`CONTRIBUTING.md`](CONTRIBUTING.md) for the development workflow, extension points, and boundaries. Version `0.1.2` is pre-1.0 and its API may change. The package name must be rechecked immediately before publishing; completing the repository release gates does not publish anything.
+See [`CONTRIBUTING.md`](CONTRIBUTING.md) for the development workflow, extension points,
+and boundaries, [`SUPPORT.md`](.github/SUPPORT.md) for usage help, and
+[`SECURITY.md`](.github/SECURITY.md) for private vulnerability reporting. Version
+`0.1.2` is pre-1.0 and its API may change. Release ownership and the target version
+must be verified immediately before publishing; completing the repository release
+gates does not publish anything.
 
 GraphKeeper is available under the [MIT License](LICENSE).

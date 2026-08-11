@@ -7,10 +7,12 @@ This checklist is for a human release owner. Passing it makes a version eligible
 - [ ] Apply semantic versioning. `0.x` means the public API may still change; breaking behavior after `1.0.0` requires a major version.
 - [ ] Update `package.json`, `package-lock.json`, CLI `--version`, changelog/release notes, and verification evidence to the same version.
 - [ ] Confirm the version is not already published: `npm view graphkeeper versions --json`.
-- [ ] Recheck the name immediately before publishing: `npm view graphkeeper name version dist-tags --json`. An `E404` means no public package was visible at that instant; it does not reserve the name or prove the current npm account may publish it.
-- [ ] If the name is no longer available, stop and select an approved scoped name. Do not silently change package identity in a release commit.
+- [ ] Verify the established package identity immediately before publishing: `npm view graphkeeper name version dist-tags repository homepage bugs --json`.
+- [ ] Run `npm owner ls graphkeeper` and confirm the authenticated release owner still has publish access. Do not silently change package identity in a release commit.
 
-Registry observation on 2026-08-05: `npm view graphkeeper name version dist-tags time --json` returned npm `E404`. Recheck remains mandatory at publish time.
+Registry observation on 2026-08-11: `graphkeeper@0.1.2` is public under the `latest`
+dist-tag. Registry state and publish authorization must still be rechecked at release
+time.
 
 ## 2. Reproduce the release candidate
 
