@@ -50,6 +50,8 @@ test('release tarball contains every runtime asset and excludes development-only
   for (const required of [
     'dist/src/cli.js',
     'dist/src/commands/update.js',
+    'dist/src/commands/integrate.js',
+    'dist/src/lib/agent-adapters.js',
     'scripts/validate.sh',
     'templates/pre-commit',
     'templates/SKILL.md',
@@ -78,7 +80,7 @@ test('release tarball contains every runtime asset and excludes development-only
       'development files must be excluded: ' + excludedPrefix,
     );
   }
-  for (const excludedFile of ['CLAUDE.md', 'tsconfig.json']) {
+  for (const excludedFile of ['CLAUDE.md', 'PROGRESS.md', 'tsconfig.json']) {
     assert.equal(paths.has(excludedFile), false, 'development file must be excluded: ' + excludedFile);
   }
   assert.equal(paths.has('scripts/run-tests.mjs'), false, 'test runner must not ship');
@@ -99,6 +101,7 @@ test('release tarball contains every runtime asset and excludes development-only
   assert.match(help.stdout, /GraphKeeper - grounded, auditable memory/);
   assert.match(help.stdout, /graphkeeper doctor/);
   assert.match(help.stdout, /graphkeeper update/);
+  assert.match(help.stdout, /integrate remove <codex\|claude>/);
   assert.match(await readFile(join(packageRoot, 'scripts', 'validate.sh'), 'utf8'), /GraphKeeper: validation passed/);
   assert.match(
     await readFile(join(packageRoot, 'templates', 'SKILL.md'), 'utf8'),

@@ -49,10 +49,10 @@ test('contribution guide defines v1 scope and concrete extension points', async 
 
 test('contribution guide explains the complete runtime flow and ownership boundaries', async () => {
   const guide = await read('CONTRIBUTING.md');
-  for (const command of ['init', 'check', 'query', 'doctor', 'update']) {
+  for (const command of ['init', 'integrate remove', 'check', 'query', 'doctor', 'update']) {
     assert.match(guide, new RegExp('^' + command + '\\s+[-=]>', 'm'));
   }
-  assert.match(guide, /init.*prerequisite.*templates.*Git hook.*Codex/is);
+  assert.match(guide, /init.*prerequisite.*plan.*templates.*Git hook.*agent adapter/is);
   assert.match(guide, /query.*check.*entity resolution.*jq/is);
   assert.match(guide, /doctor.*check.*graph-reference.*physical evidence/is);
   assert.match(guide, /update.*npm registry.*global install.*no repository changes/is);
@@ -64,9 +64,12 @@ test('contribution guide explains the complete runtime flow and ownership bounda
 test('contribution guide fixes the supported platform and agent-adapter contract', async () => {
   const guide = await read('CONTRIBUTING.md');
   assert.match(guide, /graph.*schema.*CLI remain vendor-neutral/is);
-  assert.match(guide, /Codex is currently the only\s+generated agent adapter/is);
+  assert.match(guide, /Codex and Claude Code are explicit\s+internal adapters/is);
   assert.match(guide, /\.agents\/skills\/graphkeeper/is);
+  assert.match(guide, /\.claude\/skills\/graphkeeper/is);
   assert.match(guide, /--integrate codex.*AGENTS\.md/is);
+  assert.match(guide, /--integrate claude.*CLAUDE\.md/is);
+  assert.match(guide, /not a public plugin framework/is);
   assert.match(guide, /Linux.*macOS.*directly/is);
   assert.match(guide, /Windows.*WSL.*Git Bash/is);
   assert.match(guide, /native PowerShell.*outside.*v1 runtime boundary/is);
