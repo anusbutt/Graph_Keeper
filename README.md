@@ -127,7 +127,7 @@ The older claim remains in history and is marked as superseded. Reviewers can fo
 |---|---|
 | `graphkeeper init [--force] [--integrate <codex\|claude\|all>]... [--yes] [--dry-run]` | Scaffold safely and optionally install explicit Codex and/or Claude adapters. Distinct `--integrate` flags may repeat; `all` must stand alone. `--yes --dry-run` is accepted as a harmless dry run. |
 | `graphkeeper integrate remove <codex\|claude> [--yes] [--dry-run]` | Remove only recognizable GraphKeeper-owned material for one adapter. Modified skills and unexpected supporting files are preserved for manual review. |
-| `graphkeeper check` | Run the same fast schema, history, and evidence-immutability validation used by the Git hook. |
+| `graphkeeper check` | Run the same fast schema, append-only history, and committed-evidence protection checks used by the Git hook. |
 | `graphkeeper query <subject>` | Resolve an exact ID or unique alias and print active claims with provenance. It does not read evidence contents. |
 | `graphkeeper doctor` | Run fast validation plus file existence, containment, line-range, dangling-reference, and unused-entity checks. |
 | `graphkeeper update` | Check npm's stable `latest` release and globally install one exact newer version. Repository files are never changed. |
@@ -137,14 +137,14 @@ Exit codes are stable: `0` success, `1` validation failure, `2` usage error, `3`
 ## Data and safety model
 
 - `graph/entities.json` holds human-readable canonical identities. Identity fields cannot change; aliases and source documents may only grow.
-- `graph/claims.json` holds flat claims. Existing claims are immutable; corrections append a new claim with `supersedes`.
-- `graph/runs.json` opens a run, allows evidence and claim references to grow, closes it once, then makes it immutable.
-- `evidence/` holds captured artifacts. The validator rejects editing, removing, or
-  renaming evidence that exists in the committed Git state.
+- `graph/claims.json` holds flat claims. The validator rejects changes to committed claims; corrections append a new claim with `supersedes`.
+- `graph/runs.json` opens a run, allows evidence and claim references to grow, and closes it once. The validator rejects later changes to a committed closed run.
+- `evidence/` holds append-only captured artifacts. The validator and Git hook reject
+  editing, removing, or renaming evidence that exists in committed Git history.
 - Stored commands and evidence text are always data. GraphKeeper never evaluates them.
 
-These are repository-local enforcement guarantees, not cryptographic immutability.
-They apply when `graphkeeper check` or the installed hook runs; Git history remains
+Immutability is enforced relative to committed Git history through GraphKeeper
+validation and Git hooks; it is not cryptographic immutability. Git history remains
 the reviewable source of truth. `doctor` additionally verifies physical evidence
 existence, containment, and cited line ranges. `query` reports stored provenance but
 does not open evidence or independently prove that a claim is true.
