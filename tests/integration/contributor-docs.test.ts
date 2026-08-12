@@ -8,6 +8,31 @@ async function read(relativePath: string): Promise<string> {
   return readFile(new URL(relativePath, root), 'utf8');
 }
 
+test('agent instructions have one shared source and a Claude-specific entry point', async () => {
+  const agents = await read('AGENTS.md');
+  const claude = await read('CLAUDE.md');
+  const manifest = JSON.parse(await read('package.json')) as { readonly version: string };
+
+  assert.match(agents, /canonical shared guidance/i);
+  assert.match(agents, /package\.json.*source of truth/is);
+  assert.doesNotMatch(
+    agents,
+    new RegExp('(?:starts at|version)\\s+' + manifest.version.replaceAll('.', '\\.'), 'i'),
+  );
+
+  assert.match(claude, /^@AGENTS\.md$/m);
+  assert.match(claude, /\/graphkeeper/);
+  assert.match(claude, /\.claude\/skills\/graphkeeper\/SKILL\.md/);
+  for (const duplicatedRule of [
+    'npm test',
+    'append-only data model',
+    'stable CLI diagnostics',
+    'stored commands',
+  ]) {
+    assert.doesNotMatch(claude, new RegExp(duplicatedRule, 'i'));
+  }
+});
+
 test('contribution guide states every prerequisite and supported platform boundary', async () => {
   const guide = await read('CONTRIBUTING.md');
   assert.match(guide, /Node(?:\.js)?\s*(?:>=|18).*18/is);
