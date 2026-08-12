@@ -6,8 +6,9 @@ consistent when contributor-facing rules change.
 
 ## Project shape
 
-GraphKeeper is a repository-local, JSON-backed memory tool for coding agents. The
-runtime is a Node.js ESM CLI in `src/`, with the canonical shell validator in
+GraphKeeper is a repository-local, JSON-backed, evidence-grounded memory tool with
+explicit Codex and Claude Code adapters. The runtime is a Node.js ESM CLI in `src/`,
+with the canonical shell validator in
 `scripts/validate.sh`. Templates live in `templates/`, generic demonstrations live
 in `examples/`, and automated coverage lives in `tests/`.
 

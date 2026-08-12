@@ -5,6 +5,9 @@ preserve its auditable data model, zero runtime dependencies, and single canonic
 validator. This guide is sufficient to locate the supported extension points and run
 the project without private maintainer knowledge.
 
+Participation in project spaces is governed by the
+[Code of Conduct](CODE_OF_CONDUCT.md).
+
 ## Prerequisites and supported platforms
 
 - Node.js >= 18 and npm.
@@ -37,6 +40,11 @@ From a fresh clone:
 Then read `src/cli.ts`, `src/commands/query.ts`, and the matching tests. A small query
 recipe should begin as a failing focused test, add the smallest selector or formatting
 change, and finish with the complete quality gates below.
+
+For bounded starter work, review the
+[prepared contributor issue drafts](docs/contributor-issues.md). They identify useful
+documentation, testing, CLI, and design tasks with acceptance criteria; maintainers
+should triage a draft into a GitHub issue before implementation begins.
 
 ## Test-first workflow
 
@@ -164,9 +172,11 @@ an invariant to make a fixture pass.
 Use the narrowest useful labels:
 
 - `type:bug`, `type:feature`, or `type:docs`
-- `area:cli`, `area:validator`, `area:doctor`, `area:templates`, or `area:ci`
+- `area:cli`, `area:validator`, `area:doctor`, `area:templates`, `area:ci`,
+  `area:testing`, `area:integration`, or `area:architecture`
 - `breaking-schema` for any incompatible record interpretation
 - `good first issue` only for bounded work with explicit acceptance checks
+- `help wanted` for maintainer-approved work seeking community ownership
 
 ## Recovery runbooks
 
@@ -228,10 +238,10 @@ reversible migration boundary for a later specification.
 ## Agent-harness compatibility
 
 The shipped `templates/SKILL.md` and `templates/graph/SCHEMA.md` are the interface for
-agent harnesses. The initial launch installs the skill only in Codex's repository
-skill path and supports execution through WSL or Git Bash; other harness adapters are
-future, explicit changes. A command-capable harness may invoke the CLI directly. A
-file-editing harness may update the documented JSON and evidence files, then invoke
-`graphkeeper check`. Both must read and write the same records without vendor-specific
-fields or conversion. Compatibility tests query one unchanged graph through both
-harness styles and compare their active claim IDs.
+agent harnesses. GraphKeeper has explicit Codex and Claude Code adapters, and both
+install the same canonical skill in their repository skill paths. Any additional
+harness adapter is a future, explicit change. A command-capable harness may invoke the
+CLI directly. A file-editing harness may update the documented JSON and evidence
+files, then invoke `graphkeeper check`. Both harness styles use the same records without vendor-specific
+fields or conversion. Compatibility tests query one unchanged
+graph through both harness styles and compare their active claim IDs.
