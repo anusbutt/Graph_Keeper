@@ -3,7 +3,7 @@
 All notable changes to GraphKeeper are documented here. GraphKeeper follows semantic
 versioning; while the package is below 1.0, minor releases may change public behavior.
 
-## Unreleased
+## [0.2.0] - 2026-08-12
 
 ### Added
 
