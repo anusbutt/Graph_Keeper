@@ -8,8 +8,11 @@ import { fileURLToPath } from 'node:url';
 import {
   EXIT_SUCCESS,
   EXIT_USAGE,
+  authorizePlan,
   parseInitArguments,
+  parseRemoveArguments,
   type CliIO,
+  type CliTerminal,
   run,
 } from '../../src/cli.js';
 import { runCommand } from '../helpers/repository.js';
@@ -39,35 +42,123 @@ test('prints help successfully when no command is provided', async () => {
   assert.match(capture.stdout.join('\n'), /graphkeeper init/);
   assert.match(capture.stdout.join('\n'), /graphkeeper update/);
   assert.equal(capture.stderr.length, 0);
-  assert.match(capture.stdout.join('\n'), /init \[--force\] \[--integrate codex\]/);
+  assert.match(capture.stdout.join('\n'), /--integrate <codex\|claude\|all>/);
+  assert.match(capture.stdout.join('\n'), /integrate remove <codex\|claude>/);
 });
 
-test('parses only the documented init option grammar', () => {
-  assert.deepEqual(parseInitArguments([]), { force: false, integrateCodex: false });
-  assert.deepEqual(parseInitArguments(['--force']), { force: true, integrateCodex: false });
+test('parses the documented multi-adapter init option grammar deterministically', () => {
+  assert.deepEqual(
+    parseInitArguments([]),
+    { force: false, integrations: [], yes: false, dryRun: false },
+  );
+  assert.deepEqual(
+    parseInitArguments(['--force']),
+    { force: true, integrations: [], yes: false, dryRun: false },
+  );
   assert.deepEqual(
     parseInitArguments(['--integrate', 'codex']),
-    { force: false, integrateCodex: true },
+    { force: false, integrations: ['codex'], yes: false, dryRun: false },
   );
   assert.deepEqual(
-    parseInitArguments(['--force', '--integrate', 'codex']),
-    { force: true, integrateCodex: true },
+    parseInitArguments(['--integrate', 'claude']),
+    { force: false, integrations: ['claude'], yes: false, dryRun: false },
   );
   assert.deepEqual(
-    parseInitArguments(['--integrate', 'codex', '--force']),
-    { force: true, integrateCodex: true },
+    parseInitArguments([
+      '--integrate', 'claude',
+      '--yes',
+      '--integrate', 'codex',
+      '--dry-run',
+      '--force',
+    ]),
+    { force: true, integrations: ['codex', 'claude'], yes: true, dryRun: true },
+  );
+  assert.deepEqual(
+    parseInitArguments(['--integrate', 'all']),
+    { force: false, integrations: ['codex', 'claude'], yes: false, dryRun: false },
   );
 
   for (const invalid of [
     ['--integrate'],
-    ['--integrate', 'claude'],
+    ['--integrate', 'unknown'],
     ['--force', '--force'],
     ['--integrate', 'codex', '--integrate', 'codex'],
+    ['--integrate', 'all', '--integrate', 'claude'],
+    ['--integrate', 'claude', '--integrate', 'all'],
+    ['--yes', '--yes'],
+    ['--dry-run', '--dry-run'],
     ['--unknown'],
     ['codex'],
   ]) {
     assert.equal(parseInitArguments(invalid), null, invalid.join(' '));
   }
+});
+
+test('parses only the documented conservative removal grammar', () => {
+  assert.deepEqual(
+    parseRemoveArguments(['remove', 'codex']),
+    { adapter: 'codex', yes: false, dryRun: false },
+  );
+  assert.deepEqual(
+    parseRemoveArguments(['remove', 'claude', '--yes', '--dry-run']),
+    { adapter: 'claude', yes: true, dryRun: true },
+  );
+  for (const invalid of [
+    [],
+    ['remove'],
+    ['remove', 'all'],
+    ['remove', 'unknown'],
+    ['remove', 'claude', '--force'],
+    ['install', 'claude'],
+  ]) {
+    assert.equal(parseRemoveArguments(invalid), null, invalid.join(' '));
+  }
+});
+
+test('confirmation is injectable, defaults safely, and dry-run never prompts', async () => {
+  const action = {
+    kind: 'create' as const,
+    target: 'CLAUDE.md',
+    reason: 'test plan',
+  };
+
+  for (const answer of [true, false]) {
+    const capture = captureIO();
+    let prompts = 0;
+    const terminal: CliTerminal = {
+      isInteractive: true,
+      confirm: async (prompt) => {
+        prompts += 1;
+        assert.equal(prompt, 'Continue? [y/N] ');
+        return answer;
+      },
+    };
+    assert.equal(
+      await authorizePlan([action], false, false, capture.io, terminal),
+      answer ? 'apply' : 'stop',
+    );
+    assert.equal(prompts, 1);
+  }
+
+  const dryCapture = captureIO();
+  const noPrompt: CliTerminal = {
+    isInteractive: false,
+    confirm: async () => {
+      throw new Error('dry-run must not prompt');
+    },
+  };
+  assert.equal(
+    await authorizePlan([action], true, true, dryCapture.io, noPrompt),
+    'stop',
+  );
+  assert.match(dryCapture.stdout.join('\n'), /DRY RUN/);
+
+  const nonInteractive = captureIO();
+  assert.equal(
+    await authorizePlan([action], false, false, nonInteractive.io, noPrompt),
+    'error',
+  );
+  assert.match(nonInteractive.stderr.join('\n'), /GK002.*--yes/s);
 });
 
 test('prints the package version successfully', async () => {

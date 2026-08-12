@@ -55,7 +55,8 @@ The public commands share one repository-local data model but take deliberately
 different paths through it:
 
 ```text
-init   -> prerequisite probes -> templates and graph files -> Git hook -> optional Codex guidance
+init   -> prerequisite probes -> immutable plan -> templates and graph files -> Git hook -> optional agent adapters
+integrate remove -> ownership preflight -> immutable plan -> conservative adapter cleanup
 check  -> scripts/validate.sh --worktree
 query  -> check -> exact entity resolution -> jq active-claim selection
 doctor -> check -> graph-reference checks -> physical evidence inspection
@@ -68,11 +69,13 @@ read-only consumers used after validation and by deeper inspection; they do not
 replace the shell validator. `graphkeeper doctor` adds physical evidence and graph
 integrity checks that intentionally do not run in the fast hook path.
 
-The graph, schema, and CLI remain vendor-neutral. Codex is currently the only
-generated agent adapter: initialization writes the repository skill under
-`.agents/skills/graphkeeper/`, and `--integrate codex` may manage one marked block in
-`AGENTS.md`. Linux and macOS run GraphKeeper directly. Windows runs it through WSL or
-Git Bash; native PowerShell remains outside the v1 runtime boundary.
+The graph, schema, and CLI remain vendor-neutral. Codex and Claude Code are explicit
+internal adapters. They generate skills under `.agents/skills/graphkeeper/` and
+`.claude/skills/graphkeeper/`, while `--integrate codex` and
+`--integrate claude` manage independent marked blocks in `AGENTS.md` and
+`CLAUDE.md`. Both consume the same canonical `templates/SKILL.md`; this registry is
+not a public plugin framework. Linux and macOS run GraphKeeper directly. Windows runs
+it through WSL or Git Bash; native PowerShell remains outside the v1 runtime boundary.
 
 - `src/cli.ts` owns public command dispatch and argument usage.
 - `src/commands/query.ts` owns entity resolution, active-claim selection, and query
@@ -86,12 +89,14 @@ Git Bash; native PowerShell remains outside the v1 runtime boundary.
 - The canonical validator is `scripts/validate.sh`. The pre-commit hook and
   `graphkeeper check` both invoke it; do not duplicate validation logic in TypeScript.
 - `templates/graph/SCHEMA.md` is the shipped record contract.
-- `templates/SKILL.md` is vendor-neutral agent guidance packaged to
-  `.agents/skills/graphkeeper/SKILL.md` for the initial Codex integration. Its YAML
-  frontmatter contains only `name` and a trigger-focused `description`.
-- `src/commands/init.ts` owns the optional GraphKeeper marker block in `AGENTS.md`.
-  Default and forced initialization must preserve `AGENTS.md`, `CLAUDE.md`, and
-  legacy root `SKILL.md` content. Never manage text outside the two GraphKeeper
+- `templates/SKILL.md` is vendor-neutral agent guidance packaged to both registered
+  skill destinations. Its YAML frontmatter contains only `name` and a
+  trigger-focused `description`.
+- `src/lib/agent-adapters.ts` defines the closed internal adapter registry and
+  generic marked-block planner. `src/commands/integrate.ts` owns safe installation
+  and conservative removal. `src/commands/init.ts` owns scaffold planning and
+  application. Default and forced initialization preserve `AGENTS.md`, `CLAUDE.md`,
+  and legacy root `SKILL.md` content. Never manage text outside matching GraphKeeper
   markers.
 - `tests/integration` contains rule-isolated repository fixtures. A new validation
   rule needs both an accepting test and a rejecting test, in staged and worktree modes
@@ -170,9 +175,14 @@ Use the narrowest useful labels:
 - Interrupted or repeated initialization: fix the reported cause and rerun
   `graphkeeper init`. Initialization is idempotent, and `--force` refreshes generated
   documentation only.
-- Codex adoption: use `graphkeeper init --integrate codex` only when the repository
-  wants always-visible activation guidance. A malformed or repeated marker pair must
-  fail with `GK004`; repair the markers deliberately instead of replacing the file.
+- Agent adoption: use `graphkeeper init --integrate codex`,
+  `graphkeeper init --integrate claude`, repeated distinct flags, or
+  `--integrate all`. Review the disclosed plan and confirm it, or pass `--yes` only
+  in non-interactive automation. A malformed, mixed, or repeated marker pair fails
+  with `GK004`; repair it deliberately instead of replacing the file.
+- Agent removal: use `graphkeeper integrate remove <codex|claude>`. GraphKeeper
+  removes only an exact canonical skill and matching marked block. Review preserved
+  modified skills or unexpected supporting files manually.
 - Existing pre-commit hook: preserve the existing hook and chain the generated
   `.githooks/pre-commit` wrapper as instructed by `graphkeeper init`; never overwrite
   third-party hook content.

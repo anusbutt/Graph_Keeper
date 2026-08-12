@@ -59,15 +59,23 @@ matches its description. The hook normally lives under `.git` and is not committ
 hook. An empty `evidence/` directory becomes tracked when the first evidence file is
 added.
 
-For always-visible Codex guidance, opt in explicitly:
+For a complete agent integration (the agent-specific skill plus a short,
+always-visible reminder), opt in explicitly:
 
 ```sh
 npx graphkeeper init --integrate codex
+npx graphkeeper init --integrate claude
+npx graphkeeper init --integrate all
 ```
 
-This creates or updates only GraphKeeper's marked block in root `AGENTS.md`. Existing
-guidance outside that block is preserved. Default init and `--force` do not create or
-change `AGENTS.md` or `CLAUDE.md`.
+Codex uses `.agents/skills/graphkeeper/SKILL.md`, `AGENTS.md`, and
+`$graphkeeper`. Claude Code uses `.claude/skills/graphkeeper/SKILL.md`,
+`CLAUDE.md`, and `/graphkeeper`. Both skills are generated from the same
+`templates/SKILL.md`. Existing guidance outside the matching marked block is
+preserved. Integration plans are shown before writing; answer the prompt, or pass
+`--yes` in non-interactive automation. Use `--dry-run` for a complete read-only
+preflight. Default init and `--force` do not create or change `AGENTS.md` or
+`CLAUDE.md`.
 
 When an agent records a finding, retrieve it by canonical entity ID or an exact unique alias:
 
@@ -100,7 +108,8 @@ The older claim remains in history and is marked as superseded. Reviewers can fo
 
 | Command | Role |
 |---|---|
-| `graphkeeper init [--force] [--integrate codex]` | Scaffold safely. `--force` refreshes generated schema and skill templates; Codex integration explicitly manages one marked `AGENTS.md` block. |
+| `graphkeeper init [--force] [--integrate <codex\|claude\|all>]... [--yes] [--dry-run]` | Scaffold safely and optionally install explicit Codex and/or Claude adapters. Distinct `--integrate` flags may repeat; `all` must stand alone. `--yes --dry-run` is accepted as a harmless dry run. |
+| `graphkeeper integrate remove <codex\|claude> [--yes] [--dry-run]` | Remove only recognizable GraphKeeper-owned material for one adapter. Modified skills and unexpected supporting files are preserved for manual review. |
 | `graphkeeper check` | Run the same fast schema, history, and evidence-immutability validation used by the Git hook. |
 | `graphkeeper query <subject>` | Resolve an exact ID or unique alias and print active claims with provenance. It does not read evidence contents. |
 | `graphkeeper doctor` | Run fast validation plus file existence, containment, line-range, dangling-reference, and unused-entity checks. |
@@ -116,8 +125,9 @@ Exit codes are stable: `0` success, `1` validation failure, `2` usage error, `3`
 - `evidence/` holds captured artifacts. A committed evidence file cannot be edited, removed, or renamed.
 - Stored commands and evidence text are always data. GraphKeeper never evaluates them.
 
-See the generated `graph/SCHEMA.md` and
-`.agents/skills/graphkeeper/SKILL.md` for the complete writing contract.
+See the generated `graph/SCHEMA.md` and the GraphKeeper skill under
+`.agents/skills/graphkeeper/` or `.claude/skills/graphkeeper/` for the complete
+writing contract.
 [`examples/reviewer.md`](examples/reviewer.md) is a copy-pasteable grounded-review
 prompt.
 
@@ -125,8 +135,19 @@ prompt.
 
 - Re-running `init` is safe: existing graph data is skipped. Use `--force` only to refresh `graph/SCHEMA.md` and `.agents/skills/graphkeeper/SKILL.md`.
 - A root `SKILL.md` created by an older GraphKeeper version is legacy user content. It is reported and preserved; migrate by committing the generated `.agents/skills/graphkeeper/SKILL.md`.
-- `--integrate codex` creates `AGENTS.md` when absent, appends one marked block when no markers exist, and refreshes only that block on later runs. Malformed, repeated, or concurrently changed markers fail with `GK004` instead of risking existing guidance.
-- GraphKeeper does not create or edit `CLAUDE.md` in this Codex-only launch.
+- `--integrate codex` manages the Codex skill plus one marked block in `AGENTS.md`;
+  `--integrate claude` does the same for the Claude skill and `CLAUDE.md`. Multiple
+  distinct flags and `--integrate all` use one plan and one confirmation.
+- Integration creates a guidance file when absent, appends one block when no markers
+  exist, and refreshes only that block later. Malformed, mixed, repeated, reversed,
+  wrong-type, symlinked, or concurrently changed destinations fail with `GK004`.
+- Non-interactive integration and removal require `--yes`; declined prompts and EOF
+  leave the repository unchanged. `--dry-run` never prompts or writes.
+- `graphkeeper integrate remove <agent>` removes an exact canonical skill and its
+  matching block. User-modified skills and directories with unexpected files are
+  preserved with manual-cleanup instructions.
+- Restart Claude Code once if the current session began before the repository's
+  top-level `.claude/skills/` directory was created.
 - Run `graphkeeper update` from WSL or Git Bash to update a global npm installation.
   It first resolves the stable published version, installs only when that version is
   newer, and does not install prereleases. If the registry is offline, no update is

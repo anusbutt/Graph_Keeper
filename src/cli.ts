@@ -1,13 +1,28 @@
 #!/usr/bin/env node
 
 import { realpathSync } from 'node:fs';
+import { createInterface } from 'node:readline/promises';
 import { fileURLToPath } from 'node:url';
 
 import { check } from './commands/check.js';
 import { doctor } from './commands/doctor.js';
-import { initialize } from './commands/init.js';
+import {
+  applyInitialization,
+  prepareInitialization,
+  type ScaffoldAction,
+} from './commands/init.js';
+import {
+  applyAgentIntegrationPlan,
+  prepareAgentRemoval,
+  type IntegrationAction,
+} from './commands/integrate.js';
 import { query } from './commands/query.js';
 import { updateGraphKeeper } from './commands/update.js';
+import {
+  AGENT_IDS,
+  isAgentId,
+  type AgentId,
+} from './lib/agent-adapters.js';
 import {
   EXIT_CODES,
   GraphKeeperError,
@@ -26,14 +41,20 @@ export interface CliIO {
   readonly stderr: (message: string) => void;
 }
 
+export interface CliTerminal {
+  readonly isInteractive: boolean;
+  readonly confirm: (prompt: string) => Promise<boolean>;
+}
+
 const VERSION = '0.1.3';
-const COMMANDS = new Set(['init', 'check', 'query', 'doctor', 'update']);
+const COMMANDS = new Set(['init', 'integrate', 'check', 'query', 'doctor', 'update']);
 
 const USAGE = [
   'GraphKeeper - grounded, auditable memory for coding agents',
   '',
   'Usage:',
-  '  graphkeeper init [--force] [--integrate codex]',
+  '  graphkeeper init [--force] [--integrate <codex|claude|all>]... [--yes] [--dry-run]',
+  '  graphkeeper integrate remove <codex|claude> [--yes] [--dry-run]',
   '  graphkeeper check',
   '  graphkeeper query <subject>',
   '  graphkeeper doctor',
@@ -47,16 +68,36 @@ const processIO: CliIO = {
   stderr: (message) => process.stderr.write(message + '\n'),
 };
 
+const processTerminal: CliTerminal = {
+  isInteractive: Boolean(process.stdin.isTTY && process.stdout.isTTY),
+  confirm: async (prompt) => {
+    const terminal = createInterface({ input: process.stdin, output: process.stdout });
+    try {
+      const answer = await terminal.question(prompt);
+      return /^(?:y|yes)$/i.test(answer.trim());
+    } catch {
+      return false;
+    } finally {
+      terminal.close();
+    }
+  },
+};
+
 export interface ParsedInitArguments {
   readonly force: boolean;
-  readonly integrateCodex: boolean;
+  readonly integrations: readonly AgentId[];
+  readonly yes: boolean;
+  readonly dryRun: boolean;
 }
 
 export function parseInitArguments(
   args: readonly string[],
 ): ParsedInitArguments | null {
   let force = false;
-  let integrateCodex = false;
+  let yes = false;
+  let dryRun = false;
+  const explicit: AgentId[] = [];
+  let all = false;
   for (let index = 0; index < args.length; index += 1) {
     const argument = args[index];
     if (argument === '--force') {
@@ -64,15 +105,111 @@ export function parseInitArguments(
       force = true;
       continue;
     }
+    if (argument === '--yes') {
+      if (yes) return null;
+      yes = true;
+      continue;
+    }
+    if (argument === '--dry-run') {
+      if (dryRun) return null;
+      dryRun = true;
+      continue;
+    }
     if (argument === '--integrate') {
-      if (integrateCodex || args[index + 1] !== 'codex') return null;
-      integrateCodex = true;
+      const value = args[index + 1];
+      if (value === undefined) return null;
+      if (value === 'all') {
+        if (all || explicit.length > 0) return null;
+        all = true;
+      } else if (isAgentId(value)) {
+        if (all || explicit.includes(value)) return null;
+        explicit.push(value);
+      } else {
+        return null;
+      }
       index += 1;
       continue;
     }
     return null;
   }
-  return { force, integrateCodex };
+  return {
+    force,
+    integrations: all ? [...AGENT_IDS] : AGENT_IDS.filter((id) => explicit.includes(id)),
+    yes,
+    dryRun,
+  };
+}
+
+export interface ParsedRemoveArguments {
+  readonly adapter: AgentId;
+  readonly yes: boolean;
+  readonly dryRun: boolean;
+}
+
+export function parseRemoveArguments(
+  args: readonly string[],
+): ParsedRemoveArguments | null {
+  if (args[0] !== 'remove' || args[1] === undefined || !isAgentId(args[1])) return null;
+  let yes = false;
+  let dryRun = false;
+  for (const argument of args.slice(2)) {
+    if (argument === '--yes' && !yes) {
+      yes = true;
+    } else if (argument === '--dry-run' && !dryRun) {
+      dryRun = true;
+    } else {
+      return null;
+    }
+  }
+  return { adapter: args[1], yes, dryRun };
+}
+
+type DisplayAction = ScaffoldAction | IntegrationAction;
+
+function printPlan(actions: readonly DisplayAction[], io: CliIO): void {
+  io.stdout('GraphKeeper will:');
+  for (const action of actions) {
+    io.stdout('  ' + action.kind.toUpperCase() + ' ' + action.target + ': ' + action.reason);
+  }
+  io.stdout('  Existing content outside matching GraphKeeper marked blocks will be preserved.');
+}
+
+function printCompleted(actions: readonly DisplayAction[], io: CliIO): void {
+  for (const action of actions) {
+    const message = action.kind.toUpperCase() + ' ' + action.target + ': ' + action.reason;
+    if (action.kind === 'warn' || action.kind === 'warning' || action.kind === 'preserve') {
+      io.stderr('WARNING ' + message);
+    } else {
+      io.stdout(message);
+    }
+  }
+}
+
+export async function authorizePlan(
+  actions: readonly DisplayAction[],
+  yes: boolean,
+  dryRun: boolean,
+  io: CliIO,
+  terminal: CliTerminal,
+): Promise<'apply' | 'stop' | 'error'> {
+  printPlan(actions, io);
+  if (dryRun) {
+    io.stdout('DRY RUN No changes were made.');
+    return 'stop';
+  }
+  if (yes) return 'apply';
+  if (!terminal.isInteractive) {
+    io.stderr(diagnostic(
+      'GK002',
+      'confirmation is required in non-interactive mode; rerun with --yes or --dry-run',
+    ));
+    return 'error';
+  }
+  if (!await terminal.confirm('Continue? [y/N] ')) {
+    io.stdout('Cancelled; no changes were made.');
+    return 'stop';
+  }
+  return 'apply';
 }
 
 function forwardOutput(output: string, write: (message: string) => void): void {
@@ -85,6 +222,7 @@ export async function run(
   argv: readonly string[],
   io: CliIO = processIO,
   cwd: string = process.cwd(),
+  terminal: CliTerminal = processTerminal,
 ): Promise<number> {
   const command = argv[0];
 
@@ -110,24 +248,62 @@ export async function run(
     if (parsed === null) {
       io.stderr(diagnostic(
         'GK002',
-        'init accepts --force and --integrate codex at most once each',
+        'init accepts --force, distinct --integrate codex|claude flags or --integrate all, --yes, and --dry-run',
       ));
       return EXIT_USAGE;
     }
     try {
-      const report = await initialize({
+      const prepared = await prepareInitialization({
         cwd,
         force: parsed.force,
-        integrateCodex: parsed.integrateCodex,
+        integrations: parsed.integrations,
       });
-      for (const action of report.actions) {
-        const message = action.kind.toUpperCase() + ' ' + action.target + ': ' + action.reason;
-        if (action.kind === 'warn') {
-          io.stderr('WARNING ' + message);
-        } else {
-          io.stdout(message);
-        }
+      if (parsed.integrations.length > 0 || parsed.dryRun) {
+        const authorization = await authorizePlan(
+          prepared.actions,
+          parsed.yes,
+          parsed.dryRun,
+          io,
+          terminal,
+        );
+        if (authorization === 'error') return EXIT_USAGE;
+        if (authorization === 'stop') return EXIT_SUCCESS;
       }
+      const report = await applyInitialization(prepared);
+      printCompleted(report.actions, io);
+      for (const note of report.notes) io.stdout('NOTE ' + note);
+      return EXIT_SUCCESS;
+    } catch (error: unknown) {
+      if (error instanceof GraphKeeperError) {
+        io.stderr(diagnostic(error.code, error.message, error.context));
+        return error.exitCode;
+      }
+      throw error;
+    }
+  }
+
+  if (command === 'integrate') {
+    const parsed = parseRemoveArguments(argv.slice(1));
+    if (parsed === null) {
+      io.stderr(diagnostic(
+        'GK002',
+        'integrate accepts remove <codex|claude> followed by optional --yes and --dry-run',
+      ));
+      return EXIT_USAGE;
+    }
+    try {
+      const plan = await prepareAgentRemoval(cwd, parsed.adapter);
+      const authorization = await authorizePlan(
+        plan.actions,
+        parsed.yes,
+        parsed.dryRun,
+        io,
+        terminal,
+      );
+      if (authorization === 'error') return EXIT_USAGE;
+      if (authorization === 'stop') return EXIT_SUCCESS;
+      await applyAgentIntegrationPlan(plan);
+      printCompleted(plan.actions, io);
       return EXIT_SUCCESS;
     } catch (error: unknown) {
       if (error instanceof GraphKeeperError) {

@@ -29,6 +29,18 @@ async function runInit(
   });
 }
 
+async function runCli(
+  cwd: string,
+  args: readonly string[],
+  env: NodeJS.ProcessEnv = supportedEnvironment(),
+): Promise<ProcessResult> {
+  return runProcess(process.execPath, [cliPath, ...args], {
+    cwd,
+    env,
+    timeoutMs: 15_000,
+  });
+}
+
 test('initializes both unborn and clean committed Git repositories', async () => {
   for (const withCommit of [false, true]) {
     const fixture = await createRepositoryFixture();
@@ -60,13 +72,108 @@ test('initializes both unborn and clean committed Git repositories', async () =>
 test('explicit Codex integration creates the managed AGENTS.md block through the CLI', async () => {
   const fixture = await createRepositoryFixture();
   try {
-    const result = await runInit(fixture.root, ['--integrate', 'codex']);
+    const result = await runInit(fixture.root, ['--integrate', 'codex', '--yes']);
     assert.equal(result.exitCode, EXIT_SUCCESS, result.stderr);
     assert.match(result.stdout, /CREATE AGENTS\.md/);
     const agents = await readFile(join(fixture.root, 'AGENTS.md'), 'utf8');
     assert.match(agents, /<!-- graphkeeper:codex:start -->/);
     assert.match(agents, /invoke `\$graphkeeper`/);
     assert.equal((agents.match(/graphkeeper:codex:start/g) ?? []).length, 1);
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+test('non-interactive integration requires --yes and refuses before mutation', async () => {
+  const fixture = await createRepositoryFixture();
+  try {
+    const result = await runInit(fixture.root, ['--integrate', 'claude']);
+    assert.equal(result.exitCode, EXIT_USAGE);
+    assert.match(result.stderr, /GK002.*non-interactive.*--yes/is);
+    assert.match(result.stdout, /GraphKeeper will:/);
+    await assert.rejects(stat(join(fixture.root, 'graph')));
+    await assert.rejects(stat(join(fixture.root, 'CLAUDE.md')));
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+test('--dry-run preflights all adapters without prompting or writing', async () => {
+  const fixture = await createRepositoryFixture();
+  try {
+    const result = await runInit(fixture.root, [
+      '--integrate', 'all',
+      '--yes',
+      '--dry-run',
+    ]);
+    assert.equal(result.exitCode, EXIT_SUCCESS, result.stderr);
+    assert.match(result.stdout, /CREATE AGENTS\.md/);
+    assert.match(result.stdout, /CREATE CLAUDE\.md/);
+    assert.match(result.stdout, /\.claude\/skills\/graphkeeper\/SKILL\.md/);
+    assert.match(result.stdout, /DRY RUN No changes were made/);
+    assert.doesNotMatch(result.stdout, /Restart Claude Code/);
+    await assert.rejects(stat(join(fixture.root, 'graph')));
+    await assert.rejects(stat(join(fixture.root, 'AGENTS.md')));
+    await assert.rejects(stat(join(fixture.root, 'CLAUDE.md')));
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+test('--yes never bypasses marker validation or writes a partial scaffold', async () => {
+  const fixture = await createRepositoryFixture();
+  try {
+    const malformed = '<!-- graphkeeper:claude:start -->\nmissing end\n';
+    await writeFile(join(fixture.root, 'CLAUDE.md'), malformed, 'utf8');
+    const result = await runInit(
+      fixture.root,
+      ['--integrate', 'claude', '--yes'],
+    );
+    assert.equal(result.exitCode, EXIT_OPERATIONAL);
+    assert.match(result.stderr, /GK004.*marker/is);
+    assert.equal(await readFile(join(fixture.root, 'CLAUDE.md'), 'utf8'), malformed);
+    await assert.rejects(stat(join(fixture.root, 'graph')));
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+test('all adapters install and conservative removal works through the CLI', async () => {
+  const fixture = await createRepositoryFixture();
+  try {
+    const installed = await runInit(fixture.root, ['--integrate', 'all', '--yes']);
+    assert.equal(installed.exitCode, EXIT_SUCCESS, installed.stderr);
+    assert.match(await readFile(join(fixture.root, 'AGENTS.md'), 'utf8'), /graphkeeper:codex/);
+    assert.match(await readFile(join(fixture.root, 'CLAUDE.md'), 'utf8'), /graphkeeper:claude/);
+
+    const refused = await runCli(fixture.root, ['integrate', 'remove', 'claude']);
+    assert.equal(refused.exitCode, EXIT_USAGE);
+    assert.match(refused.stderr, /non-interactive.*--yes/is);
+    assert.equal(
+      (await stat(join(fixture.root, '.claude', 'skills', 'graphkeeper'))).isDirectory(),
+      true,
+    );
+
+    const dryRun = await runCli(
+      fixture.root,
+      ['integrate', 'remove', 'claude', '--yes', '--dry-run'],
+    );
+    assert.equal(dryRun.exitCode, EXIT_SUCCESS, dryRun.stderr);
+    assert.match(dryRun.stdout, /DRY RUN No changes were made/);
+    assert.match(await readFile(join(fixture.root, 'CLAUDE.md'), 'utf8'), /graphkeeper:claude/);
+
+    const removed = await runCli(
+      fixture.root,
+      ['integrate', 'remove', 'claude', '--yes'],
+    );
+    assert.equal(removed.exitCode, EXIT_SUCCESS, removed.stderr);
+    assert.match(removed.stdout, /REMOVE CLAUDE\.md/);
+    assert.doesNotMatch(
+      await readFile(join(fixture.root, 'CLAUDE.md'), 'utf8'),
+      /graphkeeper:claude/,
+    );
+    await assert.rejects(stat(join(fixture.root, '.claude', 'skills', 'graphkeeper')));
+    assert.match(await readFile(join(fixture.root, 'AGENTS.md'), 'utf8'), /graphkeeper:codex/);
   } finally {
     await fixture.cleanup();
   }
@@ -187,9 +294,10 @@ test('discoverable skill destination conflicts fail without replacing the confli
 test('invalid init integration grammar returns GK002 without repository mutation', async () => {
   for (const args of [
     ['--integrate'],
-    ['--integrate', 'claude'],
+    ['--integrate', 'unknown'],
     ['--force', '--force'],
     ['--integrate', 'codex', '--integrate', 'codex'],
+    ['--integrate', 'all', '--integrate', 'claude'],
     ['--unknown'],
   ]) {
     const fixture = await createRepositoryFixture();

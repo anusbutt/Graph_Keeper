@@ -13,9 +13,23 @@ import { basename, dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { GraphKeeperError } from '../lib/errors.js';
+import {
+  AGENT_IDS,
+  getAgentAdapter,
+  planGuidanceContent,
+  type AgentId,
+  type GuidanceContentPlan,
+} from '../lib/agent-adapters.js';
 import { resolveHooksPath } from '../lib/git.js';
 import { findRepositoryRoot, resolveContainedPath } from '../lib/paths.js';
 import { runProcess, type ProcessResult } from '../lib/process.js';
+import {
+  applyAgentIntegrationPlan,
+  prepareAgentInstall,
+  validateAgentIntegrationPlan,
+  type AgentIntegrationPlan,
+  type IntegrationActionKind,
+} from './integrate.js';
 
 export interface InitEnvironment {
   readonly platform: NodeJS.Platform;
@@ -29,7 +43,7 @@ export interface InitEnvironment {
   ) => Promise<ProcessResult>;
 }
 
-export type ScaffoldActionKind = 'create' | 'skip' | 'refresh' | 'warn';
+export type ScaffoldActionKind = IntegrationActionKind | 'warn';
 
 export interface ScaffoldAction {
   readonly kind: ScaffoldActionKind;
@@ -52,6 +66,7 @@ export interface InitWriteHooks {
 export interface InitializeOptions {
   readonly cwd: string;
   readonly force: boolean;
+  readonly integrations?: readonly AgentId[];
   readonly integrateCodex?: boolean;
   readonly environment?: InitEnvironment;
   readonly writeHooks?: InitWriteHooks;
@@ -61,15 +76,11 @@ export interface InitReport {
   readonly root: string;
   readonly isGitRepository: boolean;
   readonly actions: readonly ScaffoldAction[];
+  readonly notes: readonly string[];
 }
 
 export type CodexGuidanceActionKind = 'create' | 'append' | 'refresh' | 'skip';
-
-export interface CodexGuidanceContentPlan {
-  readonly kind: CodexGuidanceActionKind;
-  readonly content: string;
-  readonly expected: string | null;
-}
+export type CodexGuidanceContentPlan = GuidanceContentPlan;
 
 interface ScaffoldTarget {
   readonly target: string;
@@ -84,81 +95,24 @@ interface HookPlan {
   readonly fallbackKind: 'create' | 'skip' | 'blocked';
 }
 
-interface CodexGuidanceFilePlan extends CodexGuidanceContentPlan {
-  readonly destination: string;
+export interface PreparedInitialization {
+  readonly root: string;
+  readonly isGitRepository: boolean;
+  readonly actions: readonly ScaffoldAction[];
+  readonly notes: readonly string[];
+  readonly scaffoldActions: readonly ScaffoldAction[];
+  readonly assets: ReadonlyMap<string, string>;
+  readonly hookPlan: HookPlan | null;
+  readonly integrationPlan: AgentIntegrationPlan | null;
+  readonly refreshExpected: ReadonlyMap<string, string>;
+  readonly writeHooks: InitWriteHooks;
 }
 
-const codexStartMarker = '<!-- graphkeeper:codex:start -->';
-const codexEndMarker = '<!-- graphkeeper:codex:end -->';
-
-function codexGuidanceBlock(newline: string): string {
-  return [
-    codexStartMarker,
-    '## GraphKeeper memory',
-    '',
-    'Before repeating repository investigation, invoke `$graphkeeper` to check',
-    'existing durable findings. Record new durable, evidence-backed findings through',
-    'that skill.',
-    codexEndMarker,
-  ].join(newline);
-}
-
-function occurrenceCount(content: string, value: string): number {
-  let count = 0;
-  let offset = 0;
-  while (true) {
-    const found = content.indexOf(value, offset);
-    if (found === -1) return count;
-    count += 1;
-    offset = found + value.length;
-  }
-}
 
 export function planCodexGuidanceContent(
   existing: string | null,
 ): CodexGuidanceContentPlan {
-  if (existing === null) {
-    return {
-      kind: 'create',
-      content: codexGuidanceBlock('\n') + '\n',
-      expected: null,
-    };
-  }
-
-  const newline = existing.includes('\r\n') ? '\r\n' : '\n';
-  const block = codexGuidanceBlock(newline);
-  const startCount = occurrenceCount(existing, codexStartMarker);
-  const endCount = occurrenceCount(existing, codexEndMarker);
-  if (startCount === 0 && endCount === 0) {
-    const separator = existing.length === 0
-      ? ''
-      : existing.endsWith(newline + newline)
-        ? ''
-        : existing.endsWith(newline)
-          ? newline
-          : newline + newline;
-    return {
-      kind: 'append',
-      content: existing + separator + block + newline,
-      expected: existing,
-    };
-  }
-  if (startCount !== 1 || endCount !== 1) {
-    throw operational('AGENTS.md contains malformed or repeated GraphKeeper Codex markers');
-  }
-
-  const start = existing.indexOf(codexStartMarker);
-  const endStart = existing.indexOf(codexEndMarker);
-  if (start > endStart) {
-    throw operational('AGENTS.md contains reversed GraphKeeper Codex markers');
-  }
-  const end = endStart + codexEndMarker.length;
-  const content = existing.slice(0, start) + block + existing.slice(end);
-  return {
-    kind: content === existing ? 'skip' : 'refresh',
-    content,
-    expected: existing,
-  };
+  return planGuidanceContent(getAgentAdapter('codex'), existing);
 }
 
 const scaffoldTargets: readonly ScaffoldTarget[] = [
@@ -332,14 +286,33 @@ function operational(message: string, error?: unknown): GraphKeeperError {
 
 async function validateDestinationShapes(root: string): Promise<void> {
   for (const entry of scaffoldTargets) {
-    const target = resolveContainedPath(root, entry.target);
+    resolveContainedPath(root, entry.target);
+    const segments = entry.target.split(/[\\/]/);
+    let current = resolve(root);
     try {
-      const information = await lstat(target);
-      const expectedDirectory = entry.target === 'evidence';
-      if (expectedDirectory ? !information.isDirectory() : !information.isFile()) {
-        throw operational(
-          'Existing path has the wrong type and was preserved: ' + entry.target,
-        );
+      for (let index = 0; index < segments.length; index += 1) {
+        current = resolve(current, segments[index] ?? '');
+        let information: Awaited<ReturnType<typeof lstat>>;
+        try {
+          information = await lstat(current);
+        } catch (error: unknown) {
+          if (error instanceof Error && 'code' in error && error.code === 'ENOENT') break;
+          throw error;
+        }
+        if (information.isSymbolicLink()) {
+          throw operational('Symbolic-link destination was preserved: ' + entry.target);
+        }
+        if (index < segments.length - 1 && !information.isDirectory()) {
+          throw operational('Existing path has the wrong type and was preserved: ' + entry.target);
+        }
+        if (index === segments.length - 1) {
+          const expectedDirectory = entry.target === 'evidence';
+          if (expectedDirectory ? !information.isDirectory() : !information.isFile()) {
+            throw operational(
+              'Existing path has the wrong type and was preserved: ' + entry.target,
+            );
+          }
+        }
       }
     } catch (error: unknown) {
       if (error instanceof GraphKeeperError) throw error;
@@ -347,27 +320,6 @@ async function validateDestinationShapes(root: string): Promise<void> {
       throw operational('Unable to inspect destination ' + entry.target, error);
     }
   }
-}
-
-async function prepareCodexGuidancePlan(root: string): Promise<CodexGuidanceFilePlan> {
-  const destination = resolveContainedPath(root, 'AGENTS.md');
-  let existing: string | null = null;
-  try {
-    const information = await lstat(destination);
-    if (!information.isFile()) {
-      throw operational('Existing AGENTS.md path has the wrong type and was preserved');
-    }
-    existing = await readFile(destination, 'utf8');
-  } catch (error: unknown) {
-    if (error instanceof GraphKeeperError) throw error;
-    if (!(error instanceof Error && 'code' in error && error.code === 'ENOENT')) {
-      throw operational('Unable to inspect AGENTS.md', error);
-    }
-  }
-  return {
-    ...planCodexGuidanceContent(existing),
-    destination,
-  };
 }
 
 async function loadRequiredAssets(
@@ -521,52 +473,6 @@ async function atomicRefresh(
   }
 }
 
-async function applyCodexGuidancePlan(
-  plan: CodexGuidanceFilePlan,
-  hooks: InitWriteHooks,
-): Promise<ScaffoldAction> {
-  if (plan.kind === 'skip') {
-    return {
-      kind: 'skip',
-      target: 'AGENTS.md',
-      reason: 'GraphKeeper Codex integration is already current',
-    };
-  }
-  if (plan.kind === 'create') {
-    const created = await atomicCreate(
-      plan.destination,
-      'AGENTS.md',
-      plan.content,
-      0o644,
-      hooks,
-    );
-    if (!created) {
-      throw operational('AGENTS.md changed concurrently and was preserved');
-    }
-    return {
-      kind: 'create',
-      target: 'AGENTS.md',
-      reason: 'GraphKeeper Codex integration block created',
-    };
-  }
-
-  await atomicRefresh(
-    plan.destination,
-    'AGENTS.md',
-    plan.content,
-    0o644,
-    hooks,
-    plan.expected ?? undefined,
-  );
-  return {
-    kind: plan.kind === 'append' ? 'refresh' : plan.kind,
-    target: 'AGENTS.md',
-    reason: plan.kind === 'append'
-      ? 'GraphKeeper Codex integration block appended'
-      : 'GraphKeeper Codex integration block refreshed',
-  };
-}
-
 async function createEvidenceDirectory(target: string): Promise<boolean> {
   try {
     await mkdir(target, { mode: 0o755 });
@@ -597,12 +503,13 @@ async function applyHookPlan(
       0o755,
       hooks,
     );
+    if (!created) {
+      throw operational('pre-commit-hook changed concurrently and was preserved');
+    }
     return [{
-      kind: created ? 'create' : 'skip',
+      kind: 'create',
       target: 'pre-commit-hook',
-      reason: created
-        ? 'installed at ' + hookPlan.destination
-        : 'appeared during initialization and was preserved',
+      reason: 'installed at ' + hookPlan.destination,
     }];
   }
 
@@ -615,12 +522,13 @@ async function applyHookPlan(
       0o755,
       hooks,
     );
+    if (!created) {
+      throw operational('.githooks/pre-commit changed concurrently and was preserved');
+    }
     actions.push({
-      kind: created ? 'create' : 'skip',
+      kind: 'create',
       target: '.githooks/pre-commit',
-      reason: created
-        ? 'inspectable GraphKeeper chaining hook created'
-        : 'fallback appeared during initialization and was preserved',
+      reason: 'inspectable GraphKeeper chaining hook created',
     });
   } else if (hookPlan.fallbackKind === 'skip') {
     actions.push({
@@ -644,31 +552,143 @@ async function applyHookPlan(
   return actions;
 }
 
-export async function initialize(options: InitializeOptions): Promise<InitReport> {
+function plannedHookActions(hookPlan: HookPlan | null): ScaffoldAction[] {
+  if (hookPlan === null) return [];
+  if (hookPlan.kind === 'skip') {
+    return [{
+      kind: 'skip',
+      target: 'pre-commit-hook',
+      reason: 'GraphKeeper hook is already installed at ' + hookPlan.destination,
+    }];
+  }
+  if (hookPlan.kind === 'install') {
+    return [{
+      kind: 'create',
+      target: 'pre-commit-hook',
+      reason: 'GraphKeeper hook will be installed at ' + hookPlan.destination,
+    }];
+  }
+
+  const actions: ScaffoldAction[] = [];
+  if (hookPlan.fallbackKind === 'create') {
+    actions.push({
+      kind: 'create',
+      target: '.githooks/pre-commit',
+      reason: 'inspectable GraphKeeper chaining hook will be created',
+    });
+  } else if (hookPlan.fallbackKind === 'skip') {
+    actions.push({
+      kind: 'skip',
+      target: '.githooks/pre-commit',
+      reason: 'inspectable GraphKeeper chaining hook already exists',
+    });
+  }
+  actions.push({
+    kind: 'warn',
+    target: 'pre-commit-hook',
+    reason: 'existing third-party hook will be preserved and chaining guidance reported',
+  });
+  return actions;
+}
+
+function requestedIntegrations(options: InitializeOptions): readonly AgentId[] {
+  const requested = new Set(options.integrations ?? []);
+  if (options.integrateCodex === true) requested.add('codex');
+  return AGENT_IDS.filter((id) => requested.has(id));
+}
+
+export async function prepareInitialization(
+  options: InitializeOptions,
+): Promise<PreparedInitialization> {
   const environment = options.environment ?? defaultEnvironment;
   await checkInitPrerequisites(options.cwd, environment);
 
   const discoveredRoot = await findRepositoryRoot(options.cwd);
   const isGitRepository = discoveredRoot !== null;
   const root = discoveredRoot ?? resolve(options.cwd);
-  const plan = await planScaffold(root, {
+  const scaffoldActions = await planScaffold(root, {
     force: options.force,
     isGitRepository,
   });
   await validateDestinationShapes(root);
-  const codexGuidancePlan = options.integrateCodex
-    ? await prepareCodexGuidancePlan(root)
-    : null;
-  const assets = await loadRequiredAssets(plan);
+  const integrations = requestedIntegrations(options);
+  const integrationPlan = integrations.length === 0
+    ? null
+    : await prepareAgentInstall(root, integrations, options.force, {
+      skipSkillFor: new Set<AgentId>(['codex']),
+    });
+  const assets = await loadRequiredAssets(scaffoldActions);
   const hookPlan = isGitRepository ? await prepareHookPlan(root) : null;
-  const hooks = options.writeHooks ?? {};
+  const refreshExpected = new Map<string, string>();
+  for (const action of scaffoldActions) {
+    if (action.kind === 'refresh') {
+      try {
+        refreshExpected.set(
+          action.target,
+          await readFile(resolveContainedPath(root, action.target), 'utf8'),
+        );
+      } catch (error: unknown) {
+        throw operational(action.target + ' changed while initialization was planned', error);
+      }
+    }
+  }
+
+  return {
+    root,
+    isGitRepository,
+    actions: [
+      ...scaffoldActions,
+      ...(integrationPlan?.actions ?? []),
+      ...plannedHookActions(hookPlan),
+    ],
+    notes: integrationPlan?.notes ?? [],
+    scaffoldActions,
+    assets,
+    hookPlan,
+    integrationPlan,
+    refreshExpected,
+    writeHooks: options.writeHooks ?? {},
+  };
+}
+
+export async function applyInitialization(
+  prepared: PreparedInitialization,
+): Promise<InitReport> {
+  const {
+    root,
+    isGitRepository,
+    scaffoldActions,
+    assets,
+    hookPlan,
+    integrationPlan,
+    refreshExpected,
+    writeHooks: hooks,
+  } = prepared;
   const completed: ScaffoldAction[] = [];
 
   try {
-    if (codexGuidancePlan !== null) {
-      completed.push(await applyCodexGuidancePlan(codexGuidancePlan, hooks));
+    await validateDestinationShapes(root);
+    if (integrationPlan !== null) {
+      await validateAgentIntegrationPlan(integrationPlan);
     }
-    for (const action of plan) {
+    for (const action of scaffoldActions) {
+      const target = resolveContainedPath(root, action.target);
+      if (action.kind === 'create' && await pathExists(target)) {
+        throw operational(action.target + ' changed after planning and was preserved');
+      }
+      if (action.kind === 'refresh') {
+        let current: string;
+        try {
+          current = await readFile(target, 'utf8');
+        } catch (error: unknown) {
+          throw operational(action.target + ' changed after planning and was preserved', error);
+        }
+        if (current !== refreshExpected.get(action.target)) {
+          throw operational(action.target + ' changed after planning and was preserved');
+        }
+      }
+    }
+    for (const action of scaffoldActions) {
       if (action.kind === 'skip' || action.kind === 'warn') {
         completed.push(action);
         continue;
@@ -676,11 +696,10 @@ export async function initialize(options: InitializeOptions): Promise<InitReport
       const target = resolveContainedPath(root, action.target);
       if (action.target === 'evidence') {
         const created = await createEvidenceDirectory(target);
-        completed.push(created ? action : {
-          kind: 'skip',
-          target: action.target,
-          reason: 'appeared during initialization and was preserved',
-        });
+        if (!created) {
+          throw operational(action.target + ' changed after planning and was preserved');
+        }
+        completed.push(action);
         continue;
       }
       const content = assets.get(action.target);
@@ -695,11 +714,10 @@ export async function initialize(options: InitializeOptions): Promise<InitReport
           targetMode(action.target),
           hooks,
         );
-        completed.push(created ? action : {
-          kind: 'skip',
-          target: action.target,
-          reason: 'appeared during initialization and was preserved',
-        });
+        if (!created) {
+          throw operational(action.target + ' changed after planning and was preserved');
+        }
+        completed.push(action);
       } else {
         await atomicRefresh(
           target,
@@ -707,9 +725,22 @@ export async function initialize(options: InitializeOptions): Promise<InitReport
           content,
           targetMode(action.target),
           hooks,
+          refreshExpected.get(action.target),
         );
         completed.push(action);
       }
+    }
+    if (integrationPlan !== null) {
+      await applyAgentIntegrationPlan(integrationPlan, {
+        beforeCommit: async (target, kind) => {
+          if (kind !== 'remove') await hooks.beforeCommit?.(target, kind);
+        },
+      }, {
+        ignoreSnapshotTargets: new Set([
+          getAgentAdapter('codex').skillTarget,
+        ]),
+      });
+      completed.push(...integrationPlan.actions);
     }
     if (hookPlan !== null) {
       completed.push(...await applyHookPlan(root, hookPlan, hooks));
@@ -719,5 +750,14 @@ export async function initialize(options: InitializeOptions): Promise<InitReport
     throw operational('Initialization stopped; rerun after correcting the reported cause', error);
   }
 
-  return { root, isGitRepository, actions: completed };
+  return {
+    root,
+    isGitRepository,
+    actions: completed,
+    notes: prepared.notes,
+  };
+}
+
+export async function initialize(options: InitializeOptions): Promise<InitReport> {
+  return applyInitialization(await prepareInitialization(options));
 }
