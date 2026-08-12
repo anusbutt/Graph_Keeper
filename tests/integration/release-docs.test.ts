@@ -9,6 +9,7 @@ const projectRoot = fileURLToPath(new URL('../../../', import.meta.url));
 test('release README covers onboarding, operation, recovery, limits, and future storage', async () => {
   const readme = await readFile(join(projectRoot, 'README.md'), 'utf8');
   for (const contract of [
+    /coding agents shouldn't just remember.*prove why they\s+remember/is,
     /grounded, auditable memory/i,
     /## Prerequisites/,
     /## Installation/,

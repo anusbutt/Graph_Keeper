@@ -4,8 +4,11 @@
 [![npm](https://img.shields.io/npm/v/graphkeeper.svg)](https://www.npmjs.com/package/graphkeeper)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-Grounded, auditable memory for coding agents—stored beside the code, reviewable in
-Git, and traceable to exact evidence.
+**Coding agents shouldn't just remember. They should be able to prove why they
+remember.**
+
+GraphKeeper gives coding agents grounded, auditable memory—stored beside the code,
+reviewable in Git, and traceable to exact evidence.
 
 GraphKeeper is not a transcript store or a generic memory wrapper. It records durable
 project findings as flat claims linked to the run and evidence that produced them.
