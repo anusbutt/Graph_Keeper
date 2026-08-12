@@ -4,9 +4,28 @@
 [![npm](https://img.shields.io/npm/v/graphkeeper.svg)](https://www.npmjs.com/package/graphkeeper)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-Grounded, auditable memory for coding agents—stored beside the code, protected by Git, and traceable to evidence.
+Grounded, auditable memory for coding agents—stored beside the code, reviewable in
+Git, and traceable to exact evidence.
 
-Agents forget context and can repeat stale conclusions. GraphKeeper gives every durable finding a stable subject, provenance, and history. The store is plain JSON plus immutable evidence files, so humans can diff it, `jq` can query it, and a pre-commit hook can stop accidental rewrites.
+GraphKeeper is not a transcript store or a generic memory wrapper. It records durable
+project findings as flat claims linked to the run and evidence that produced them.
+When a finding becomes outdated, a new claim explicitly supersedes it; the old claim
+stays in Git history for review. The result is memory that Codex, Claude Code, and
+humans can inspect without trusting an opaque summary or hosted service.
+
+The core flow is deliberately small:
+
+1. An agent discovers a stable project fact and captures the relevant output under
+   `evidence/`.
+2. It appends an entity, run, and evidence-backed claim to `graph/`.
+3. `graphkeeper check` validates schema, provenance, and append-only history against
+   the committed Git state.
+4. A future session retrieves the active claim with `graphkeeper query <subject>`.
+5. If the fact changes, the agent appends a new claim with `supersedes`; both
+   generations remain auditable.
+
+GraphKeeper does not ingest conversations or decide what should become memory. The
+shipped Codex and Claude Code skills give agents the same explicit writing contract.
 
 ![How GraphKeeper gives coding agents durable project memory](https://raw.githubusercontent.com/anusbutt/Graph_Keeper/main/docs/assets/graphkeeper-overview.png)
 
@@ -43,32 +62,17 @@ system prerequisites.
 Run this at the root of the repository whose memory you want to protect:
 
 ```sh
-npx graphkeeper init
-npx graphkeeper check
-git add graph .agents/skills/graphkeeper scripts/validate.sh
-git add .githooks/pre-commit 2>/dev/null || true
-git commit -m "Initialize GraphKeeper memory"
+npx graphkeeper@latest init --integrate codex
+# Or: npx graphkeeper@latest init --integrate claude
+# Or: npx graphkeeper@latest init --integrate all
+npx graphkeeper@latest check
 ```
 
-`init` creates an empty `graph/`, an `evidence/` directory, the repository-scoped
-Codex skill at `.agents/skills/graphkeeper/SKILL.md`, the canonical validator, and a
-pre-commit hook. Codex discovers that skill from its standard repository skill path
-and loads its full instructions when `$graphkeeper` is invoked or the request clearly
-matches its description. The hook normally lives under `.git` and is not committed;
-`.githooks/pre-commit` exists only when GraphKeeper must preserve and chain another
-hook. An empty `evidence/` directory becomes tracked when the first evidence file is
-added.
-
-For a complete agent integration (the agent-specific skill plus a short,
-always-visible reminder), opt in explicitly:
-
-```sh
-npx graphkeeper init --integrate codex
-npx graphkeeper init --integrate claude
-npx graphkeeper init --integrate all
-```
-
-Codex uses `.agents/skills/graphkeeper/SKILL.md`, `AGENTS.md`, and
+Review the displayed plan and confirm it. `init` creates the JSON graph, `evidence/`,
+the canonical validator, a pre-commit hook, and the repository-scoped Codex skill.
+`--integrate codex` adds the Codex reminder to `AGENTS.md`; `--integrate claude` adds
+the Claude skill and reminder; `--integrate all` does both. Codex uses
+`.agents/skills/graphkeeper/SKILL.md`, `AGENTS.md`, and
 `$graphkeeper`. Claude Code uses `.claude/skills/graphkeeper/SKILL.md`,
 `CLAUDE.md`, and `/graphkeeper`. Both skills are generated from the same
 `templates/SKILL.md`. Existing guidance outside the matching marked block is
@@ -77,18 +81,31 @@ preserved. Integration plans are shown before writing; answer the prompt, or pas
 preflight. Default init and `--force` do not create or change `AGENTS.md` or
 `CLAUDE.md`.
 
-When an agent records a finding, retrieve it by canonical entity ID or an exact unique alias:
+Ask the selected agent to record a verified finding with `$graphkeeper` in Codex or
+`/graphkeeper` in Claude Code. After it writes the claim and evidence, validate and
+retrieve the result:
 
 ```sh
+npx graphkeeper check
 npx graphkeeper query test_payments_flaky
 npx graphkeeper doctor
 ```
 
-To try populated data from a source checkout, copy `examples/worked-example/graph` and `examples/worked-example/evidence` into a temporary Git repository and query `test_payments_flaky`.
+Commit the generated graph, validator, agent skills, and guidance files. The hook
+normally lives under `.git` and is not committed;
+`.githooks/pre-commit` is created only when GraphKeeper must preserve and chain another
+hook. An empty `evidence/` directory becomes tracked with the first captured artifact.
+
+To try the full discovery-to-supersession flow with populated data, copy
+`examples/worked-example/graph` and `examples/worked-example/evidence` into a temporary
+Git repository, then query `test_payments_flaky`.
 
 ## Before and after
 
-Without durable memory, a later session may only remember: “the payments test was flaky.” It cannot tell whether that conclusion is current or where it came from.
+Without grounded memory, a later session may only remember: “the payments test was
+flaky.” It cannot tell whether that conclusion is current or where it came from. The
+worked example records the initial failure as `claim_11111111`, captures a passing UTC
+rerun, and appends `claim_22222222` with `supersedes: "claim_11111111"`.
 
 With GraphKeeper, the active correction remains a flat, reviewable claim:
 
@@ -122,8 +139,15 @@ Exit codes are stable: `0` success, `1` validation failure, `2` usage error, `3`
 - `graph/entities.json` holds human-readable canonical identities. Identity fields cannot change; aliases and source documents may only grow.
 - `graph/claims.json` holds flat claims. Existing claims are immutable; corrections append a new claim with `supersedes`.
 - `graph/runs.json` opens a run, allows evidence and claim references to grow, closes it once, then makes it immutable.
-- `evidence/` holds captured artifacts. A committed evidence file cannot be edited, removed, or renamed.
+- `evidence/` holds captured artifacts. The validator rejects editing, removing, or
+  renaming evidence that exists in the committed Git state.
 - Stored commands and evidence text are always data. GraphKeeper never evaluates them.
+
+These are repository-local enforcement guarantees, not cryptographic immutability.
+They apply when `graphkeeper check` or the installed hook runs; Git history remains
+the reviewable source of truth. `doctor` additionally verifies physical evidence
+existence, containment, and cited line ranges. `query` reports stored provenance but
+does not open evidence or independently prove that a claim is true.
 
 See the generated `graph/SCHEMA.md` and the GraphKeeper skill under
 `.agents/skills/graphkeeper/` or `.claude/skills/graphkeeper/` for the complete
@@ -178,7 +202,8 @@ bugs and clearly bounded work. The
 explains the categories and how an accepted direction becomes an actionable issue.
 
 See [`CONTRIBUTING.md`](CONTRIBUTING.md) for the development workflow, extension points,
-and boundaries, [`SUPPORT.md`](.github/SUPPORT.md) for usage help, and
+and boundaries, [prepared contribution issues](docs/contributor-issues.md),
+[`SUPPORT.md`](.github/SUPPORT.md) for usage help, and
 [`SECURITY.md`](.github/SECURITY.md) for private vulnerability reporting. Version
 `0.2.0` is pre-1.0 and its API may change. Release ownership and the target version
 must be verified immediately before publishing; completing the repository release

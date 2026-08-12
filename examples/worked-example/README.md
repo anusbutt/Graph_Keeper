@@ -1,8 +1,9 @@
 # Worked example: correcting a flaky-test finding
 
 This populated example demonstrates a complete GraphKeeper flow with generic test
-output. It contains two immutable evidence captures, two closed runs, one corrected
-tool-output claim, and one explicit inference.
+output. It contains two committed evidence captures protected from rewrite by the
+validator, two closed runs, one corrected tool-output claim, and one explicit
+inference.
 
 ## Setup
 

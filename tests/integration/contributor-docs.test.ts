@@ -146,6 +146,17 @@ test('issue and pull-request templates require actionable engineering context', 
   assert.match(support, /bug report.*feature request/is);
   assert.match(support, /SECURITY\.md/);
 
+  const conduct = await read('CODE_OF_CONDUCT.md');
+  assert.match(conduct, /Contributor Covenant/);
+  assert.match(conduct, /Enforcement/);
+  assert.match(conduct, /report.*privately/is);
+
+  const issueDrafts = await read('docs/contributor-issues.md');
+  assert.equal((issueDrafts.match(/^## /gm) ?? []).length, 7);
+  for (const field of ['Suggested labels', 'Context', 'Scope', 'Acceptance criteria']) {
+    assert.equal((issueDrafts.match(new RegExp('\\*\\*' + field, 'g')) ?? []).length, 7);
+  }
+
   const guide = await read('CONTRIBUTING.md');
   assert.match(guide, /GitHub Discussions.*does not authorize implementation/is);
   assert.match(guide, /accepts? a direction.*actionable scope.*issue/is);
@@ -153,6 +164,9 @@ test('issue and pull-request templates require actionable engineering context', 
 
 test('CI and repository settings cover all supported platforms and governance', async () => {
   const ci = await read('.github/workflows/ci.yml');
+  assert.match(ci, /actions\/checkout@v7/);
+  assert.match(ci, /actions\/setup-node@v6/);
+  assert.doesNotMatch(ci, /actions\/(?:checkout|setup-node)@v4/);
   for (const platform of ['ubuntu-latest', 'macos-latest', 'windows-latest']) {
     assert.match(ci, new RegExp(platform));
   }
@@ -182,4 +196,7 @@ test('CI and repository settings cover all supported platforms and governance', 
   assert.match(settings, /approvals are `0`.*one maintainer/is);
   assert.match(settings, /manual merge/is);
   assert.match(settings, /auto-merge/is);
+  for (const label of ['area:testing', 'area:integration', 'area:architecture', 'help wanted']) {
+    assert.match(settings, new RegExp(label));
+  }
 });

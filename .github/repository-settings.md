@@ -33,8 +33,12 @@ squash merging so each pull request has one reviewable integration commit.
 | `area:doctor` | Deep evidence or graph inspection |
 | `area:templates` | Shipped schema or agent guidance |
 | `area:ci` | Automation, packaging, or platform support |
+| `area:testing` | Test coverage or fixture quality |
+| `area:integration` | Coding-agent or Git-hook integration |
+| `area:architecture` | Design exploration outside implementation scope |
 | `breaking-schema` | Incompatible record interpretation |
 | `good first issue` | Bounded work with explicit acceptance checks |
+| `help wanted` | Maintainer-approved work seeking community ownership |
 
 ## Discussions
 
