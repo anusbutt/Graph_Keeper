@@ -67,12 +67,12 @@ test('release version stays aligned across package, lockfile, CLI, README, and c
   const changelog = await readFile(join(projectRoot, 'CHANGELOG.md'), 'utf8');
   const version = manifest.version;
 
-  assert.equal(version, '0.1.3');
+  assert.equal(version, '0.2.0');
   assert.equal(lockfile.version, version);
   assert.equal(lockfile.packages?.['']?.version, version);
   assert.match(cli, new RegExp("const VERSION = '" + version?.replaceAll('.', '\\.') + "';"));
   assert.match(readme, new RegExp('Version\\s+`' + version?.replaceAll('.', '\\.') + '`'));
-  assert.match(changelog, new RegExp('## \\[' + version?.replaceAll('.', '\\.') + '\\] - 2026-08-11'));
+  assert.match(changelog, new RegExp('## \\[' + version?.replaceAll('.', '\\.') + '\\] - 2026-08-12'));
 });
 
 test('release carries the MIT terms for GraphKeeper contributors', async () => {
