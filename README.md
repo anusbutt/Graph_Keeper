@@ -179,7 +179,7 @@ prompt.
   update a global npm installation. It resolves the stable published version, installs only when that version is
   newer, and does not install prereleases. If the registry is offline, no update is
   attempted; retry when npm registry access returns.
-- After updating an existing installation to 0.3.0, rerun `graphkeeper init --force`
+- After updating an existing installation to 0.4.0, rerun `graphkeeper init --force`
   to refresh the repository skill and schema. This preserves `scripts/validate.sh`.
   Exact package-owned validators and hooks migrate to the Node path automatically.
   If a repository has a customized shell-only
@@ -217,7 +217,7 @@ See [`CONTRIBUTING.md`](CONTRIBUTING.md) for the development workflow, extension
 and boundaries, [prepared contribution issues](docs/contributor-issues.md),
 [`SUPPORT.md`](.github/SUPPORT.md) for usage help, and
 [`SECURITY.md`](.github/SECURITY.md) for private vulnerability reporting. Version
-`0.3.0` is pre-1.0 and its API may change. Release ownership and the target version
+`0.4.0` is pre-1.0 and its API may change. Release ownership and the target version
 must be verified immediately before publishing; completing the repository release
 gates does not publish anything.
 
