@@ -54,6 +54,18 @@ test('distinguishes fast hook checks, deep doctor checks, and behavioral guidanc
   assert.match(schema, /duplicate JSON object keys.*DOCTOR/is);
 });
 
+test('documents atomic claims, grounded source selection, and confidence boundaries', async () => {
+  const schema = await readFile(schemaUrl, 'utf8');
+  assert.match(schema, /^### Claim granularity and grounding$/m);
+  assert.match(schema, /one independently changeable fact/is);
+  assert.match(schema, /write multiple claims/is);
+  assert.match(schema, /tool-output claim.*cited evidence lines directly/is);
+  assert.match(schema, /observation.*tool output.*conclusion.*inference.*basis/is);
+  assert.match(schema, /confidence: 1.*directly evidenced.*non-inference.*exact claim/is);
+  assert.match(schema, /inference source contains exactly kind and basis/is);
+  assert.match(schema, /inference claim must not use.*confidence: 1/is);
+});
+
 test('includes coherent examples for entity, run, tool output, and inference', async () => {
   const schema = await readFile(schemaUrl, 'utf8');
   assert.match(schema, /Example entity/);

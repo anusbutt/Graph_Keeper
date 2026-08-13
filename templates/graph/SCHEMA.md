@@ -20,7 +20,7 @@ agent writing memory.
 | subject | string | yes | Resolves to an id already present in entities.json. | [HOOK] |
 | predicate | string | yes | Non-empty lowercase snake_case relation label. | [HOOK] |
 | object | string | yes | Non-empty plain string, never an array or nested object. | [HOOK] [GUIDANCE] |
-| confidence | number | no | Inclusive numeric range from 0 through 1. | [HOOK] |
+| confidence | number | no | Inclusive numeric range from 0 through 1. Inference cannot use 1. | [HOOK] [GUIDANCE] |
 | source | object | yes | Exactly one source variant described below. | [HOOK] |
 | produced_by | string | yes | Resolves to an id already present in runs.json. | [HOOK] |
 | supersedes | string | no | Resolves to one earlier claim; one successor only and no cycle. | [HOOK] |
@@ -28,6 +28,22 @@ agent writing memory.
 
 [GUIDANCE] Keep predicate and object short and canonical. Put structured detail,
 stack traces, diagnostics, and large values in evidence; object remains a plain string.
+
+### Claim granularity and grounding
+
+[GUIDANCE] Each claim represents one independently changeable fact. If one part of a
+finding could become false while another remains true, write multiple claims. Atomic
+claims may cite overlapping evidence lines and may share one producing run; each claim
+still identifies its own complete supported fact.
+
+[GUIDANCE] A tool-output claim is limited to what its cited evidence lines directly
+show. If those lines support an observation but a cause, interpretation, or broader
+conclusion is not directly proven, record the observation as tool output and record
+the conclusion separately as inference with its basis.
+
+[GUIDANCE] Use `confidence: 1` only for a directly evidenced, non-inference claim when
+the evidence fully supports the exact claim. A lower confidence value does not make an
+unsupported interpretation eligible for a tool-output source.
 
 ### Tool-output source
 
@@ -46,9 +62,10 @@ canonical evidence reference.
 
 ### Inference source
 
-[HOOK] An inference source contains exactly kind and optional basis. kind equals
-inference. basis, when present, is a non-empty string. An inference must not include
-command, exit_code, ref, or captured because it has no external artifact.
+[HOOK] An inference source contains exactly kind and basis. kind equals inference and
+basis is a non-empty string. An inference must not include command, exit_code, ref, or
+captured because it has no external artifact. An inference claim must not use
+`confidence: 1`.
 
     {
       "kind": "inference",
@@ -205,6 +222,16 @@ claim merely to populate claims_written.
       "produced_by": "run_2026-07-21-triage_a1",
       "created": "2026-07-21T09:15:52Z"
     }
+
+### Example atomic split
+
+Suppose captured output directly reports both a 5000 ms timeout and three attempts,
+while dependency latency is only a possible explanation. Write separate tool-output
+claims such as `has_timeout_duration: 5000_ms` and `has_attempt_count: 3`, with each
+claim citing the exact supporting lines. Write `likely_cause: dependency_latency` as a
+separate inference whose basis explains how the observed timeout and retry pattern led
+to that conclusion. Do not combine all three into one claim or present the possible
+cause as captured output.
 
 ### Evidence provenance
 

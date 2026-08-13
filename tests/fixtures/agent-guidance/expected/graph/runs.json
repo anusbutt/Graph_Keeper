@@ -9,7 +9,9 @@
     ],
     "claims_written": [
       "claim_0a1b2c3d",
-      "claim_1a2b3c4d"
+      "claim_1a2b3c4d",
+      "claim_2b3c4d5e",
+      "claim_3c4d5e6f"
     ],
     "ended": "2026-07-21T09:16:22Z",
     "verdict": "inconclusive"

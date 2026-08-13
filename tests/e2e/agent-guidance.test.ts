@@ -20,6 +20,9 @@ interface GuidanceCase {
   readonly expected_action: string;
   readonly entity_id?: string;
   readonly claim_id?: string;
+  readonly claim_ids?: readonly string[];
+  readonly observed_claim_id?: string;
+  readonly inference_claim_id?: string;
   readonly evidence_path?: string;
 }
 
@@ -47,12 +50,14 @@ function entityById(entities: readonly Entity[], id: string | undefined): Entity
   return found;
 }
 
-test('guidance fixtures cover all six required agent decisions', async () => {
+test('guidance fixtures cover all eight required agent decisions', async () => {
   const cases = await readJson('cases.json') as GuidanceCase[];
   assert.deepEqual(
     cases.map((entry) => entry.id).sort(),
     [
+      'compound_finding',
       'existing_alias',
+      'fact_vs_inference',
       'inference',
       'new_entity',
       'session_chatter',
@@ -60,6 +65,55 @@ test('guidance fixtures cover all six required agent decisions', async () => {
       'tool_output',
     ],
   );
+});
+
+test('compound findings become independently changeable claims', async () => {
+  const cases = await readJson('cases.json') as GuidanceCase[];
+  const claims = parseClaims(await readJson('expected/graph/claims.json'));
+  const compound = caseById(cases, 'compound_finding');
+  assert.equal(compound.expected_action, 'split_atomic_claims');
+  assert.deepEqual(compound.claim_ids, ['claim_2b3c4d5e', 'claim_3c4d5e6f']);
+
+  const atomicClaims = compound.claim_ids?.map((id) => claimById(claims, id)) ?? [];
+  assert.deepEqual(
+    atomicClaims.map(({ predicate, object }) => ({ predicate, object })),
+    [
+      { predicate: 'has_timeout_duration', object: '5000_ms' },
+      { predicate: 'has_attempt_count', object: '3' },
+    ],
+  );
+  assert.equal(new Set(atomicClaims.map((claim) => claim.id)).size, 2);
+});
+
+test('direct observation and interpretation use separate source kinds', async () => {
+  const cases = await readJson('cases.json') as GuidanceCase[];
+  const claims = parseClaims(await readJson('expected/graph/claims.json'));
+  const separated = caseById(cases, 'fact_vs_inference');
+  const observed = claimById(claims, separated.observed_claim_id);
+  const inferred = claimById(claims, separated.inference_claim_id);
+
+  assert.equal(observed.source.kind, 'tool_output');
+  assert.equal(observed.confidence, 1);
+  assert.equal(inferred.source.kind, 'inference');
+  assert.notEqual(inferred.confidence, 1);
+  if (inferred.source.kind === 'inference') {
+    assert.match(inferred.source.basis, /observed retry pattern.*dependency latency/i);
+  }
+});
+
+test('every expected claim is linked bidirectionally to its producing run', async () => {
+  const claims = parseClaims(await readJson('expected/graph/claims.json'));
+  const runs = parseRuns(await readJson('expected/graph/runs.json'));
+  assert.equal(runs.length, 1);
+  const run = runs[0];
+  assert.ok(run);
+  assert.deepEqual(new Set(run.claims_written), new Set(claims.map((claim) => claim.id)));
+  for (const claim of claims) {
+    assert.equal(claim.produced_by, run.id);
+    if (claim.source.kind === 'tool_output') {
+      assert.ok(run.evidence.includes(claim.source.ref.split('#', 1)[0] ?? ''));
+    }
+  }
 });
 
 test('expected graph reuses an exact alias and creates only the genuinely new entity', async () => {

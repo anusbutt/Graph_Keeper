@@ -183,8 +183,8 @@ if [ "$parse_ok" -eq 1 ]; then
         and (.ref | evidence_ref)
         and (.captured | utc)
       elif .kind == "inference" then
-        exact_keys(["kind"]; ["basis"])
-        and ((has("basis") | not) or (.basis | nonempty))
+        exact_keys(["kind", "basis"]; [])
+        and (.basis | nonempty)
       else false
       end;
     type == "array"
@@ -207,6 +207,7 @@ if [ "$parse_ok" -eq 1 ]; then
       and ((has("confidence") | not) or
         (.confidence | type == "number" and . >= 0 and . <= 1)
       )
+      and ((.confidence != 1) or (.source.kind != "inference"))
       and ((has("supersedes") | not) or
         (.supersedes | type == "string" and test("^claim_[0-9a-f]{8}$"))
       )
