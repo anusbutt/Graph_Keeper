@@ -24,6 +24,7 @@ test('release README covers onboarding, operation, recovery, limits, and future 
     /graphkeeper doctor/,
     /Native PowerShell is not supported/i,
     /## Recovery and adoption/,
+    /0\.3\.0.*init --force.*preserves\s+`scripts\/validate\.sh`/is,
     /github\.com\/anusbutt\/Graph_Keeper\/discussions/,
     /10,000 claims, 2,000 entities, and 1,000 runs/,
     /SQLite or PostgreSQL/,
@@ -68,12 +69,12 @@ test('release version stays aligned across package, lockfile, CLI, README, and c
   const changelog = await readFile(join(projectRoot, 'CHANGELOG.md'), 'utf8');
   const version = manifest.version;
 
-  assert.equal(version, '0.2.0');
+  assert.equal(version, '0.3.0');
   assert.equal(lockfile.version, version);
   assert.equal(lockfile.packages?.['']?.version, version);
   assert.match(cli, new RegExp("const VERSION = '" + version?.replaceAll('.', '\\.') + "';"));
   assert.match(readme, new RegExp('Version\\s+`' + version?.replaceAll('.', '\\.') + '`'));
-  assert.match(changelog, new RegExp('## \\[' + version?.replaceAll('.', '\\.') + '\\] - 2026-08-12'));
+  assert.match(changelog, new RegExp('## \\[' + version?.replaceAll('.', '\\.') + '\\] - 2026-08-13'));
 });
 
 test('release carries the MIT terms for GraphKeeper contributors', async () => {

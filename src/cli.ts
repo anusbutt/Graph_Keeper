@@ -46,7 +46,7 @@ export interface CliTerminal {
   readonly confirm: (prompt: string) => Promise<boolean>;
 }
 
-const VERSION = '0.2.0';
+const VERSION = '0.3.0';
 const COMMANDS = new Set(['init', 'integrate', 'check', 'query', 'doctor', 'update']);
 
 const USAGE = [

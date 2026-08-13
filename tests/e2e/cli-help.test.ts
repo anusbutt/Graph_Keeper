@@ -166,7 +166,7 @@ test('prints the package version successfully', async () => {
   const exitCode = await run(['--version'], capture.io);
 
   assert.equal(exitCode, EXIT_SUCCESS);
-  assert.deepEqual(capture.stdout, ['0.2.0']);
+  assert.deepEqual(capture.stdout, ['0.3.0']);
   assert.equal(capture.stderr.length, 0);
 });
 
@@ -209,7 +209,7 @@ test('compiled CLI entrypoint runs through an npm-style symlink', {
     const result = await runCommand(process.execPath, [linkPath, '--version'], directory);
 
     assert.equal(result.exitCode, EXIT_SUCCESS);
-    assert.equal(result.stdout, '0.2.0\n');
+    assert.equal(result.stdout, '0.3.0\n');
     assert.equal(result.stderr, '');
   } finally {
     await rm(directory, { recursive: true, force: true });
