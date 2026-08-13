@@ -31,10 +31,10 @@ jobs:
         with:
           node-version: 18
           cache: npm
-      - name: Install jq on Linux
+      - name: Install jq for legacy validator on Linux
         if: runner.os == 'Linux'
         run: sudo apt-get update && sudo apt-get install -y jq
-      - name: Install jq on macOS
+      - name: Install jq for legacy validator on macOS
         if: runner.os == 'macOS'
         run: brew install jq
       - name: Install dependencies
@@ -67,7 +67,7 @@ jobs:
         with:
           node-version: 18
           cache: npm
-      - name: Install jq
+      - name: Install jq for legacy validator
         shell: pwsh
         run: choco install jq -y --no-progress
       - name: Install dependencies
@@ -108,13 +108,6 @@ jobs:
         with:
           node-version: 18
           cache: npm
-      - name: Install jq on Linux
-        if: runner.os == 'Linux'
-        run: sudo apt-get update && sudo apt-get install -y jq
-      - name: Install jq on Windows
-        if: runner.os == 'Windows'
-        shell: pwsh
-        run: choco install jq -y --no-progress
       - name: Install dependencies
         run: npm ci
       - name: Run isolated performance budgets

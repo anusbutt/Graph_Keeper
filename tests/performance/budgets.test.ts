@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { cp } from 'node:fs/promises';
-import { delimiter, join } from 'node:path';
+import { join } from 'node:path';
 import { performance } from 'node:perf_hooks';
 import { fileURLToPath } from 'node:url';
 import test from 'node:test';
@@ -30,28 +30,12 @@ const budgets = process.platform === 'win32'
       peakMemoryMb: 256,
     } as const;
 
-function supportedEnvironment(): NodeJS.ProcessEnv {
-  const environment: NodeJS.ProcessEnv = {
-    ...process.env,
-    ...(process.platform === 'win32' ? { MSYSTEM: 'MINGW64' } : {}),
-  };
-  if (process.platform === 'win32') {
-    const pathKey = Object.keys(environment).find((key) => key.toLowerCase() === 'path') ?? 'PATH';
-    environment[pathKey] = [
-      'C:\\Program Files\\Git\\bin',
-      'C:\\tmp\\graphkeeper-tools',
-      environment[pathKey] ?? '',
-    ].join(delimiter);
-  }
-  return environment;
-}
-
 test('aggregate release journey reports budgets and rejects regressions above twenty percent', {
   timeout: 60_000,
 }, async (t) => {
   const fixture = await createRepositoryFixture(true, 'graphkeeper-budget-');
   t.after(fixture.cleanup);
-  const environment = supportedEnvironment();
+  const environment = { ...process.env };
   const runner: CheckRunner = (command, args, options) => runProcess(command, args, {
     ...options,
     env: environment,

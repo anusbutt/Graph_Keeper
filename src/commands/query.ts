@@ -8,15 +8,6 @@ import { parseClaims, parseEntities, type Claim, type Entity } from '../lib/reco
 import { runProcess } from '../lib/process.js';
 
 const DEFAULT_TIMEOUT_MS = 15_000;
-const ACTIVE_CLAIMS_PROGRAM = [
-  '[.[] | select(has("supersedes")) | .supersedes] as $superseded',
-  '| [.[]',
-  '   | select(.subject == $subject)',
-  '   | select((.id as $id | ($superseded | index($id))) == null)',
-  '  ]',
-  '| sort_by(.created, .id)',
-].join('\n');
-
 export interface ResolvedEntity {
   readonly kind: 'resolved';
   readonly subject: string;
@@ -81,6 +72,19 @@ export function resolveEntity(entities: readonly Entity[], subject: string): Ent
     };
   }
   return { kind: 'resolved', subject, entity: aliases[0] as Entity, matchedBy: 'alias' };
+}
+
+function compareOrdinal(left: string, right: string): number {
+  return left < right ? -1 : left > right ? 1 : 0;
+}
+
+export function selectActiveClaims(claims: readonly Claim[], subject: string): Claim[] {
+  const superseded = new Set(
+    claims.flatMap((claim) => claim.supersedes === undefined ? [] : [claim.supersedes]),
+  );
+  return claims
+    .filter((claim) => claim.subject === subject && !superseded.has(claim.id))
+    .sort((left, right) => compareOrdinal(left.created, right.created) || compareOrdinal(left.id, right.id));
 }
 
 function quoted(value: string): string {
@@ -170,47 +174,23 @@ export async function query(options: QueryOptions): Promise<QueryReport> {
     );
   }
 
-  const claimsPath = join(repositoryRoot, 'graph', 'claims.json');
-  const selected = await runner('jq', [
-    '-c',
-    '--arg',
-    'subject',
-    resolution.entity.id,
-    ACTIVE_CLAIMS_PROGRAM,
-    claimsPath,
-  ], {
-    cwd: repositoryRoot,
-    timeoutMs,
-  });
-
-  if (selected.problem === 'missing') {
-    return failure(EXIT_CODES.prerequisite, 'GK003', 'jq 1.6 or newer is required');
-  }
-  if (selected.problem === 'timeout') {
-    return failure(EXIT_CODES.operational, 'GK004', 'query selection timed out after ' + timeoutMs + ' ms');
-  }
-  if (selected.problem === 'spawn' || selected.exitCode === null) {
-    return failure(EXIT_CODES.operational, 'GK004', 'unable to run query selection', undefined, selected.stderr);
-  }
-  if (selected.exitCode !== 0) {
+  let claims: Claim[];
+  try {
+    const raw = await readFile(join(repositoryRoot, 'graph', 'claims.json'), 'utf8');
+    claims = parseClaims(JSON.parse(raw) as unknown);
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
     return failure(
       EXIT_CODES.operational,
       'GK004',
-      'jq query selection failed with exit code ' + selected.exitCode,
+      'graph changed or became unreadable after validation: ' + message,
       'graph/claims.json',
-      selected.stderr,
     );
   }
 
-  try {
-    const claims = parseClaims(JSON.parse(selected.stdout) as unknown);
-    return {
-      exitCode: EXIT_CODES.success,
-      stdout: formatQueryOutput(resolution, claims),
-      stderr: '',
-    };
-  } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : String(error);
-    return failure(EXIT_CODES.internal, 'GK005', 'invalid jq query output: ' + message);
-  }
+  return {
+    exitCode: EXIT_CODES.success,
+    stdout: formatQueryOutput(resolution, selectActiveClaims(claims, resolution.entity.id)),
+    stderr: '',
+  };
 }

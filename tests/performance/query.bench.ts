@@ -51,7 +51,7 @@ test('10,000-claim query selection and rendering p95 stays within its platform b
     command: string,
     args: readonly string[],
     options: Parameters<typeof runProcess>[2],
-  ): Promise<ProcessResult> => command === 'sh'
+  ): Promise<ProcessResult> => command === process.execPath
     ? { exitCode: 0, stdout: 'GraphKeeper: validation passed\n', stderr: '' }
     : runProcess(command, args, options);
   const durations: number[] = [];

@@ -4,8 +4,9 @@ import test from 'node:test';
 import {
   formatQueryOutput,
   resolveEntity,
+  selectActiveClaims,
 } from '../../src/commands/query.js';
-import type { Entity } from '../../src/lib/records.js';
+import type { Claim, Entity } from '../../src/lib/records.js';
 
 const entities: Entity[] = [
   {
@@ -75,4 +76,52 @@ test('a known entity with no active claims has a distinct successful empty outpu
   assert.match(output, /^Matched by alias: "Checkout Worker"$/m);
   assert.match(output, /^Active claims: 0$/m);
   assert.match(output, /^No active claims\.$/m);
+});
+
+test('active claim selection mirrors global supersession and stable ordinal ordering', () => {
+  const claims: Claim[] = [
+    {
+      id: 'claim_cccccccc',
+      subject: 'payments_api',
+      predicate: 'has_state',
+      object: 'third',
+      source: { kind: 'inference', basis: 'fixture' },
+      produced_by: 'run_2026-07-21-query_cc',
+      created: '2026-07-21T09:16:22Z',
+    },
+    {
+      id: 'claim_aaaaaaaa',
+      subject: 'payments_api',
+      predicate: 'has_state',
+      object: 'obsolete',
+      source: { kind: 'inference', basis: 'fixture' },
+      produced_by: 'run_2026-07-21-query_aa',
+      created: '2026-07-21T09:14:22Z',
+    },
+    {
+      id: 'claim_dddddddd',
+      subject: 'other_subject',
+      predicate: 'replaces_state',
+      object: 'replacement',
+      source: { kind: 'inference', basis: 'fixture' },
+      produced_by: 'run_2026-07-21-query_dd',
+      supersedes: 'claim_aaaaaaaa',
+      created: '2026-07-21T09:17:22Z',
+    },
+    {
+      id: 'claim_bbbbbbbb',
+      subject: 'payments_api',
+      predicate: 'has_state',
+      object: 'second',
+      source: { kind: 'inference', basis: 'fixture' },
+      produced_by: 'run_2026-07-21-query_bb',
+      created: '2026-07-21T09:15:22Z',
+    },
+  ];
+  const before = JSON.stringify(claims);
+
+  const selected = selectActiveClaims(claims, 'payments_api');
+
+  assert.deepEqual(selected.map((claim) => claim.id), ['claim_bbbbbbbb', 'claim_cccccccc']);
+  assert.equal(JSON.stringify(claims), before);
 });

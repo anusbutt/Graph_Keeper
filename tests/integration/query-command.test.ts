@@ -1,4 +1,6 @@
 import assert from 'node:assert/strict';
+import { writeFile } from 'node:fs/promises';
+import { join } from 'node:path';
 import test from 'node:test';
 
 import { query } from '../../src/commands/query.js';
@@ -67,6 +69,31 @@ test('query returns only active claims in created/id order with complete provena
   assert.match(result.stdout, new RegExp('Captured: ' + timestamp));
   assert.match(result.stdout, new RegExp('Producer: ' + validRun.id));
   assert.match(result.stdout, /Created: 2026-07-21T09:16:22Z/);
+  assert.equal(result.stdout, [
+    'Entity: test_payments_flaky',
+    'Matched by: canonical ID',
+    'Active claims: 2',
+    '',
+    'Claim: claim_33333333',
+    '  Predicate: likely_cause',
+    '  Object: \u0022timezone mismatch\u0022',
+    '  Source: inference',
+    '  Basis: \u0022failure starts after midnight UTC\u0022',
+    '  Producer: run_2026-07-21-triage_a1',
+    '  Created: 2026-07-21T09:15:22Z',
+    '',
+    'Claim: claim_22222222',
+    '  Predicate: has_status',
+    '  Object: \u0022passing with UTC default\u0022',
+    '  Source: tool_output',
+    '  Command: \u0022npm test\u0022',
+    '  Exit code: 1',
+    '  Evidence: evidence/triage.log#L1-L2',
+    '  Captured: 2026-07-21T09:14:22Z',
+    '  Producer: run_2026-07-21-triage_a1',
+    '  Created: 2026-07-21T09:16:22Z',
+    '',
+  ].join('\n'));
 });
 
 test('query uses claim ID as a stable secondary sort key', async (t) => {
@@ -98,25 +125,28 @@ test('query returns validator failures before attempting claim selection', async
   assert.equal(result.stdout, '');
 });
 
-test('query maps jq selection timeout to an operational error', async (t) => {
+test('query performs no selector subprocess after validation', async (t) => {
   const fixture = await createValidatorFixture();
   t.after(fixture.cleanup);
   await fixture.writeGraph([entity], [validClaim], [validRun]);
+  const commands: string[] = [];
 
   const result = await query({
     cwd: fixture.root,
     subject: entity.id,
-    timeoutMs: 321,
-    runner: async (command) => command === process.execPath
-      ? { exitCode: 0, stdout: 'GraphKeeper: validation passed\n', stderr: '' }
-      : { exitCode: null, stdout: '', stderr: '', problem: 'timeout' },
+    runner: async (command) => {
+      commands.push(command);
+      return command === process.execPath
+        ? { exitCode: 0, stdout: 'GraphKeeper: validation passed\n', stderr: '' }
+        : { exitCode: 0, stdout: JSON.stringify([validClaim]), stderr: '' };
+    },
   });
 
-  assert.equal(result.exitCode, 4);
-  assert.match(result.stderr, /GK004 query selection timed out after 321 ms/);
+  assert.equal(result.exitCode, 0, result.stderr);
+  assert.deepEqual(commands, [process.execPath]);
 });
 
-test('query uses a fifteen-second default timeout for validation and selection', async (t) => {
+test('query uses a fifteen-second default timeout for validation', async (t) => {
   const fixture = await createValidatorFixture();
   t.after(fixture.cleanup);
   await fixture.writeGraph([entity], [validClaim], [validRun]);
@@ -134,7 +164,7 @@ test('query uses a fifteen-second default timeout for validation and selection',
   });
 
   assert.equal(result.exitCode, 0, result.stderr);
-  assert.deepEqual(observedTimeouts, [15_000, 15_000]);
+  assert.deepEqual(observedTimeouts, [15_000]);
 });
 
 test('query applies its timeout to validation and never selects after validation timeout', async (t) => {
@@ -158,7 +188,7 @@ test('query applies its timeout to validation and never selects after validation
   assert.deepEqual(commands, [process.execPath]);
 });
 
-test('query maps a missing jq selector to the prerequisite exit code', async (t) => {
+test('query maps a post-validation claims parse race to GK004', async (t) => {
   const fixture = await createValidatorFixture();
   t.after(fixture.cleanup);
   await fixture.writeGraph([entity], [validClaim], [validRun]);
@@ -166,11 +196,15 @@ test('query maps a missing jq selector to the prerequisite exit code', async (t)
   const result = await query({
     cwd: fixture.root,
     subject: entity.id,
-    runner: async (command) => command === process.execPath
-      ? { exitCode: 0, stdout: 'GraphKeeper: validation passed\n', stderr: '' }
-      : { exitCode: null, stdout: '', stderr: '', problem: 'missing' },
+    runner: async (command) => {
+      if (command === process.execPath) {
+        await writeFile(join(fixture.root, 'graph', 'claims.json'), '{changed after validation\n', 'utf8');
+        return { exitCode: 0, stdout: 'GraphKeeper: validation passed\n', stderr: '' };
+      }
+      return { exitCode: 0, stdout: '[]', stderr: '' };
+    },
   });
 
-  assert.equal(result.exitCode, 3);
-  assert.match(result.stderr, /GK003 jq 1\.6 or newer is required/);
+  assert.equal(result.exitCode, 4);
+  assert.match(result.stderr, /GK004 \[graph\/claims\.json\] graph changed or became unreadable after validation/);
 });
