@@ -115,7 +115,11 @@ test('a tarball installs in a clean directory and runs init, check, query, and d
       shim,
       ...args,
     ], { cwd: repository.root, env: commandEnvironment, timeoutMs })
-    : runProcess(shim, args, { cwd: repository.root, env: commandEnvironment, timeoutMs });
+    : runProcess(process.execPath, [cli, ...args], {
+      cwd: repository.root,
+      env: commandEnvironment,
+      timeoutMs,
+    });
   const help = await runCli(['--help']);
   assert.equal(help.exitCode, 0, help.stderr);
   assert.match(help.stdout, /graphkeeper update/);
