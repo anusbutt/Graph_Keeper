@@ -65,6 +65,13 @@ export class RecordValidationError extends Error {
   }
 }
 
+export interface RecordValidationIssue {
+  readonly recordType: string;
+  readonly index?: number;
+  readonly id?: string;
+  readonly message: string;
+}
+
 function isObject(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
@@ -196,9 +203,14 @@ function validateRun(value: unknown): void {
   }
 }
 
-function parseArray<T>(value: unknown, recordType: string, validate: (entry: unknown) => void): T[] {
-  if (!Array.isArray(value)) throw new RecordValidationError(recordType, 'expected a top-level array');
+function validateRecords(
+  value: unknown,
+  recordType: string,
+  validate: (entry: unknown) => void,
+): RecordValidationIssue[] {
+  if (!Array.isArray(value)) return [{ recordType, message: 'expected a top-level array' }];
   const ids = new Set<string>();
+  const issues: RecordValidationIssue[] = [];
   value.forEach((entry, index) => {
     try {
       validate(entry);
@@ -207,20 +219,48 @@ function parseArray<T>(value: unknown, recordType: string, validate: (entry: unk
       ids.add(id);
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : String(error);
-      throw new RecordValidationError(recordType, message, index);
+      const id = isObject(entry) && typeof entry.id === 'string' ? entry.id : undefined;
+      issues.push({
+        recordType,
+        index,
+        ...(id === undefined ? {} : { id }),
+        message,
+      });
     }
   });
+  return issues;
+}
+
+export function validateClaimRecords(value: unknown): RecordValidationIssue[] {
+  return validateRecords(value, 'claims', validateClaim);
+}
+
+export function validateEntityRecords(value: unknown): RecordValidationIssue[] {
+  return validateRecords(value, 'entities', validateEntity);
+}
+
+export function validateRunRecords(value: unknown): RecordValidationIssue[] {
+  return validateRecords(value, 'runs', validateRun);
+}
+
+function parseArray<T>(
+  value: unknown,
+  recordType: string,
+  validate: (value: unknown) => RecordValidationIssue[],
+): T[] {
+  const issue = validate(value)[0];
+  if (issue !== undefined) throw new RecordValidationError(recordType, issue.message, issue.index);
   return value as T[];
 }
 
 export function parseClaims(value: unknown): Claim[] {
-  return parseArray<Claim>(value, 'claims', validateClaim);
+  return parseArray<Claim>(value, 'claims', validateClaimRecords);
 }
 
 export function parseEntities(value: unknown): Entity[] {
-  return parseArray<Entity>(value, 'entities', validateEntity);
+  return parseArray<Entity>(value, 'entities', validateEntityRecords);
 }
 
 export function parseRuns(value: unknown): Run[] {
-  return parseArray<Run>(value, 'runs', validateRun);
+  return parseArray<Run>(value, 'runs', validateRunRecords);
 }
