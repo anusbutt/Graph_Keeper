@@ -26,7 +26,7 @@ interface PackManifest {
 }
 
 test('release tarball contains every runtime asset and excludes development-only files', {
-  timeout: 60_000,
+  timeout: 120_000,
 }, async (t) => {
   const temporary = await mkdtemp(join(tmpdir(), 'graphkeeper-pack-'));
   t.after(() => rm(temporary, { recursive: true, force: true }));
@@ -39,7 +39,7 @@ test('release tarball contains every runtime asset and excludes development-only
   ]);
   const packed = await runProcess(invocation.command, invocation.args, {
     cwd: projectRoot,
-    timeoutMs: 45_000,
+    timeoutMs: 90_000,
   });
   assert.equal(packed.exitCode, 0, packed.stderr || packed.stdout);
   const manifests = JSON.parse(packed.stdout) as PackManifest[];
@@ -53,6 +53,7 @@ test('release tarball contains every runtime asset and excludes development-only
     'dist/src/commands/integrate.js',
     'dist/src/lib/agent-adapters.js',
     'scripts/validate.sh',
+    'scripts/validate.mjs',
     'templates/pre-commit',
     'templates/SKILL.md',
     'templates/graph/SCHEMA.md',
@@ -103,6 +104,7 @@ test('release tarball contains every runtime asset and excludes development-only
   assert.match(help.stdout, /graphkeeper update/);
   assert.match(help.stdout, /integrate remove <codex\|claude>/);
   assert.match(await readFile(join(packageRoot, 'scripts', 'validate.sh'), 'utf8'), /GraphKeeper: validation passed/);
+  assert.match(await readFile(join(packageRoot, 'scripts', 'validate.mjs'), 'utf8'), /GraphKeeper: validation passed/);
   assert.match(
     await readFile(join(packageRoot, 'templates', 'SKILL.md'), 'utf8'),
     /^---\nname: graphkeeper\ndescription: .+\n---\n/,

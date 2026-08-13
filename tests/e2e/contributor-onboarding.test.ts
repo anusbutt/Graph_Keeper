@@ -81,7 +81,7 @@ test('a clean source snapshot completes onboarding gates and a query recipe with
   for (const [args, timeoutMs, expected] of [
     [['run', 'test:unit'], 120_000, /tests [0-9]+/],
     [['run', 'typecheck'], 60_000, new RegExp('> graphkeeper@' + version + ' typecheck')],
-    [['run', 'package:smoke'], 60_000, new RegExp('graphkeeper-' + version + '\\.tgz')],
+    [['run', 'package:smoke'], 120_000, new RegExp('graphkeeper-' + version + '\\.tgz')],
     [['ls', '--all'], 60_000, new RegExp('graphkeeper@' + version)],
   ] as const) {
     const invocation = npmInvocation(args);

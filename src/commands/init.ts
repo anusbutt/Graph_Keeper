@@ -123,6 +123,7 @@ const scaffoldTargets: readonly ScaffoldTarget[] = [
   { target: 'graph/SCHEMA.md', refreshable: true },
   { target: '.agents/skills/graphkeeper/SKILL.md', refreshable: true },
   { target: 'scripts/validate.sh', refreshable: false },
+  { target: 'scripts/validate.mjs', refreshable: false },
 ];
 
 const defaultEnvironment: InitEnvironment = {
@@ -225,6 +226,23 @@ export async function planScaffold(
   for (const entry of scaffoldTargets) {
     const exists = await pathExists(resolve(root, entry.target));
     if (!exists) {
+      if (entry.target === 'scripts/validate.mjs') {
+        const legacyPath = resolve(root, 'scripts', 'validate.sh');
+        if (await pathExists(legacyPath)) {
+          const [legacy, packaged] = await Promise.all([
+            readFile(legacyPath, 'utf8'),
+            readFile(resolve(packageRoot, 'scripts', 'validate.sh'), 'utf8'),
+          ]);
+          if (legacy !== packaged) {
+            actions.push({
+              kind: 'skip',
+              target: entry.target,
+              reason: 'modified legacy validator was preserved; manual migration is required',
+            });
+            continue;
+          }
+        }
+      }
       actions.push({
         kind: 'create',
         target: entry.target,
@@ -266,8 +284,8 @@ export async function planScaffold(
 }
 
 function sourcePath(target: string): string {
-  if (target === 'scripts/validate.sh') {
-    return resolve(packageRoot, 'scripts', 'validate.sh');
+  if (target === 'scripts/validate.sh' || target === 'scripts/validate.mjs') {
+    return resolve(packageRoot, target);
   }
   if (target === '.agents/skills/graphkeeper/SKILL.md') {
     return resolve(packageRoot, 'templates', 'SKILL.md');

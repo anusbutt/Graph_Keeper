@@ -52,23 +52,43 @@ export async function check(options: CheckOptions): Promise<CheckReport> {
     throw error;
   }
 
-  const validatorPath = join(repositoryRoot, 'scripts', 'validate.sh');
+  const nodeValidatorPath = join(repositoryRoot, 'scripts', 'validate.mjs');
+  const shellValidatorPath = join(repositoryRoot, 'scripts', 'validate.sh');
+  let validatorPath = nodeValidatorPath;
+  let command = process.execPath;
   try {
-    await access(validatorPath);
+    await access(nodeValidatorPath);
   } catch (error: unknown) {
     if (error instanceof Error && 'code' in error && error.code === 'ENOENT') {
+      try {
+        await access(shellValidatorPath);
+        validatorPath = shellValidatorPath;
+        command = 'sh';
+      } catch (shellError: unknown) {
+        if (shellError instanceof Error && 'code' in shellError && shellError.code === 'ENOENT') {
+          return failure(
+            EXIT_CODES.operational,
+            diagnostic('GK004', 'repository validator is missing; run graphkeeper init', nodeValidatorPath),
+          );
+        }
+        const message = shellError instanceof Error ? shellError.message : String(shellError);
+        return failure(
+          EXIT_CODES.operational,
+          diagnostic('GK004', 'cannot access repository validator: ' + message, shellValidatorPath),
+        );
+      }
+    } else {
+      const message = error instanceof Error ? error.message : String(error);
       return failure(
         EXIT_CODES.operational,
-        diagnostic('GK004', 'repository validator is missing; run graphkeeper init', validatorPath),
+        diagnostic('GK004', 'cannot access repository validator: ' + message, nodeValidatorPath),
       );
     }
-    const message = error instanceof Error ? error.message : String(error);
-    return failure(EXIT_CODES.operational, diagnostic('GK004', 'cannot access repository validator: ' + message, validatorPath));
   }
 
   const timeoutMs = options.timeoutMs ?? DEFAULT_TIMEOUT_MS;
   const runner = options.runner ?? runProcess;
-  const result = await runner('sh', [validatorPath, '--worktree'], {
+  const result = await runner(command, [validatorPath, '--worktree'], {
     cwd: repositoryRoot,
     timeoutMs,
   });
@@ -76,7 +96,9 @@ export async function check(options: CheckOptions): Promise<CheckReport> {
   if (result.problem === 'missing') {
     return failure(
       EXIT_CODES.prerequisite,
-      diagnostic('GK003', 'sh is required; use Git Bash or WSL on Windows'),
+      command === 'sh'
+        ? diagnostic('GK003', 'sh is required; use Git Bash or WSL on Windows')
+        : diagnostic('GK003', 'Node.js is required to run repository validator'),
       result.stderr,
     );
   }
