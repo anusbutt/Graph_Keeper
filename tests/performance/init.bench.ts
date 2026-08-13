@@ -10,18 +10,11 @@ import { createRepositoryFixture } from '../helpers/repository.js';
 const initBudgetMs = process.platform === 'win32' ? 15_000 : 10_000;
 const cliPath = fileURLToPath(new URL('../../src/cli.js', import.meta.url));
 
-function supportedEnvironment(): NodeJS.ProcessEnv {
-  return {
-    ...process.env,
-    ...(process.platform === 'win32' ? { MSYSTEM: 'MINGW64' } : {}),
-  };
-}
-
 async function timedInit(root: string): Promise<number> {
   const started = performance.now();
   const result = await runProcess(process.execPath, [cliPath, 'init'], {
     cwd: root,
-    env: supportedEnvironment(),
+    env: process.env,
     timeoutMs: 15_000,
   });
   assert.equal(result.exitCode, 0, result.stderr);
@@ -63,7 +56,7 @@ test('documented scaffold-to-enforced-hook walkthrough stays below two minutes',
     const hook = join(fixture.root, '.git', 'hooks', 'pre-commit');
     const enforced = await runProcess(process.execPath, [hook], {
       cwd: fixture.root,
-      env: supportedEnvironment(),
+      env: process.env,
       timeoutMs: 15_000,
     });
     assert.equal(enforced.exitCode, 0, enforced.stderr);

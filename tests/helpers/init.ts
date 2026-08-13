@@ -4,7 +4,7 @@ import type { ProcessResult } from '../../src/lib/process.js';
 export function successfulProbe(command: string): ProcessResult {
   return {
     exitCode: 0,
-    stdout: command === 'jq' ? 'jq-1.7.1\n' : '',
+    stdout: command === 'git' ? 'git version 2.50.0\n' : '',
     stderr: '',
   };
 }

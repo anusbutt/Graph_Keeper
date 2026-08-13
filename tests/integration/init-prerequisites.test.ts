@@ -61,10 +61,19 @@ async function expectPrerequisiteFailure(
   }
 }
 
-test('accepts Node 18+, Git, sh, and jq 1.6+ on a supported platform', async () => {
+test('accepts Node 18+ and Git on native Windows without probing sh or jq', async () => {
   const fixture = await createRepositoryFixture(false);
   try {
-    await checkInitPrerequisites(fixture.root, environment());
+    const commands: string[] = [];
+    const nativeEnvironment: InitEnvironment = {
+      ...environment({ platform: 'win32', env: {} }),
+      probe: async (command) => {
+        commands.push(command);
+        return command === 'git' ? result(0, 'git version 2.50.0\n') : result(null, '', 'missing');
+      },
+    };
+    await checkInitPrerequisites(fixture.root, nativeEnvironment);
+    assert.deepEqual(commands, ['git']);
   } finally {
     await fixture.cleanup();
   }
@@ -74,28 +83,6 @@ test('rejects Node older than 18 with an install link', async () => {
   await expectPrerequisiteFailure(environment({ nodeVersion: '17.9.1' }), /Node\.js 18.*https:\/\/nodejs\.org/s);
 });
 
-test('rejects missing Git, sh, and jq before mutation', async () => {
+test('rejects missing Git before mutation', async () => {
   await expectPrerequisiteFailure(environment({}, { git: result(null, '', 'missing') }), /Git.*https:\/\/git-scm\.com/s);
-  await expectPrerequisiteFailure(environment({}, { sh: result(null, '', 'missing') }), /POSIX.*https:\/\/gitforwindows\.org/s);
-  await expectPrerequisiteFailure(environment({}, { jq: result(null, '', 'missing') }), /jq.*https:\/\/jqlang\.org\/download/s);
-});
-
-test('rejects jq older than 1.6', async () => {
-  await expectPrerequisiteFailure(environment({}, { jq: result(0, 'jq-1.5\n') }), /jq 1\.6 or newer/);
-});
-
-test('rejects native PowerShell while accepting Git Bash on Windows', async () => {
-  await expectPrerequisiteFailure(
-    environment({ platform: 'win32', env: {} }),
-    /native PowerShell.*Git Bash or WSL/s,
-  );
-  const fixture = await createRepositoryFixture(false);
-  try {
-    await checkInitPrerequisites(
-      fixture.root,
-      environment({ platform: 'win32', env: { MSYSTEM: 'MINGW64' } }),
-    );
-  } finally {
-    await fixture.cleanup();
-  }
 });

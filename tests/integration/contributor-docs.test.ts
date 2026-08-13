@@ -207,6 +207,9 @@ test('CI and repository settings cover all supported platforms and governance', 
   ]) {
     assert.match(ci, new RegExp(command.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
   }
+  const performanceJob = ci.slice(ci.indexOf('  performance:'));
+  assert.doesNotMatch(performanceJob, /Install jq|install jq/i);
+  assert.match(ci, /Install jq for legacy validator/);
 
   const settings = await read('.github/repository-settings.md');
   assert.match(settings, /Description/);

@@ -156,14 +156,6 @@ function parseMajor(version: string): number | null {
   return match === null ? null : Number.parseInt(match[1] ?? '', 10);
 }
 
-function supportedJq(versionOutput: string): boolean {
-  const match = /^jq-([0-9]+)\.([0-9]+)/.exec(versionOutput.trim());
-  if (match === null) return false;
-  const major = Number.parseInt(match[1] ?? '', 10);
-  const minor = Number.parseInt(match[2] ?? '', 10);
-  return major > 1 || (major === 1 && minor >= 6);
-}
-
 async function requireProbe(
   cwd: string,
   environment: InitEnvironment,
@@ -185,13 +177,6 @@ export async function checkInitPrerequisites(
     throw prerequisite('Node.js 18 or newer is required. Install it from https://nodejs.org/');
   }
 
-  if (environment.platform === 'win32' && !environment.env.MSYSTEM) {
-    throw prerequisite(
-      'GraphKeeper v1 does not support native PowerShell. Run it through Git Bash or WSL. '
-      + 'Install Git Bash from https://gitforwindows.org/',
-    );
-  }
-
   await requireProbe(
     cwd,
     environment,
@@ -199,24 +184,6 @@ export async function checkInitPrerequisites(
     ['--version'],
     'Git is required. Install it from https://git-scm.com/downloads',
   );
-  await requireProbe(
-    cwd,
-    environment,
-    'sh',
-    ['-c', 'exit 0'],
-    'A POSIX-compatible shell is required. On Windows install Git Bash from '
-      + 'https://gitforwindows.org/',
-  );
-  const jq = await requireProbe(
-    cwd,
-    environment,
-    'jq',
-    ['--version'],
-    'jq 1.6 or newer is required. Install it from https://jqlang.org/download/',
-  );
-  if (!supportedJq(jq.stdout || jq.stderr)) {
-    throw prerequisite('jq 1.6 or newer is required. Install it from https://jqlang.org/download/');
-  }
 }
 
 async function pathExists(path: string): Promise<boolean> {
