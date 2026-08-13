@@ -6,6 +6,7 @@ import { runProcess, type ProcessResult } from '../../src/lib/process.js';
 import { createRepositoryFixture, type RepositoryFixture } from './repository.js';
 
 const validatorSource = fileURLToPath(new URL('../../../scripts/validate.sh', import.meta.url));
+const nodeValidatorSource = fileURLToPath(new URL('../../../scripts/validate.mjs', import.meta.url));
 
 export const timestamp = '2026-07-21T09:14:22Z';
 
@@ -63,6 +64,7 @@ export async function createValidatorFixture(
   await mkdir(dirname(validator), { recursive: true });
   await copyFile(validatorSource, validator);
   await chmod(validator, 0o755);
+  await copyFile(nodeValidatorSource, join(fixture.root, 'scripts', 'validate.mjs'));
 
   const writeGraph = async (
     entities: unknown = [validEntity],

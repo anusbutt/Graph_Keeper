@@ -39,11 +39,16 @@ test('baseline schema and agent guidance are useful and placeholder-free', async
   assert.match(skill, /^---\nname: graphkeeper\ndescription: .+\n---\n/);
 });
 
-test('pre-commit is a minimal marked wrapper around staged validation', async () => {
+test('pre-commit is a minimal rule-free Node launcher for staged validation', async () => {
   const hook = await readFile(template('pre-commit'), 'utf8');
-  assert.match(hook, /^#!\/bin\/sh\n/);
+  assert.match(hook, /^#!\/usr\/bin\/env node\n/);
   assert.match(hook, /GraphKeeper managed hook/);
-  assert.match(hook, /git rev-parse --show-toplevel/);
-  assert.match(hook, /scripts\/validate\.sh.*--staged/);
-  assert.ok(hook.trim().split(/\r?\n/).length <= 8, 'hook should remain a minimal wrapper');
+  assert.match(hook, /spawnSync\('git', \['rev-parse', '--show-toplevel'\]/);
+  assert.match(hook, /scripts.*validate\.mjs/);
+  assert.match(hook, /process\.execPath.*--staged/s);
+  assert.match(hook, /shell: false/);
+  assert.match(hook, /import\('node:child_process'\)/);
+  assert.doesNotMatch(hook, /^import /m);
+  assert.doesNotMatch(hook, /validate\.sh|\bjq\b|spawnSync\('sh'/);
+  assert.ok(hook.trim().split(/\r?\n/).length <= 45, 'hook should remain a minimal launcher');
 });

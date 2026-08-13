@@ -97,5 +97,5 @@ test('doctor maps validator timeout to operational failure without deep reads', 
 
   assert.equal(result.exitCode, 4);
   assert.match(result.stderr, /GK004 validator timed out after 654 ms/);
-  assert.deepEqual(commands, ['sh']);
+  assert.deepEqual(commands, [process.execPath]);
 });

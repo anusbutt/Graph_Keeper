@@ -107,7 +107,7 @@ test('query maps jq selection timeout to an operational error', async (t) => {
     cwd: fixture.root,
     subject: entity.id,
     timeoutMs: 321,
-    runner: async (command) => command === 'sh'
+    runner: async (command) => command === process.execPath
       ? { exitCode: 0, stdout: 'GraphKeeper: validation passed\n', stderr: '' }
       : { exitCode: null, stdout: '', stderr: '', problem: 'timeout' },
   });
@@ -127,7 +127,7 @@ test('query uses a fifteen-second default timeout for validation and selection',
     subject: entity.id,
     runner: async (command, _args, options) => {
       observedTimeouts.push(options.timeoutMs ?? -1);
-      return command === 'sh'
+      return command === process.execPath
         ? { exitCode: 0, stdout: 'GraphKeeper: validation passed\n', stderr: '' }
         : { exitCode: 0, stdout: JSON.stringify([validClaim]), stderr: '' };
     },
@@ -155,7 +155,7 @@ test('query applies its timeout to validation and never selects after validation
 
   assert.equal(result.exitCode, 4);
   assert.match(result.stderr, /GK004 validator timed out after 432 ms/);
-  assert.deepEqual(commands, ['sh']);
+  assert.deepEqual(commands, [process.execPath]);
 });
 
 test('query maps a missing jq selector to the prerequisite exit code', async (t) => {
@@ -166,7 +166,7 @@ test('query maps a missing jq selector to the prerequisite exit code', async (t)
   const result = await query({
     cwd: fixture.root,
     subject: entity.id,
-    runner: async (command) => command === 'sh'
+    runner: async (command) => command === process.execPath
       ? { exitCode: 0, stdout: 'GraphKeeper: validation passed\n', stderr: '' }
       : { exitCode: null, stdout: '', stderr: '', problem: 'missing' },
   });

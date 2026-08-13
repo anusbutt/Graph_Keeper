@@ -1,5 +1,42 @@
-#!/bin/sh
-# GraphKeeper managed hook
-set -eu
-root=$(git rev-parse --show-toplevel)
-exec sh "$root/scripts/validate.sh" --staged
+#!/usr/bin/env node
+// GraphKeeper managed hook
+function fail(message, error) {
+  const detail = error instanceof Error ? ': ' + error.message : '';
+  process.stderr.write('GK004 ' + message + detail + '\n');
+  return 4;
+}
+
+async function main() {
+  const [{ existsSync }, { join }, { spawnSync }] = await Promise.all([
+    import('node:fs'),
+    import('node:path'),
+    import('node:child_process'),
+  ]);
+  const rootResult = spawnSync('git', ['rev-parse', '--show-toplevel'], {
+    encoding: 'utf8',
+    shell: false,
+    windowsHide: true,
+  });
+  if (rootResult.error || rootResult.status !== 0) {
+    return fail('unable to resolve repository root', rootResult.error);
+  }
+  const root = rootResult.stdout.trim();
+  const validator = join(root, 'scripts', 'validate.mjs');
+  if (!existsSync(validator)) {
+    return fail('[' + validator + '] repository validator is missing; run graphkeeper init');
+  }
+  const validation = spawnSync(process.execPath, [validator, '--staged'], {
+    cwd: root,
+    stdio: 'inherit',
+    shell: false,
+    windowsHide: true,
+  });
+  if (validation.error) return fail('unable to run repository validator', validation.error);
+  if (validation.status === null) return fail('repository validator ended without an exit status');
+  return validation.status;
+}
+
+main().then(
+  (exitCode) => { process.exitCode = exitCode; },
+  (error) => { process.exitCode = fail('unable to initialize hook', error); },
+);

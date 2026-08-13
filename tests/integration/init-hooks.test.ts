@@ -3,12 +3,22 @@ import { mkdir, readFile, stat, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import test from 'node:test';
 
-import { initialize } from '../../src/commands/init.js';
+import { initialize, type InitWriteHooks } from '../../src/commands/init.js';
+import { GraphKeeperError } from '../../src/lib/errors.js';
 import { supportedInitEnvironment } from '../helpers/init.js';
 import { createRepositoryFixture } from '../helpers/repository.js';
 
 const packagedHook = async (): Promise<string> =>
   readFile(join(process.cwd(), 'templates', 'pre-commit'), 'utf8');
+
+const legacyHook = [
+  '#!/bin/sh',
+  '# GraphKeeper managed hook',
+  'set -eu',
+  'root=$(git rev-parse --show-toplevel)',
+  'exec sh \u0022\u0024root/scripts/validate.sh\u0022 --staged',
+  '',
+].join('\n');
 
 test('installs the default hook atomically with its executable mode', async () => {
   const fixture = await createRepositoryFixture();
@@ -61,6 +71,55 @@ test('reports an exact existing GraphKeeper hook as already installed', async ()
   }
 });
 
+test('atomically migrates the exact package-owned legacy hook', async () => {
+  const fixture = await createRepositoryFixture();
+  try {
+    const hook = join(fixture.root, '.git', 'hooks', 'pre-commit');
+    await writeFile(hook, legacyHook, 'utf8');
+
+    const report = await initialize({
+      cwd: fixture.root,
+      force: false,
+      environment: supportedInitEnvironment(),
+    });
+
+    assert.equal(await readFile(hook, 'utf8'), await packagedHook());
+    assert.ok(report.actions.some((action) =>
+      action.kind === 'refresh' && action.target === 'pre-commit-hook'));
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+test('legacy hook migration rejects a concurrent edit without overwriting it', async () => {
+  const fixture = await createRepositoryFixture();
+  try {
+    const hook = join(fixture.root, '.git', 'hooks', 'pre-commit');
+    const concurrent = '#!/bin/sh\nprintf concurrent\n';
+    await writeFile(hook, legacyHook, 'utf8');
+    const writeHooks: InitWriteHooks = {
+      beforeCommit: async (target, kind) => {
+        if (target === 'pre-commit-hook' && kind === 'refresh') {
+          await writeFile(hook, concurrent, 'utf8');
+        }
+      },
+    };
+
+    await assert.rejects(
+      initialize({
+        cwd: fixture.root,
+        force: false,
+        environment: supportedInitEnvironment(),
+        writeHooks,
+      }),
+      (error: unknown) => error instanceof GraphKeeperError && error.code === 'GK004',
+    );
+    assert.equal(await readFile(hook, 'utf8'), concurrent);
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
 test('never overwrites a third-party hook and writes chaining fallback guidance', async () => {
   const fixture = await createRepositoryFixture();
   try {
@@ -84,6 +143,32 @@ test('never overwrites a third-party hook and writes chaining fallback guidance'
     assert.match(warning?.reason ?? '', /not overwritten/);
     assert.match(warning?.reason ?? '', /\.githooks\/pre-commit/);
     assert.match(warning?.reason ?? '', /chain/i);
+    assert.match(warning?.reason ?? '', /node /i);
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+test('refreshes an exact legacy fallback while preserving the third-party hook', async () => {
+  const fixture = await createRepositoryFixture();
+  try {
+    const hook = join(fixture.root, '.git', 'hooks', 'pre-commit');
+    const fallback = join(fixture.root, '.githooks', 'pre-commit');
+    const thirdParty = '#!/bin/sh\nprintf third-party\n';
+    await mkdir(join(fixture.root, '.githooks'), { recursive: true });
+    await writeFile(hook, thirdParty, 'utf8');
+    await writeFile(fallback, legacyHook, 'utf8');
+
+    const report = await initialize({
+      cwd: fixture.root,
+      force: false,
+      environment: supportedInitEnvironment(),
+    });
+
+    assert.equal(await readFile(hook, 'utf8'), thirdParty);
+    assert.equal(await readFile(fallback, 'utf8'), await packagedHook());
+    assert.ok(report.actions.some((action) =>
+      action.kind === 'refresh' && action.target === '.githooks/pre-commit'));
   } finally {
     await fixture.cleanup();
   }
