@@ -1,3 +1,6 @@
+import { access } from 'node:fs/promises';
+import { win32 } from 'node:path';
+
 import { GraphKeeperError } from '../lib/errors.js';
 import { runProcess, type ProcessResult } from '../lib/process.js';
 
@@ -6,6 +9,9 @@ export type StableVersion = readonly [number, number, number];
 export interface UpdateEnvironment {
   readonly platform: NodeJS.Platform;
   readonly env: NodeJS.ProcessEnv;
+  readonly nodePath: string;
+  readonly npmCliPath?: string;
+  readonly npmCliExists?: (path: string) => Promise<boolean>;
   readonly run: (
     command: string,
     args: readonly string[],
@@ -30,9 +36,36 @@ export interface UpdateReport {
 const defaultEnvironment: UpdateEnvironment = {
   platform: process.platform,
   env: process.env,
+  nodePath: process.execPath,
+  npmCliExists: async (path) => {
+    try {
+      await access(path);
+      return true;
+    } catch {
+      return false;
+    }
+  },
   run: (command, args, timeoutMs, env) =>
     runProcess(command, args, { env, timeoutMs }),
 };
+
+export interface NpmInvocation {
+  readonly command: string;
+  readonly argsPrefix: readonly string[];
+}
+
+export function resolveNpmInvocation(
+  platform: NodeJS.Platform,
+  environment: NodeJS.ProcessEnv,
+  nodePath: string,
+  npmCliPath?: string,
+): NpmInvocation {
+  if (platform !== 'win32') return { command: 'npm', argsPrefix: [] };
+  const cli = npmCliPath
+    ?? environment.npm_execpath
+    ?? win32.join(win32.dirname(nodePath), 'node_modules', 'npm', 'bin', 'npm-cli.js');
+  return { command: nodePath, argsPrefix: [cli] };
+}
 
 function prerequisite(message: string): GraphKeeperError {
   return new GraphKeeperError('GK003', 'prerequisite', message);
@@ -78,18 +111,26 @@ function registryVersion(output: string): string | null {
 
 export async function updateGraphKeeper(options: UpdateOptions): Promise<UpdateReport> {
   const environment = options.environment ?? defaultEnvironment;
-  if (environment.platform === 'win32' && !environment.env.MSYSTEM) {
-    throw prerequisite(
-      'GraphKeeper v1 does not support native PowerShell. Run update through Git Bash or WSL.',
-    );
-  }
   if (parseStableVersion(options.currentVersion) === null) {
     throw operational('The running GraphKeeper version is invalid; reinstall GraphKeeper with npm.');
   }
 
+  const npm = resolveNpmInvocation(
+    environment.platform,
+    environment.env,
+    environment.nodePath,
+    environment.npmCliPath,
+  );
+  if (
+    environment.platform === 'win32'
+    && environment.npmCliExists !== undefined
+    && !(await environment.npmCliExists(npm.argsPrefix[0] as string))
+  ) {
+    throw prerequisite('npm is required to update GraphKeeper. Install npm, then retry.');
+  }
   const lookup = await environment.run(
-    'npm',
-    ['view', 'graphkeeper@latest', 'version', '--json'],
+    npm.command,
+    [...npm.argsPrefix, 'view', 'graphkeeper@latest', 'version', '--json'],
     30_000,
     environment.env,
   );
@@ -114,8 +155,8 @@ export async function updateGraphKeeper(options: UpdateOptions): Promise<UpdateR
   }
 
   const installation = await environment.run(
-    'npm',
-    ['install', '--global', 'graphkeeper@' + latestVersion],
+    npm.command,
+    [...npm.argsPrefix, 'install', '--global', 'graphkeeper@' + latestVersion],
     120_000,
     environment.env,
   );

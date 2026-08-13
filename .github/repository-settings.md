@@ -29,7 +29,7 @@ squash merging so each pull request has one reviewable integration commit.
 | `type:feature` | New user-visible capability |
 | `type:docs` | Documentation-only improvement |
 | `area:cli` | Command dispatch or output |
-| `area:validator` | Canonical jq/sh validation |
+| `area:validator` | Canonical TypeScript/Node validation and legacy fallback |
 | `area:doctor` | Deep evidence or graph inspection |
 | `area:templates` | Shipped schema or agent guidance |
 | `area:ci` | Automation, packaging, or platform support |
@@ -64,6 +64,7 @@ Protect `main` with these required status checks:
 - `quality-ubuntu`
 - `quality-macos`
 - `quality-windows-git-bash`
+- `quality-windows-powershell`
 - `performance-ubuntu`
 - `performance-windows-git-bash`
 

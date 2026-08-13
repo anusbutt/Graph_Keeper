@@ -22,13 +22,17 @@ test('release README covers onboarding, operation, recovery, limits, and future 
     /graphkeeper check/,
     /graphkeeper query <subject>/,
     /graphkeeper doctor/,
-    /Native PowerShell is not supported/i,
+    /native Windows PowerShell/i,
+    /legacy.*validate\.sh.*sh.*jq/is,
     /## Recovery and adoption/,
+    /rerun `graphkeeper init(?: --force)?`.*package-owned.*validator.*hook.*migrate/is,
+    /customized.*shell-only.*POSIX.*jq/is,
     /0\.3\.0.*init --force.*preserves\s+`scripts\/validate\.sh`/is,
     /github\.com\/anusbutt\/Graph_Keeper\/discussions/,
     /10,000 claims, 2,000 entities, and 1,000 runs/,
     /SQLite or PostgreSQL/,
   ]) assert.match(readme, contract);
+  assert.doesNotMatch(readme, /Native PowerShell is not supported/i);
 });
 
 test('npm metadata points to the canonical public repository and support channels', async () => {
@@ -83,4 +87,14 @@ test('release carries the MIT terms for GraphKeeper contributors', async () => {
   assert.match(license, /Copyright \(c\) 2026 GraphKeeper contributors/);
   assert.match(license, /Permission is hereby granted, free of charge/);
   assert.match(license, /THE SOFTWARE IS PROVIDED "AS IS"/);
+});
+
+test('native Windows migration keeps customized validators conservative', async () => {
+  const guide = await readFile(join(projectRoot, 'docs', 'windows-migration.md'), 'utf8');
+  assert.match(guide, /Node\.js.*npm.*Git/is);
+  assert.match(guide, /graphkeeper init --force/);
+  assert.match(guide, /exact package-owned.*migrat/is);
+  assert.match(guide, /customized.*does not replace or bypass/is);
+  assert.match(guide, /legacy fallback.*POSIX shell.*jq/is);
+  assert.match(guide, /rollback.*previous GraphKeeper npm version/is);
 });

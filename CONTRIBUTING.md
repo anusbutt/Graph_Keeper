@@ -12,21 +12,13 @@ Participation in project spaces is governed by the
 
 - Node.js >= 18 and npm.
 - Git.
-- jq 1.6 or newer.
-- A POSIX-compatible `sh`.
 
-Linux and macOS are supported directly. On Windows, use WSL or Git Bash; native
-PowerShell execution is not supported in v1. PowerShell may install prerequisites for
-CI, but GraphKeeper validation and hooks still run through Git Bash or WSL.
-
-Install jq with the platform package manager when it is missing:
-
-- Debian/Ubuntu: `sudo apt-get install jq`
-- macOS with Homebrew: `brew install jq`
-- Windows before opening Git Bash: `choco install jq`
-
-Confirm the environment with `node --version`, `npm --version`, `git --version`,
-`sh --version`, and `jq --version`.
+Linux, macOS, Windows through WSL/Git Bash, and native Windows PowerShell are
+supported. Confirm the environment with `node --version`, `npm --version`, and
+`git --version`. The legacy `scripts/validate.sh` fallback uses a POSIX shell and jq;
+only repositories with a customized, unmigrated shell validator need those tools.
+Follow the [native Windows migration guide](docs/windows-migration.md) before replacing
+customized repository validators or hooks.
 
 ## Fifteen-minute contributor path
 
@@ -65,16 +57,16 @@ different paths through it:
 ```text
 init   -> prerequisite probes -> immutable plan -> templates and graph files -> Git hook -> optional agent adapters
 integrate remove -> ownership preflight -> immutable plan -> conservative adapter cleanup
-check  -> scripts/validate.sh --worktree
-query  -> check -> exact entity resolution -> jq active-claim selection
+check  -> scripts/validate.mjs --worktree -> legacy validate.sh fallback when needed
+query  -> check -> exact entity resolution -> TypeScript active-claim selection
 doctor -> check -> graph-reference checks -> physical evidence inspection
 update -> npm registry lookup -> exact global install (no repository changes)
 ```
 
-The shell validator is the commit-time authority: both the pre-commit hook and
-`graphkeeper check` execute `scripts/validate.sh`. The TypeScript record parsers are
-read-only consumers used after validation and by deeper inspection; they do not
-replace the shell validator. `graphkeeper doctor` adds physical evidence and graph
+The TypeScript validator is the commit-time authority: the pre-commit hook and
+`graphkeeper check` execute `scripts/validate.mjs`, generated from the canonical
+TypeScript validation core. `scripts/validate.sh` is retained only for conservative
+legacy fallback compatibility. `graphkeeper doctor` adds physical evidence and graph
 integrity checks that intentionally do not run in the fast hook path.
 
 The graph, schema, and CLI remain vendor-neutral. Codex and Claude Code are explicit
@@ -82,8 +74,8 @@ internal adapters. They generate skills under `.agents/skills/graphkeeper/` and
 `.claude/skills/graphkeeper/`, while `--integrate codex` and
 `--integrate claude` manage independent marked blocks in `AGENTS.md` and
 `CLAUDE.md`. Both consume the same canonical `templates/SKILL.md`; this registry is
-not a public plugin framework. Linux and macOS run GraphKeeper directly. Windows runs
-it through WSL or Git Bash; native PowerShell remains outside the v1 runtime boundary.
+not a public plugin framework. Linux, macOS, WSL/Git Bash, and native PowerShell use
+the same Node validation and query behavior.
 
 - `src/cli.ts` owns public command dispatch and argument usage.
 - `src/commands/query.ts` owns entity resolution, active-claim selection, and query
@@ -94,8 +86,8 @@ it through WSL or Git Bash; native PowerShell remains outside the v1 runtime bou
 - `src/commands/update.ts` owns stable-version comparison and the fixed npm registry
   and exact global-install argument arrays. It must remain independent of repository
   data and must never use a shell.
-- The canonical validator is `scripts/validate.sh`. The pre-commit hook and
-  `graphkeeper check` both invoke it; do not duplicate validation logic in TypeScript.
+- `src/lib/validation.ts` is canonical. `scripts/validate.mjs` is generated from it;
+  the hook and check invoke that artifact. Do not add validator rules to launchers.
 - `templates/graph/SCHEMA.md` is the shipped record contract.
 - `templates/SKILL.md` is vendor-neutral agent guidance packaged to both registered
   skill destinations. Its YAML frontmatter contains only `name` and a
@@ -109,8 +101,8 @@ it through WSL or Git Bash; native PowerShell remains outside the v1 runtime bou
 - `tests/integration` contains rule-isolated repository fixtures. A new validation
   rule needs both an accepting test and a rejecting test, in staged and worktree modes
   when selection behavior matters.
-- `src/lib/records.ts` owns read-only TypeScript parsing. It does not replace jq as the
-  commit-time source of truth.
+- `src/lib/records.ts` owns shared structured record parsing used by validation and
+  read-only command paths.
 
 Rules in shipped guidance use three labels: `HOOK` for fast mechanical enforcement,
 `DOCTOR` for deep inspection, and `GUIDANCE` for behavior that software cannot infer.
@@ -126,7 +118,7 @@ concurrent edits before replacement.
 
 Version 1 has no database backend, hosted service, remote API, authentication or
 authorization, UI or dashboard, vector search, multi-repository synchronization,
-automatic transcript ingestion, native PowerShell support, binary evidence, automatic
+automatic transcript ingestion, binary evidence, automatic
 merge resolution, or telemetry. It also has no plugin framework or storage abstraction.
 
 Do not expand a focused change across these boundaries. Propose a specification and
@@ -146,13 +138,13 @@ Run these before opening a pull request:
     npm run package:smoke
     npm ls --all
     sh -n scripts/validate.sh
-    sh -n templates/pre-commit
+    node --check templates/pre-commit
     git diff --check
 
 `npm test` includes all compiled tests and benchmarks for a complete local check.
 `npm run release:verify` deliberately runs the deterministic functional, security,
 and package gates; performance budgets run separately in dedicated Ubuntu and
-Windows/Git Bash CI jobs. This keeps performance regressions visible without making
+Windows CI jobs. This keeps performance regressions visible without making
 publication depend on temporary workstation load.
 
 ## Pull requests and labels
@@ -180,8 +172,9 @@ Use the narrowest useful labels:
 
 ## Recovery runbooks
 
-- Missing prerequisite: install the named tool, confirm its version, then rerun the
-  failed command. GraphKeeper never installs jq automatically.
+- Missing prerequisite: install the named Node/npm/Git tool, confirm its version,
+  then rerun the failed command. For a customized legacy validator, migrate it or
+  install its separately documented shell/jq requirements.
 - Interrupted or repeated initialization: fix the reported cause and rerun
   `graphkeeper init`. Initialization is idempotent, and `--force` refreshes generated
   documentation only.
@@ -205,7 +198,7 @@ Use the narrowest useful labels:
 - CLI rollback: install the previous npm version and rerun check and doctor. Generated
   graph data remains under Git control; do not roll back by deleting append-only
   claims or committed evidence.
-- Update failure: confirm WSL or Git Bash, npm availability, registry access, and a
+- Update failure: confirm npm availability, registry access, and a
   user-writable global npm prefix. The command never falls back to local dependency
   installation or another package manager.
 
@@ -216,7 +209,7 @@ SSD reference environment. Query and doctor benchmarks also enforce a 256 MB pea
 memory ceiling. A performance regression over 20 percent requires investigation before
 release; correctness checks may never be skipped to recover speed.
 The Unix reference budgets remain 10 seconds for initialization and doctor and 2
-seconds for a 10,000-claim query. Windows/Git Bash budgets are 15 seconds for
+seconds for a 10,000-claim query. Windows budgets are 15 seconds for
 initialization and doctor and 3 seconds for that query, reflecting process and
 filesystem overhead rather than a different correctness standard.
 

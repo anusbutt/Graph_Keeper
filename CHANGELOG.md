@@ -7,6 +7,10 @@ versioning; while the package is below 1.0, minor releases may change public beh
 
 ### Added
 
+- Native Windows PowerShell support for init, check, query, doctor, update, and the
+  Node pre-commit hook without normal sh or jq prerequisites.
+- A native PowerShell CI acceptance lane covering the installed Windows command shim,
+  package journeys, and real valid/invalid Git commits.
 - GraphKeeper Memory Bench v0.1 definitions for repeated investigation, stale memory,
   provenance, and correction history.
 - Public contributor guidance, governance documentation, and clearer proof-oriented
@@ -14,6 +18,12 @@ versioning; while the package is below 1.0, minor releases may change public beh
 
 ### Changed
 
+- Query active-claim selection and stable ordering now run in TypeScript instead of
+  jq. Initialization requires only Node.js 18+ and Git; update launches npm's
+  JavaScript CLI directly through Node on Windows.
+- The generated Node validator and rule-free Node hook are the normal cross-platform
+  path. The shell validator remains a conservative compatibility fallback for
+  customized or unmigrated repositories.
 - Claims now represent one independently changeable fact. Agent guidance splits
   compound findings and records directly observed facts separately from interpretations.
 - Inference sources require a non-empty `basis`, and inference claims cannot use
@@ -24,6 +34,10 @@ versioning; while the package is below 1.0, minor releases may change public beh
 
 ### Migration
 
+- Existing repositories should rerun `graphkeeper init` after upgrading so an exact
+  package-owned validator and hook can migrate to Node. Customized `validate.sh` or
+  hook files are preserved for manual review and can still require a POSIX shell and
+  jq until migrated.
 - Before adopting the new validator, inspect existing committed inference claims.
   Claims without a basis or with `confidence: 1` are rejected by 0.3.0, and committed
   claims must not be edited in place; repositories containing those legacy shapes

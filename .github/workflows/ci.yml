@@ -88,6 +88,36 @@ jobs:
       - name: Package smoke
         run: npm run package:smoke
 
+  quality-windows-powershell:
+    name: quality-windows-powershell
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 18
+          cache: npm
+      - name: Install dependencies without legacy jq
+        run: npm ci
+      - name: Build and typecheck
+        run: npm run build; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }; npm run typecheck
+      - name: Test native PowerShell graphkeeper.cmd and Git pre-commit paths
+        run: |
+          Remove-Item Env:MSYSTEM -ErrorAction SilentlyContinue
+          node --test --test-concurrency=1 `
+            dist/tests/unit/update.test.js `
+            dist/tests/integration/update-command.test.js `
+            dist/tests/integration/init-prerequisites.test.js `
+            dist/tests/integration/query-command.test.js `
+            dist/tests/integration/standalone-validator.test.js `
+            dist/tests/e2e/pre-commit.test.js `
+            dist/tests/e2e/package-install.test.js
+      - name: Package smoke
+        run: npm run package:smoke
+
   performance:
     name: performance-${{ matrix.platform }}
     strategy:

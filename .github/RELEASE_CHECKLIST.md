@@ -17,23 +17,24 @@ time.
 ## 2. Reproduce the release candidate
 
 - [ ] Start from a clean clone of the exact candidate commit and confirm `git status --short` is empty.
-- [ ] Record `node --version`, `npm --version`, `git --version`, `jq --version`, and `sh --version`. Node must be 18 or newer and jq 1.6 or newer.
+- [ ] Record `node --version`, `npm --version`, and `git --version`. Node must be 18 or newer. Record jq/sh only when explicitly testing the legacy fallback.
 - [ ] Run `npm ci`.
 - [ ] Run `npm run typecheck`.
 - [ ] Run `npm run test:functional`.
 - [ ] Run `npm run test:security` and review every aggregate regression result.
 - [ ] Run `npm run test:performance` and compare the reported p95/RSS values with the fixed budgets and the 20-percent release regression gates.
 - [ ] Run `npm ls --all`; investigate missing, invalid, or unexpected dependencies.
-- [ ] Confirm the Linux, macOS, and Windows/Git Bash GitHub Actions jobs pass for the same commit. WSL is documented but native PowerShell is not a supported runtime.
+- [ ] Confirm the Linux, macOS, Windows/Git Bash, and native Windows PowerShell GitHub Actions jobs pass for the same commit.
 
 ## 3. Inspect the package
 
 - [ ] Run `npm run package:smoke` and review the complete included-file list.
 - [ ] Run `npm pack --json --pack-destination <clean-temp-directory>`.
-- [ ] Confirm the tarball contains `dist/src`, `scripts/validate.sh`, templates, examples, `README.md`, `LICENSE`, and `package.json`.
+- [ ] Confirm the tarball contains `dist/src`, `scripts/validate.mjs`, the legacy `scripts/validate.sh` fallback, templates, examples, `README.md`, `LICENSE`, and `package.json`.
 - [ ] Confirm it excludes source, tests, specifications, history, GitHub administration, `node_modules`, and contributor-only scripts.
 - [ ] Extract the tarball and run `node package/dist/src/cli.js --help` and `--version`.
-- [ ] Install that exact tarball into a clean directory with `npm install <tarball>` and run the `init`, `check`, `query`, and `doctor` smoke journey.
+- [ ] Install that exact tarball into clean Unix and native PowerShell directories; invoke the generated command shim and run init, check, query, doctor, update selection, and valid/invalid real-hook journeys without sh/jq on the native path.
+- [ ] Review `docs/windows-migration.md` against the candidate's actual init, validator, hook, and rollback behavior.
 - [ ] Record the tarball filename, SHA-1/SHA-512 integrity values from `npm pack --json`, byte sizes, command durations, and any approved exceptions in the signed GitHub release notes or attached release record.
 
 ## 4. Publish deliberately

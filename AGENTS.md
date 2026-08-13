@@ -12,8 +12,9 @@ transcript store.
 
 - `src/` contains the Node.js ESM CLI: `src/cli.ts` dispatches commands,
   `src/commands/` implements them, and `src/lib/` holds shared internals.
-- `scripts/validate.sh` is the canonical fast validator used by
-  `graphkeeper check` and the pre-commit hook. Do not duplicate it in TypeScript.
+- `src/lib/validation.ts` is the canonical fast-validation source. The generated
+  `scripts/validate.mjs` is used by `graphkeeper check` and the Node pre-commit hook;
+  `scripts/validate.sh` remains only as a legacy compatibility fallback.
 - `graphkeeper doctor` adds deep graph, containment, file, and line-range checks that
   intentionally stay out of the fast hook path.
 - `templates/graph/SCHEMA.md` is the data contract; `templates/SKILL.md` is
@@ -48,8 +49,8 @@ Expanding it requires an explicit architecture decision.
 ## Commands and platforms
 
 Prerequisites and supported platforms are documented in `README.md` and
-`CONTRIBUTING.md`. On Windows, use WSL or Git Bash; native PowerShell is not a
-supported GraphKeeper runtime.
+`CONTRIBUTING.md`. Linux, macOS, Git Bash/WSL, and native Windows PowerShell are
+supported with Node.js 18+, npm, and Git.
 
 ```sh
 npm ci
