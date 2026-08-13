@@ -1,6 +1,6 @@
 {
   "name": "graphkeeper",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Grounded, auditable memory for coding agents.",
   "homepage": "https://github.com/anusbutt/Graph_Keeper#readme",
   "bugs": {

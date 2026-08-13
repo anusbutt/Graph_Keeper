@@ -3,6 +3,36 @@
 All notable changes to GraphKeeper are documented here. GraphKeeper follows semantic
 versioning; while the package is below 1.0, minor releases may change public behavior.
 
+## [0.3.0] - 2026-08-13
+
+### Added
+
+- GraphKeeper Memory Bench v0.1 definitions for repeated investigation, stale memory,
+  provenance, and correction history.
+- Public contributor guidance, governance documentation, and clearer proof-oriented
+  product positioning.
+
+### Changed
+
+- Claims now represent one independently changeable fact. Agent guidance splits
+  compound findings and records directly observed facts separately from interpretations.
+- Inference sources require a non-empty `basis`, and inference claims cannot use
+  `confidence: 1`. The TypeScript parser and canonical shell validator enforce the
+  same boundary with the existing `GK120` diagnostic.
+- `confidence: 1` is documented for directly evidenced, non-inference claims only
+  when the evidence fully supports the exact claim.
+
+### Migration
+
+- Before adopting the new validator, inspect existing committed inference claims.
+  Claims without a basis or with `confidence: 1` are rejected by 0.3.0, and committed
+  claims must not be edited in place; repositories containing those legacy shapes
+  require an explicit migration decision.
+- After updating the npm installation, existing repositories should run
+  `graphkeeper init --force` to refresh generated skill and schema documentation.
+  Review and replace the repository-local `scripts/validate.sh` separately because
+  initialization intentionally preserves that enforcement file.
+
 ## [0.2.0] - 2026-08-12
 
 ### Added

@@ -179,6 +179,11 @@ prompt.
   It first resolves the stable published version, installs only when that version is
   newer, and does not install prereleases. If the registry is offline, no update is
   attempted; retry when npm registry access returns.
+- After updating an existing installation to 0.3.0, run `graphkeeper init --force`
+  to refresh the repository skill and schema. Initialization deliberately preserves
+  `scripts/validate.sh`; compare it with the validator shipped in the installed
+  package and replace it only after reviewing the diff. Commit the refreshed guidance
+  and validator together so every contributor uses the same claim contract.
 - A global npm permission error returns `GK004` without changing the repository.
   Configure npm through a Node version manager or a user-writable npm prefix, then
   retry. See npm's
@@ -208,7 +213,7 @@ See [`CONTRIBUTING.md`](CONTRIBUTING.md) for the development workflow, extension
 and boundaries, [prepared contribution issues](docs/contributor-issues.md),
 [`SUPPORT.md`](.github/SUPPORT.md) for usage help, and
 [`SECURITY.md`](.github/SECURITY.md) for private vulnerability reporting. Version
-`0.2.0` is pre-1.0 and its API may change. Release ownership and the target version
+`0.3.0` is pre-1.0 and its API may change. Release ownership and the target version
 must be verified immediately before publishing; completing the repository release
 gates does not publish anything.
 
