@@ -61,10 +61,7 @@ test('documented scaffold-to-enforced-hook walkthrough stays below two minutes',
     const staged = await fixture.git(['add', '--all']);
     assert.equal(staged.exitCode, 0, staged.stderr);
     const hook = join(fixture.root, '.git', 'hooks', 'pre-commit');
-    const shell = process.platform === 'win32'
-      ? 'C:\\Program Files\\Git\\bin\\sh.exe'
-      : '/bin/sh';
-    const enforced = await runProcess(shell, [hook.replaceAll('\\', '/')], {
+    const enforced = await runProcess(process.execPath, [hook], {
       cwd: fixture.root,
       env: supportedEnvironment(),
       timeoutMs: 15_000,

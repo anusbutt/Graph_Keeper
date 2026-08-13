@@ -93,14 +93,18 @@ test('a clean source snapshot completes onboarding gates and a query recipe with
     assert.equal(result.exitCode, 0, result.stderr || result.stdout);
     assert.match(result.stdout + result.stderr, expected);
   }
-  for (const script of ['scripts/validate.sh', 'templates/pre-commit']) {
-    const syntax = await runProcess(shellExecutable(), ['-n', script], {
-      cwd: fixture.root,
-      env: nestedEnvironment,
-      timeoutMs: 10_000,
-    });
-    assert.equal(syntax.exitCode, 0, syntax.stderr);
-  }
+  const shellSyntax = await runProcess(shellExecutable(), ['-n', 'scripts/validate.sh'], {
+    cwd: fixture.root,
+    env: nestedEnvironment,
+    timeoutMs: 10_000,
+  });
+  assert.equal(shellSyntax.exitCode, 0, shellSyntax.stderr);
+  const hookSyntax = await runProcess(process.execPath, ['--check', 'templates/pre-commit'], {
+    cwd: fixture.root,
+    env: nestedEnvironment,
+    timeoutMs: 10_000,
+  });
+  assert.equal(hookSyntax.exitCode, 0, hookSyntax.stderr);
 
   await cp(join(exampleRoot, 'graph'), join(fixture.root, 'graph'), { recursive: true });
   await cp(join(exampleRoot, 'evidence'), join(fixture.root, 'evidence'), { recursive: true });

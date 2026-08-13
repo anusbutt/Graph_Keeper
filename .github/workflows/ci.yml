@@ -44,7 +44,7 @@ jobs:
       - name: Test
         run: npm run test:functional
       - name: Shell syntax
-        run: sh -n scripts/validate.sh && sh -n templates/pre-commit
+        run: sh -n scripts/validate.sh && node --check templates/pre-commit
       - name: Check and doctor worked example
         run: |
           mkdir -p graph evidence
@@ -77,7 +77,7 @@ jobs:
       - name: Test in Git Bash
         run: npm run test:functional
       - name: Shell syntax
-        run: sh -n scripts/validate.sh && sh -n templates/pre-commit
+        run: sh -n scripts/validate.sh && node --check templates/pre-commit
       - name: Check and doctor worked example
         run: |
           mkdir -p graph evidence

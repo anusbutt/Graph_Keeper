@@ -88,12 +88,23 @@ interface ScaffoldTarget {
 }
 
 interface HookPlan {
-  readonly kind: 'install' | 'skip' | 'collision';
+  readonly kind: 'install' | 'refresh' | 'skip' | 'collision';
   readonly destination: string;
   readonly content: string;
+  readonly expected: string | null;
   readonly fallback: string;
-  readonly fallbackKind: 'create' | 'skip' | 'blocked';
+  readonly fallbackKind: 'create' | 'refresh' | 'skip' | 'blocked';
+  readonly fallbackExpected: string | null;
 }
+
+const LEGACY_PRE_COMMIT_HOOK = [
+  '#!/bin/sh',
+  '# GraphKeeper managed hook',
+  'set -eu',
+  'root=$(git rev-parse --show-toplevel)',
+  'exec sh \u0022\u0024root/scripts/validate.sh\u0022 --staged',
+  '',
+].join('\n');
 
 export interface PreparedInitialization {
   readonly root: string;
@@ -390,8 +401,10 @@ async function prepareHookPlan(root: string): Promise<HookPlan> {
       kind: 'install',
       destination,
       content,
+      expected: null,
       fallback,
       fallbackKind: 'skip',
+      fallbackExpected: null,
     };
   }
   if (existing === content && existing.includes('GraphKeeper managed hook')) {
@@ -399,18 +412,37 @@ async function prepareHookPlan(root: string): Promise<HookPlan> {
       kind: 'skip',
       destination,
       content,
+      expected: existing,
       fallback,
       fallbackKind: 'skip',
+      fallbackExpected: null,
+    };
+  }
+  if (existing === LEGACY_PRE_COMMIT_HOOK) {
+    return {
+      kind: 'refresh',
+      destination,
+      content,
+      expected: existing,
+      fallback,
+      fallbackKind: 'skip',
+      fallbackExpected: null,
     };
   }
 
   let fallbackKind: HookPlan['fallbackKind'] = 'create';
+  let fallbackExpected: string | null = null;
   try {
     const information = await lstat(fallback);
     if (!information.isFile()) {
       fallbackKind = 'blocked';
     } else {
-      fallbackKind = await readFile(fallback, 'utf8') === content ? 'skip' : 'blocked';
+      fallbackExpected = await readFile(fallback, 'utf8');
+      fallbackKind = fallbackExpected === content
+        ? 'skip'
+        : fallbackExpected === LEGACY_PRE_COMMIT_HOOK
+          ? 'refresh'
+          : 'blocked';
     }
   } catch (error: unknown) {
     if (!(error instanceof Error && 'code' in error && error.code === 'ENOENT')) {
@@ -421,8 +453,10 @@ async function prepareHookPlan(root: string): Promise<HookPlan> {
     kind: 'collision',
     destination,
     content,
+    expected: existing,
     fallback,
     fallbackKind,
+    fallbackExpected,
   };
 }
 
@@ -530,6 +564,22 @@ async function applyHookPlan(
       reason: 'installed at ' + hookPlan.destination,
     }];
   }
+  if (hookPlan.kind === 'refresh') {
+    if (hookPlan.expected === null) throw operational('legacy hook migration has no expected content');
+    await atomicRefresh(
+      hookPlan.destination,
+      'pre-commit-hook',
+      hookPlan.content,
+      0o755,
+      hooks,
+      hookPlan.expected,
+    );
+    return [{
+      kind: 'refresh',
+      target: 'pre-commit-hook',
+      reason: 'migrated package-owned legacy hook at ' + hookPlan.destination,
+    }];
+  }
 
   const actions: ScaffoldAction[] = [];
   if (hookPlan.fallbackKind === 'create') {
@@ -554,6 +604,23 @@ async function applyHookPlan(
       target: '.githooks/pre-commit',
       reason: 'inspectable GraphKeeper chaining hook already exists',
     });
+  } else if (hookPlan.fallbackKind === 'refresh') {
+    if (hookPlan.fallbackExpected === null) {
+      throw operational('legacy fallback hook migration has no expected content');
+    }
+    await atomicRefresh(
+      hookPlan.fallback,
+      '.githooks/pre-commit',
+      hookPlan.content,
+      0o755,
+      hooks,
+      hookPlan.fallbackExpected,
+    );
+    actions.push({
+      kind: 'refresh',
+      target: '.githooks/pre-commit',
+      reason: 'migrated package-owned legacy chaining hook',
+    });
   }
 
   const fallbackStatus = hookPlan.fallbackKind === 'blocked'
@@ -564,7 +631,7 @@ async function applyHookPlan(
     target: 'pre-commit-hook',
     reason: 'Existing hook at ' + hookPlan.destination
       + ' was not overwritten. To chain GraphKeeper, add this line to that hook: '
-      + 'sh "$(git rev-parse --show-toplevel)/.githooks/pre-commit".'
+      + 'node \u0022\u0024(git rev-parse --show-toplevel)/.githooks/pre-commit\u0022.'
       + fallbackStatus,
   });
   return actions;
@@ -586,6 +653,13 @@ function plannedHookActions(hookPlan: HookPlan | null): ScaffoldAction[] {
       reason: 'GraphKeeper hook will be installed at ' + hookPlan.destination,
     }];
   }
+  if (hookPlan.kind === 'refresh') {
+    return [{
+      kind: 'refresh',
+      target: 'pre-commit-hook',
+      reason: 'package-owned legacy GraphKeeper hook will be migrated',
+    }];
+  }
 
   const actions: ScaffoldAction[] = [];
   if (hookPlan.fallbackKind === 'create') {
@@ -599,6 +673,12 @@ function plannedHookActions(hookPlan: HookPlan | null): ScaffoldAction[] {
       kind: 'skip',
       target: '.githooks/pre-commit',
       reason: 'inspectable GraphKeeper chaining hook already exists',
+    });
+  } else if (hookPlan.fallbackKind === 'refresh') {
+    actions.push({
+      kind: 'refresh',
+      target: '.githooks/pre-commit',
+      reason: 'package-owned legacy chaining hook will be migrated',
     });
   }
   actions.push({
