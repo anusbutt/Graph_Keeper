@@ -3,7 +3,7 @@
 All notable changes to GraphKeeper are documented here. GraphKeeper follows semantic
 versioning; while the package is below 1.0, minor releases may change public behavior.
 
-## [0.3.0] - 2026-08-13
+## [0.4.0] - 2026-08-14
 
 ### Added
 
@@ -11,10 +11,6 @@ versioning; while the package is below 1.0, minor releases may change public beh
   Node pre-commit hook without normal sh or jq prerequisites.
 - A native PowerShell CI acceptance lane covering the installed Windows command shim,
   package journeys, and real valid/invalid Git commits.
-- GraphKeeper Memory Bench v0.1 definitions for repeated investigation, stale memory,
-  provenance, and correction history.
-- Public contributor guidance, governance documentation, and clearer proof-oriented
-  product positioning.
 
 ### Changed
 
@@ -24,6 +20,25 @@ versioning; while the package is below 1.0, minor releases may change public beh
 - The generated Node validator and rule-free Node hook are the normal cross-platform
   path. The shell validator remains a conservative compatibility fallback for
   customized or unmigrated repositories.
+
+### Migration
+
+- Existing repositories should rerun `graphkeeper init --force` after upgrading so
+  package-owned guidance, validators, and hooks can refresh or migrate to Node.
+  Customized `validate.sh` or hook files are preserved for manual review and can
+  still require a POSIX shell and jq until migrated.
+
+## [0.3.0] - 2026-08-13
+
+### Added
+
+- GraphKeeper Memory Bench v0.1 definitions for repeated investigation, stale memory,
+  provenance, and correction history.
+- Public contributor guidance, governance documentation, and clearer proof-oriented
+  product positioning.
+
+### Changed
+
 - Claims now represent one independently changeable fact. Agent guidance splits
   compound findings and records directly observed facts separately from interpretations.
 - Inference sources require a non-empty `basis`, and inference claims cannot use
@@ -34,10 +49,6 @@ versioning; while the package is below 1.0, minor releases may change public beh
 
 ### Migration
 
-- Existing repositories should rerun `graphkeeper init` after upgrading so an exact
-  package-owned validator and hook can migrate to Node. Customized `validate.sh` or
-  hook files are preserved for manual review and can still require a POSIX shell and
-  jq until migrated.
 - Before adopting the new validator, inspect existing committed inference claims.
   Claims without a basis or with `confidence: 1` are rejected by 0.3.0, and committed
   claims must not be edited in place; repositories containing those legacy shapes
