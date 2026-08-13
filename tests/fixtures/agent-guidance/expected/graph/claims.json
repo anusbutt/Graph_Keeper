@@ -17,7 +17,7 @@
   },
   {
     "id": "claim_1a2b3c4d",
-    "subject": "service_api_timeout",
+    "subject": "test_payments_flaky",
     "predicate": "likely_cause",
     "object": "dependency_latency",
     "source": {
@@ -26,5 +26,37 @@
     },
     "produced_by": "run_2026-07-21-guidance_a1",
     "created": "2026-07-21T09:15:52Z"
+  },
+  {
+    "id": "claim_2b3c4d5e",
+    "subject": "test_payments_flaky",
+    "predicate": "has_timeout_duration",
+    "object": "5000_ms",
+    "confidence": 1,
+    "source": {
+      "kind": "tool_output",
+      "command": "npm test -- payments",
+      "exit_code": 1,
+      "ref": "evidence/agent-guidance.log#L1-L1",
+      "captured": "2026-07-21T09:14:22Z"
+    },
+    "produced_by": "run_2026-07-21-guidance_a1",
+    "created": "2026-07-21T09:15:32Z"
+  },
+  {
+    "id": "claim_3c4d5e6f",
+    "subject": "test_payments_flaky",
+    "predicate": "has_attempt_count",
+    "object": "3",
+    "confidence": 1,
+    "source": {
+      "kind": "tool_output",
+      "command": "npm test -- payments",
+      "exit_code": 1,
+      "ref": "evidence/agent-guidance.log#L2-L2",
+      "captured": "2026-07-21T09:14:22Z"
+    },
+    "produced_by": "run_2026-07-21-guidance_a1",
+    "created": "2026-07-21T09:15:42Z"
   }
 ]

@@ -75,6 +75,11 @@ test('rejects invalid claim IDs, timestamps, confidence, and unknown fields', ()
     { ...validClaim, created: '2026-07-21' },
     { ...validClaim, created: '2026-02-30T09:14:22Z' },
     { ...validClaim, confidence: 1.01 },
+    {
+      ...validClaim,
+      confidence: 1,
+      source: { kind: 'inference', basis: 'Repeated failures imply flakiness.' },
+    },
     { ...validClaim, extra: true },
   ];
 
@@ -88,6 +93,7 @@ test('enforces exact source variants and canonical evidence refs', () => {
     { kind: 'tool_output', command: 'npm test', exit_code: 0, captured },
     { kind: 'tool_output', command: 'npm test', exit_code: 256, ref: 'evidence/a#L1-L2', captured },
     { kind: 'tool_output', command: 'npm test', exit_code: 0, ref: '../a#L1-L2', captured },
+    { kind: 'inference' },
     { kind: 'inference', basis: '' },
     { kind: 'inference', ref: 'evidence/a#L1-L2' },
     { kind: 'unknown' },

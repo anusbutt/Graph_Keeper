@@ -31,6 +31,16 @@ test('teaches honest tool-output and inference sourcing', async () => {
   assert.match(skill, /never.*invent.*evidence/is);
 });
 
+test('teaches atomic claims, exact grounding, and bounded certainty', async () => {
+  const skill = await readFile(skillUrl, 'utf8');
+  assert.match(skill, /one independently changeable fact per claim/is);
+  assert.match(skill, /split.*separate claims/is);
+  assert.match(skill, /evidence lines directly support.*complete claim/is);
+  assert.match(skill, /observation.*tool_output.*conclusion.*inference.*basis/is);
+  assert.match(skill, /confidence 1.*directly evidenced.*non-inference.*exact claim/is);
+  assert.match(skill, /lower confidence.*does not.*unsupported conclusion.*tool output/is);
+});
+
 test('teaches exact alias reuse, safe new identity, and append-only correction', async () => {
   const skill = await readFile(skillUrl, 'utf8');
   assert.match(skill, /canonical ID.*exact alias/is);

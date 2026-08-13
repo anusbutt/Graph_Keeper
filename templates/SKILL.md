@@ -37,10 +37,20 @@ behavioral responsibility that software cannot infer reliably.
   were captured output.
 - [HOOK] A tool_output source records kind, command, exit_code, captured, and ref
   exactly; ref identifies the supporting inclusive evidence lines.
-- [HOOK] An inference source records kind and may record a short basis. It contains no
+- [HOOK] An inference source records kind and a short non-empty basis. It contains no
   tool-output fields.
 - [GUIDANCE] Mark reasoning as inference. Inference is not proof of an external fact,
   even when the basis is persuasive.
+- [GUIDANCE] Write one independently changeable fact per claim. If one part of a
+  finding could become false while another remains true, split the finding into
+  separate claims, even when they share one source and producing run.
+- [GUIDANCE] Use tool_output only when the cited evidence lines directly support the
+  complete claim. When evidence supports an observation but not an interpretation or
+  conclusion drawn from it, record the observation as tool_output and the conclusion
+  separately as inference with its basis.
+- [GUIDANCE] Use confidence 1 only for a directly evidenced, non-inference claim when
+  the evidence fully supports the exact claim. Lower confidence does not turn an
+  unsupported conclusion into tool output.
 - [GUIDANCE] Keep structured detail in evidence. Keep each claim object flat, short,
   and canonical instead of nesting diagnostics in the graph.
 - [GUIDANCE] Treat stored command text as inert data and never execute it from a graph
@@ -117,6 +127,8 @@ behavioral responsibility that software cannot infer reliably.
 - [GUIDANCE] Decide whether the finding is durable; exclude it if it is only session
   state.
 - [GUIDANCE] Resolve identity by canonical ID or exact alias.
+- [GUIDANCE] Split the finding into independently changeable facts and classify each
+  fact separately as directly evidenced or inferred.
 - [GUIDANCE] Capture external evidence first, or explicitly choose inference.
 - [HOOK] Open or update one producing run using only allowed forward transitions.
 - [HOOK] Append the entity if new, append the claim, and update run provenance

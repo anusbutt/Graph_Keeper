@@ -85,6 +85,20 @@ test('canonical validator and TypeScript parsers reject the same record-shape bo
       ref: 'evidence/triage.log#L1-L2',
     },
   };
+  const inferenceWithoutBasis = {
+    ...validClaim,
+    source: {
+      kind: 'inference',
+    },
+  };
+  const certainInference = {
+    ...validClaim,
+    confidence: 1,
+    source: {
+      kind: 'inference',
+      basis: 'Reasoning only.',
+    },
+  };
   const runWithoutVerdict = {
     id: validRun.id,
     started: validRun.started,
@@ -110,6 +124,22 @@ test('canonical validator and TypeScript parsers reject the same record-shape bo
       claims: [mixedInferenceClaim],
       runs: [validRun],
       parse: () => parseClaims([mixedInferenceClaim]),
+    },
+    {
+      name: 'inference without a basis',
+      code: 'GK120',
+      entities: [validEntity],
+      claims: [inferenceWithoutBasis],
+      runs: [validRun],
+      parse: () => parseClaims([inferenceWithoutBasis]),
+    },
+    {
+      name: 'inference with confidence 1',
+      code: 'GK120',
+      entities: [validEntity],
+      claims: [certainInference],
+      runs: [validRun],
+      parse: () => parseClaims([certainInference]),
     },
     {
       name: 'run ending without a verdict',

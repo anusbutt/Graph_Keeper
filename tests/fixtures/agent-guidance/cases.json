@@ -32,6 +32,19 @@
     "evidence_path": "evidence/agent-guidance.log"
   },
   {
+    "id": "compound_finding",
+    "input": "The payments test timed out after 5000ms and made three attempts.",
+    "expected_action": "split_atomic_claims",
+    "claim_ids": ["claim_2b3c4d5e", "claim_3c4d5e6f"]
+  },
+  {
+    "id": "fact_vs_inference",
+    "input": "The captured three attempts suggest dependency latency.",
+    "expected_action": "separate_observation_and_inference",
+    "observed_claim_id": "claim_3c4d5e6f",
+    "inference_claim_id": "claim_1a2b3c4d"
+  },
+  {
     "id": "session_chatter",
     "input": "rewrite the entire client",
     "expected_action": "exclude_to_progress_notes"

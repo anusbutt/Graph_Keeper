@@ -15,7 +15,7 @@ export interface ToolOutputSource {
 
 export interface InferenceSource {
   readonly kind: 'inference';
-  readonly basis?: string;
+  readonly basis: string;
 }
 
 export type ClaimSource = ToolOutputSource | InferenceSource;
@@ -116,7 +116,7 @@ function isUniqueStringArray(value: unknown, item?: (value: string) => boolean):
     && new Set(value).size === value.length;
 }
 
-function validateSource(value: unknown): void {
+function validateSource(value: unknown): asserts value is ClaimSource {
   if (!isObject(value)) throw new Error('source must be an object');
   if (value.kind === 'tool_output') {
     assertExactKeys(value, ['kind', 'command', 'exit_code', 'ref', 'captured'], [], 'tool_output source');
@@ -129,8 +129,8 @@ function validateSource(value: unknown): void {
     return;
   }
   if (value.kind === 'inference') {
-    assertExactKeys(value, ['kind'], ['basis'], 'inference source');
-    if (hasOwn(value, 'basis') && !isNonEmptyString(value.basis)) throw new Error('inference basis must be non-empty');
+    assertExactKeys(value, ['kind', 'basis'], [], 'inference source');
+    if (!isNonEmptyString(value.basis)) throw new Error('inference basis must be non-empty');
     return;
   }
   throw new Error('source kind must be tool_output or inference');
@@ -148,11 +148,15 @@ function validateClaim(value: unknown): void {
   if (!isNonEmptyString(value.subject)) throw new Error('claim subject must be non-empty');
   if (typeof value.predicate !== 'string' || !SLUG.test(value.predicate)) throw new Error('claim predicate must be snake_case');
   if (!isNonEmptyString(value.object)) throw new Error('claim object must be non-empty');
-  validateSource(value.source);
+  const source = value.source;
+  validateSource(source);
   if (typeof value.produced_by !== 'string' || !RUN_ID.test(value.produced_by)) throw new Error('invalid producing run ID');
   if (!isUtcTimestamp(value.created)) throw new Error('claim created must be an ISO 8601 UTC timestamp');
   if (hasOwn(value, 'confidence') && (typeof value.confidence !== 'number' || value.confidence < 0 || value.confidence > 1)) {
     throw new Error('claim confidence must be from 0 through 1');
+  }
+  if (value.confidence === 1 && source.kind === 'inference') {
+    throw new Error('claim confidence 1 requires a non-inference source');
   }
   if (hasOwn(value, 'supersedes') && (typeof value.supersedes !== 'string' || !CLAIM_ID.test(value.supersedes))) {
     throw new Error('invalid superseded claim ID');
