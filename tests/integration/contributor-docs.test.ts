@@ -36,12 +36,12 @@ test('agent instructions have one shared source and a Claude-specific entry poin
 test('contribution guide states every prerequisite and supported platform boundary', async () => {
   const guide = await read('CONTRIBUTING.md');
   assert.match(guide, /Node(?:\.js)?\s*(?:>=|18).*18/is);
-  for (const prerequisite of ['npm', 'Git', 'jq 1.6', 'POSIX']) {
+  for (const prerequisite of ['npm', 'Git']) {
     assert.match(guide, new RegExp(prerequisite, 'i'));
   }
   assert.match(guide, /Linux.*macOS/is);
-  assert.match(guide, /Windows.*WSL.*Git Bash/is);
-  assert.match(guide, /native\s+PowerShell.*not supported/is);
+  assert.match(guide, /Windows.*native PowerShell/is);
+  assert.match(guide, /legacy.*validate\.sh.*POSIX.*jq/is);
 });
 
 test('contribution guide defines v1 scope and concrete extension points', async () => {
@@ -68,7 +68,7 @@ test('contribution guide defines v1 scope and concrete extension points', async 
   ]) {
     assert.match(guide, new RegExp(path.replaceAll('/', '\\/')));
   }
-  assert.match(guide, /canonical validator.*scripts\/validate\.sh/is);
+  assert.match(guide, /src\/lib\/validation\.ts.*canonical.*scripts\/validate\.mjs/is);
   assert.match(guide, /validation\s+rule.*accepting\s+test.*rejecting\s+test/is);
 });
 
@@ -78,11 +78,10 @@ test('contribution guide explains the complete runtime flow and ownership bounda
     assert.match(guide, new RegExp('^' + command + '\\s+[-=]>', 'm'));
   }
   assert.match(guide, /init.*prerequisite.*plan.*templates.*Git hook.*agent adapter/is);
-  assert.match(guide, /query.*check.*entity resolution.*jq/is);
+  assert.match(guide, /query.*check.*entity resolution.*TypeScript/is);
   assert.match(guide, /doctor.*check.*graph-reference.*physical evidence/is);
   assert.match(guide, /update.*npm registry.*global install.*no repository changes/is);
-  assert.match(guide, /shell validator.*commit-time authority/is);
-  assert.match(guide, /TypeScript record parsers\s+are.*read-only consumers.*do not\s+replace/is);
+  assert.match(guide, /TypeScript.*validator.*commit-time authority/is);
   assert.match(guide, /graphkeeper doctor.*adds physical evidence.*do not run.*fast hook/is);
 });
 
@@ -95,9 +94,8 @@ test('contribution guide fixes the supported platform and agent-adapter contract
   assert.match(guide, /--integrate codex.*AGENTS\.md/is);
   assert.match(guide, /--integrate claude.*CLAUDE\.md/is);
   assert.match(guide, /not a public plugin framework/is);
-  assert.match(guide, /Linux.*macOS.*directly/is);
-  assert.match(guide, /Windows.*WSL.*Git Bash/is);
-  assert.match(guide, /native PowerShell.*outside.*v1 runtime boundary/is);
+  assert.match(guide, /Linux.*macOS.*native PowerShell/is);
+  assert.match(guide, /Windows.*native PowerShell/is);
 });
 
 test('contribution guide specifies test-first workflow and complete quality gates', async () => {
@@ -196,6 +194,8 @@ test('CI and repository settings cover all supported platforms and governance', 
     assert.match(ci, new RegExp(platform));
   }
   assert.match(ci, /windows-git-bash/is);
+  assert.match(ci, /quality-windows-powershell/is);
+  assert.match(ci, /shell:\s*pwsh/is);
   assert.match(ci, /shell:\s*bash/);
   for (const command of [
     'npm run build',
@@ -210,6 +210,10 @@ test('CI and repository settings cover all supported platforms and governance', 
   const performanceJob = ci.slice(ci.indexOf('  performance:'));
   assert.doesNotMatch(performanceJob, /Install jq|install jq/i);
   assert.match(ci, /Install jq for legacy validator/);
+  const nativeJob = ci.slice(ci.indexOf('  quality-windows-powershell:'), ci.indexOf('  performance:'));
+  assert.doesNotMatch(nativeJob, /Install jq|choco install jq|MSYSTEM.*MINGW/i);
+  assert.match(nativeJob, /graphkeeper\.cmd/is);
+  assert.match(nativeJob, /pre-commit|git commit/is);
 
   const settings = await read('.github/repository-settings.md');
   assert.match(settings, /Description/);
@@ -219,7 +223,7 @@ test('CI and repository settings cover all supported platforms and governance', 
   assert.match(settings, /Welcome to GraphKeeper Discussions/);
   assert.match(settings, /Default branch.*main/is);
   assert.match(settings, /Branch protection.*required status checks/is);
-  assert.match(settings, /quality-ubuntu.*quality-macos.*quality-windows/is);
+  assert.match(settings, /quality-ubuntu.*quality-macos.*quality-windows-git-bash.*quality-windows-powershell/is);
   assert.match(settings, /performance-ubuntu.*performance-windows-git-bash/is);
   assert.match(settings, /approvals are `0`.*one maintainer/is);
   assert.match(settings, /manual merge/is);

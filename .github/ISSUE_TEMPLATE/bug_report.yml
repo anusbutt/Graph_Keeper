@@ -24,6 +24,7 @@ body:
       options:
         - Linux
         - macOS
+        - Windows through native PowerShell
         - Windows through Git Bash
         - Windows through WSL
         - Unsupported environment
@@ -33,7 +34,7 @@ body:
     id: environment
     attributes:
       label: Environment and prerequisite versions
-      description: Include Node, npm, Git, jq, and POSIX shell versions.
+      description: Include Node, npm, and Git versions. Include jq/POSIX shell versions only for a legacy-validator report.
     validations:
       required: true
   - type: textarea

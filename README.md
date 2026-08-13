@@ -36,10 +36,10 @@ shipped Codex and Claude Code skills give agents the same explicit writing contr
 
 - Node.js 18 or newer and npm
 - Git
-- a POSIX `sh`
-- jq 1.6 or newer ([install jq](https://jqlang.github.io/jq/download/))
 
-Linux and macOS are supported directly. On Windows, run GraphKeeper in WSL or Git Bash, with `jq` available on `PATH`. Native PowerShell is not supported in v1.
+Linux, macOS, Windows through Git Bash or WSL, and native Windows PowerShell are
+supported. Native PowerShell does not require a POSIX shell or jq for current
+GraphKeeper repositories.
 
 ## Installation
 
@@ -57,7 +57,7 @@ graphkeeper --help
 ```
 
 The package is published as [`graphkeeper`](https://www.npmjs.com/package/graphkeeper).
-GraphKeeper has no runtime npm dependencies; Git, a POSIX `sh`, and jq remain required
+GraphKeeper has no runtime npm dependencies. Node.js, npm, and Git are the normal
 system prerequisites.
 
 ## Two-minute quickstart
@@ -175,15 +175,19 @@ prompt.
   preserved with manual-cleanup instructions.
 - Restart Claude Code once if the current session began before the repository's
   top-level `.claude/skills/` directory was created.
-- Run `graphkeeper update` from WSL or Git Bash to update a global npm installation.
-  It first resolves the stable published version, installs only when that version is
+- Run `graphkeeper update` from any supported shell, including native PowerShell, to
+  update a global npm installation. It resolves the stable published version, installs only when that version is
   newer, and does not install prereleases. If the registry is offline, no update is
   attempted; retry when npm registry access returns.
-- After updating an existing installation to 0.3.0, run `graphkeeper init --force`
-  to refresh the repository skill and schema. Initialization deliberately preserves
-  `scripts/validate.sh`; compare it with the validator shipped in the installed
-  package and replace it only after reviewing the diff. Commit the refreshed guidance
-  and validator together so every contributor uses the same claim contract.
+- After updating an existing installation to 0.3.0, rerun `graphkeeper init --force`
+  to refresh the repository skill and schema. This preserves `scripts/validate.sh`.
+  Exact package-owned validators and hooks migrate to the Node path automatically.
+  If a repository has a customized shell-only
+  validator, review and migrate it manually; that legacy fallback can still require
+  a POSIX `sh` and jq until migration is complete. Commit refreshed guidance and
+  validators together so every contributor uses the same contract.
+  See the [native Windows migration guide](docs/windows-migration.md) for package-owned
+  and customized repository paths.
 - A global npm permission error returns `GK004` without changing the repository.
   Configure npm through a Node version manager or a user-writable npm prefix, then
   retry. See npm's

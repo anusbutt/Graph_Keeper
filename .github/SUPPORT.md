@@ -2,8 +2,8 @@
 
 Start with the [README](../README.md) for installation and normal usage, then check
 the [contributor guide](../CONTRIBUTING.md) when working from source. Include the exact
-GraphKeeper, Node.js, npm, Git, jq, shell, and operating-system versions when asking
-for help.
+GraphKeeper, Node.js, npm, Git, shell, and operating-system versions when asking for
+help. Include jq only when an unmigrated legacy validator uses it.
 
 - Use [Q&A](https://github.com/anusbutt/Graph_Keeper/discussions/categories/q-a)
   for installation, usage, recovery, and integration questions.
@@ -24,5 +24,5 @@ link the resulting pull request.
 
 Before opening an issue, remove secrets and unnecessary personal data from graph
 records, evidence, command output, and diagnostics. This open-source project does not
-provide a private help desk, guaranteed response time, or support for native
-PowerShell and other environments outside the documented platform boundary.
+provide a private help desk or guaranteed response time. Native Windows PowerShell is
+supported within the platform boundary documented in the README.

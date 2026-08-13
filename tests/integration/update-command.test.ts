@@ -17,6 +17,9 @@ interface Invocation {
   readonly timeoutMs: number;
 }
 
+const windowsNpmCli = 'C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js';
+const windowsNode = 'C:\\Program Files\\nodejs\\node.exe';
+
 function result(overrides: Partial<ProcessResult> = {}): ProcessResult {
   return { exitCode: 0, stdout: '', stderr: '', ...overrides };
 }
@@ -31,6 +34,8 @@ function fakeEnvironment(
   return {
     platform,
     env,
+    nodePath: platform === 'win32' ? windowsNode : '/usr/bin/node',
+    ...(platform === 'win32' ? { npmCliPath: windowsNpmCli } : {}),
     run: async (command, args, timeoutMs) => {
       invocations.push({ command, args: [...args], timeoutMs });
       const response = responses[index];
@@ -86,16 +91,23 @@ test('current and ahead versions succeed without an install process', async () =
   }
 });
 
-test('native PowerShell and missing npm are prerequisite failures before install', async () => {
+test('native PowerShell invokes the npm CLI through Node without shell lookup', async () => {
   const nativeCalls: Invocation[] = [];
-  await assert.rejects(
-    updateGraphKeeper({
-      currentVersion: '0.1.1',
-      environment: fakeEnvironment([], nativeCalls, 'win32', {}),
-    }),
-    (error: unknown) => error instanceof GraphKeeperError && error.code === 'GK003',
-  );
-  assert.deepEqual(nativeCalls, []);
+  const report = await updateGraphKeeper({
+    currentVersion: '0.1.1',
+    environment: fakeEnvironment([
+      result({ stdout: '0.1.2\n' }),
+      result({ stdout: 'changed 1 package\n' }),
+    ], nativeCalls, 'win32', {}),
+  });
+  assert.equal(report.status, 'updated');
+  assert.deepEqual(nativeCalls.map(({ command, args }) => [command, args]), [
+    [windowsNode, [windowsNpmCli, 'view', 'graphkeeper@latest', 'version', '--json']],
+    [windowsNode, [windowsNpmCli, 'install', '--global', 'graphkeeper@0.1.2']],
+  ]);
+});
+
+test('missing npm remains a prerequisite failure before install', async () => {
 
   const missingCalls: Invocation[] = [];
   await assert.rejects(
@@ -108,6 +120,17 @@ test('native PowerShell and missing npm are prerequisite failures before install
     (error: unknown) => error instanceof GraphKeeperError && error.code === 'GK003',
   );
   assert.equal(missingCalls.length, 1);
+
+  const nativeCalls: Invocation[] = [];
+  const native = fakeEnvironment([], nativeCalls, 'win32', {});
+  await assert.rejects(
+    updateGraphKeeper({
+      currentVersion: '0.1.1',
+      environment: { ...native, npmCliExists: async () => false },
+    }),
+    (error: unknown) => error instanceof GraphKeeperError && error.code === 'GK003',
+  );
+  assert.deepEqual(nativeCalls, []);
 });
 
 test('registry, malformed output, timeout, and install failures are operational', async () => {

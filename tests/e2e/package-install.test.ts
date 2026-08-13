@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { access, copyFile, cp, mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
-import { delimiter, dirname, join } from 'node:path';
+import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import test from 'node:test';
 
@@ -21,18 +21,27 @@ function npmInvocation(args: readonly string[]): {
   };
 }
 
-function supportedEnvironment(): NodeJS.ProcessEnv {
-  const environment: NodeJS.ProcessEnv = {
-    ...process.env,
-    ...(process.platform === 'win32' ? { MSYSTEM: 'MINGW64' } : {}),
-  };
+function normalizedPathEntry(entry: string): string {
+  return entry.trim().replace(/^\u0022|\u0022$/g, '').replace(/[\\/]+$/, '').toLowerCase();
+}
+
+async function nativeEnvironment(): Promise<NodeJS.ProcessEnv> {
+  const environment = { ...process.env };
+  delete environment.MSYSTEM;
   if (process.platform === 'win32') {
-    const pathKey = Object.keys(environment).find((key) => key.toLowerCase() === 'path') ?? 'PATH';
-    environment[pathKey] = [
-      'C:\\Program Files\\Git\\bin',
-      'C:\\tmp\\graphkeeper-tools',
-      environment[pathKey] ?? '',
-    ].join(delimiter);
+    const excludedDirectories = new Set<string>();
+    for (const command of ['sh', 'jq']) {
+      const located = await runProcess('where.exe', [command], { env: environment });
+      if (located.exitCode !== 0) continue;
+      for (const executable of located.stdout.split(/\r?\n/).filter(Boolean)) {
+        excludedDirectories.add(normalizedPathEntry(dirname(executable)));
+      }
+    }
+    const pathKey = Object.keys(environment).find((key) => key.toLowerCase() === 'path') ?? 'Path';
+    environment[pathKey] = (environment[pathKey] ?? '')
+      .split(';')
+      .filter((entry) => !excludedDirectories.has(normalizedPathEntry(entry)))
+      .join(';');
   }
   return environment;
 }
@@ -90,11 +99,23 @@ test('a tarball installs in a clean directory and runs init, check, query, and d
     ? 'graphkeeper.cmd'
     : 'graphkeeper'));
 
-  const runCli = (args: readonly string[], timeoutMs = 30_000) => runProcess(
-    process.execPath,
-    [cli, ...args],
-    { cwd: repository.root, env: supportedEnvironment(), timeoutMs },
-  );
+  const shim = join(installationRoot, 'node_modules', '.bin', process.platform === 'win32'
+    ? 'graphkeeper.cmd'
+    : 'graphkeeper');
+  const commandEnvironment = await nativeEnvironment();
+  if (process.platform === 'win32') {
+    assert.equal((await runProcess('sh', ['--version'], { env: commandEnvironment })).problem, 'missing');
+    assert.equal((await runProcess('jq', ['--version'], { env: commandEnvironment })).problem, 'missing');
+  }
+  const runCli = (args: readonly string[], timeoutMs = 30_000) => process.platform === 'win32'
+    ? runProcess(process.env.ComSpec ?? 'cmd.exe', [
+      '/d',
+      '/c',
+      'call',
+      shim,
+      ...args,
+    ], { cwd: repository.root, env: commandEnvironment, timeoutMs })
+    : runProcess(shim, args, { cwd: repository.root, env: commandEnvironment, timeoutMs });
   const help = await runCli(['--help']);
   assert.equal(help.exitCode, 0, help.stderr);
   assert.match(help.stdout, /graphkeeper update/);

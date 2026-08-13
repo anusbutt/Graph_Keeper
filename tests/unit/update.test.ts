@@ -4,7 +4,25 @@ import test from 'node:test';
 import {
   compareStableVersions,
   parseStableVersion,
+  resolveNpmInvocation,
 } from '../../src/commands/update.js';
+
+test('resolves npm without a Windows command shim or shell', () => {
+  assert.deepEqual(resolveNpmInvocation('linux', {}, '/usr/bin/node'), {
+    command: 'npm',
+    argsPrefix: [],
+  });
+  assert.deepEqual(resolveNpmInvocation('win32', {
+    npm_execpath: 'C:\\npm\\npm-cli.js',
+  }, 'C:\\Node\\node.exe'), {
+    command: 'C:\\Node\\node.exe',
+    argsPrefix: ['C:\\npm\\npm-cli.js'],
+  });
+  assert.deepEqual(resolveNpmInvocation('win32', {}, 'C:\\Node\\node.exe'), {
+    command: 'C:\\Node\\node.exe',
+    argsPrefix: ['C:\\Node\\node_modules\\npm\\bin\\npm-cli.js'],
+  });
+});
 
 test('parses stable semantic versions into numeric components', () => {
   assert.deepEqual(parseStableVersion('0.1.1'), [0, 1, 1]);
