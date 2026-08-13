@@ -6,6 +6,9 @@ import {
   parseClaims,
   parseEntities,
   parseRuns,
+  validateClaimRecords,
+  validateEntityRecords,
+  validateRunRecords,
 } from '../../src/lib/records.js';
 
 const captured = '2026-07-21T09:14:22Z';
@@ -117,4 +120,20 @@ test('requires top-level arrays', () => {
   assert.throws(() => parseClaims({}), /top-level array/);
   assert.throws(() => parseEntities(null), /top-level array/);
   assert.throws(() => parseRuns('[]'), /top-level array/);
+});
+
+test('exposes structured record issues without changing fail-fast parser behavior', () => {
+  const badClaim = { ...validClaim, predicate: 'Not Snake' };
+  const badEntity = { ...validEntity, aliases: ['same', 'same'] };
+  const badRun = { ...validRun, verdict: 'maybe' };
+
+  assert.deepEqual(validateClaimRecords([badClaim]), [{
+    recordType: 'claims',
+    index: 0,
+    id: validClaim.id,
+    message: 'claim predicate must be snake_case',
+  }]);
+  assert.equal(validateEntityRecords([badEntity])[0]?.id, validEntity.id);
+  assert.equal(validateRunRecords([badRun])[0]?.id, validRun.id);
+  assert.throws(() => parseClaims([badClaim]), RecordValidationError);
 });
