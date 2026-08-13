@@ -1,5 +1,5 @@
 import { access } from 'node:fs/promises';
-import { dirname, join } from 'node:path';
+import { win32 } from 'node:path';
 
 import { GraphKeeperError } from '../lib/errors.js';
 import { runProcess, type ProcessResult } from '../lib/process.js';
@@ -63,7 +63,7 @@ export function resolveNpmInvocation(
   if (platform !== 'win32') return { command: 'npm', argsPrefix: [] };
   const cli = npmCliPath
     ?? environment.npm_execpath
-    ?? join(dirname(nodePath), 'node_modules', 'npm', 'bin', 'npm-cli.js');
+    ?? win32.join(win32.dirname(nodePath), 'node_modules', 'npm', 'bin', 'npm-cli.js');
   return { command: nodePath, argsPrefix: [cli] };
 }
 
