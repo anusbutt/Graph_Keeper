@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { mkdir, readFile, readdir, stat, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, readdir, rm, stat, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import test from 'node:test';
 
@@ -18,6 +18,7 @@ const files = [
   'graph/SCHEMA.md',
   '.agents/skills/graphkeeper/SKILL.md',
   'scripts/validate.sh',
+  'scripts/validate.mjs',
 ];
 
 test('creates a complete scaffold with exact packaged content', async () => {
@@ -30,7 +31,7 @@ test('creates a complete scaffold with exact packaged content', async () => {
     });
     for (const relativePath of files) {
       const installed = await readFile(join(fixture.root, relativePath), 'utf8');
-      const source = relativePath === 'scripts/validate.sh'
+      const source = relativePath === 'scripts/validate.sh' || relativePath === 'scripts/validate.mjs'
         ? join(process.cwd(), relativePath)
         : relativePath === '.agents/skills/graphkeeper/SKILL.md'
           ? join(process.cwd(), 'templates', 'SKILL.md')
@@ -38,11 +39,62 @@ test('creates a complete scaffold with exact packaged content', async () => {
       assert.equal(installed, await readFile(source, 'utf8'));
     }
     assert.equal((await stat(join(fixture.root, 'evidence'))).isDirectory(), true);
-    assert.equal(report.actions.filter((action) => action.kind === 'create').length, 8);
+    assert.equal(report.actions.filter((action) => action.kind === 'create').length, 9);
     if (process.platform !== 'win32') {
       const mode = (await stat(join(fixture.root, 'scripts', 'validate.sh'))).mode & 0o777;
       assert.equal(mode, 0o755);
     }
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+test('adds the Node validator when the legacy validator is package-owned', async () => {
+  const fixture = await createRepositoryFixture();
+  try {
+    await initialize({ cwd: fixture.root, force: false, environment: supportedInitEnvironment() });
+    await rm(join(fixture.root, 'scripts', 'validate.mjs'));
+
+    const report = await initialize({
+      cwd: fixture.root,
+      force: false,
+      environment: supportedInitEnvironment(),
+    });
+
+    assert.equal(
+      report.actions.find((action) => action.target === 'scripts/validate.mjs')?.kind,
+      'create',
+    );
+    assert.equal(
+      await readFile(join(fixture.root, 'scripts', 'validate.mjs'), 'utf8'),
+      await readFile(join(process.cwd(), 'scripts', 'validate.mjs'), 'utf8'),
+    );
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+test('does not sideline a modified legacy validator during migration', async () => {
+  const fixture = await createRepositoryFixture();
+  try {
+    await initialize({ cwd: fixture.root, force: false, environment: supportedInitEnvironment() });
+    await rm(join(fixture.root, 'scripts', 'validate.mjs'));
+    await writeFile(join(fixture.root, 'scripts', 'validate.sh'), '# user validator\n', 'utf8');
+
+    const report = await initialize({
+      cwd: fixture.root,
+      force: true,
+      environment: supportedInitEnvironment(),
+    });
+
+    const action = report.actions.find((entry) => entry.target === 'scripts/validate.mjs');
+    assert.equal(action?.kind, 'skip');
+    assert.match(action?.reason ?? '', /modified legacy validator.*manual migration/i);
+    await assert.rejects(stat(join(fixture.root, 'scripts', 'validate.mjs')));
+    assert.equal(
+      await readFile(join(fixture.root, 'scripts', 'validate.sh'), 'utf8'),
+      '# user validator\n',
+    );
   } finally {
     await fixture.cleanup();
   }

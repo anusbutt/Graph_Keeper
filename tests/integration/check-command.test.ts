@@ -13,14 +13,14 @@ const processResult = (exitCode: number): ProcessResult => ({
   stderr: 'validator stderr\n',
 });
 
-test('check discovers the repository validator and invokes worktree mode', async (t) => {
+test('check prefers the repository Node validator and invokes worktree mode', async (t) => {
   const repository = await createRepositoryFixture();
   t.after(repository.cleanup);
-  const validator = join(repository.root, 'scripts', 'validate.sh');
+  const validator = join(repository.root, 'scripts', 'validate.mjs');
   const nested = join(repository.root, 'packages', 'nested');
   await mkdir(nested, { recursive: true });
   await mkdir(join(repository.root, 'scripts'), { recursive: true });
-  await writeFile(validator, '#!/bin/sh\n', 'utf8');
+  await writeFile(validator, '// generated validator\n', 'utf8');
 
   const calls: Array<{ command: string; args: readonly string[]; cwd: string | undefined }> = [];
   const runner: CheckRunner = async (command, args, options) => {
@@ -32,17 +32,37 @@ test('check discovers the repository validator and invokes worktree mode', async
 
   assert.equal(result.exitCode, 0);
   assert.deepEqual(calls, [{
-    command: 'sh',
+    command: process.execPath,
     args: [validator, '--worktree'],
     cwd: repository.root,
   }]);
+});
+
+test('check retains the shell validator for an unmigrated repository', async (t) => {
+  const repository = await createRepositoryFixture();
+  t.after(repository.cleanup);
+  const validator = join(repository.root, 'scripts', 'validate.sh');
+  await mkdir(join(repository.root, 'scripts'), { recursive: true });
+  await writeFile(validator, '#!/bin/sh\n', 'utf8');
+  const calls: Array<{ command: string; args: readonly string[] }> = [];
+
+  const result = await check({
+    cwd: repository.root,
+    runner: async (command, args) => {
+      calls.push({ command, args });
+      return processResult(0);
+    },
+  });
+
+  assert.equal(result.exitCode, 0);
+  assert.deepEqual(calls, [{ command: 'sh', args: [validator, '--worktree'] }]);
 });
 
 test('check forwards validator output and maps public validator exit codes', async (t) => {
   const repository = await createRepositoryFixture();
   t.after(repository.cleanup);
   await mkdir(join(repository.root, 'scripts'), { recursive: true });
-  await writeFile(join(repository.root, 'scripts', 'validate.sh'), '#!/bin/sh\n', 'utf8');
+  await writeFile(join(repository.root, 'scripts', 'validate.mjs'), '// generated validator\n', 'utf8');
 
   const mappings = [
     [0, 0],
@@ -72,7 +92,7 @@ test('check reports a stable operational diagnostic when validation times out', 
   const repository = await createRepositoryFixture();
   t.after(repository.cleanup);
   await mkdir(join(repository.root, 'scripts'), { recursive: true });
-  await writeFile(join(repository.root, 'scripts', 'validate.sh'), '#!/bin/sh\n', 'utf8');
+  await writeFile(join(repository.root, 'scripts', 'validate.mjs'), '// generated validator\n', 'utf8');
 
   const result = await check({
     cwd: repository.root,
@@ -84,7 +104,22 @@ test('check reports a stable operational diagnostic when validation times out', 
   assert.match(result.stderr, /^GK004 .*123 ms/);
 });
 
-test('check reports missing sh as a prerequisite failure', async (t) => {
+test('check reports missing Node on the Node validator path as a prerequisite failure', async (t) => {
+  const repository = await createRepositoryFixture();
+  t.after(repository.cleanup);
+  await mkdir(join(repository.root, 'scripts'), { recursive: true });
+  await writeFile(join(repository.root, 'scripts', 'validate.mjs'), '// generated validator\n', 'utf8');
+
+  const result = await check({
+    cwd: repository.root,
+    runner: async () => ({ exitCode: null, stdout: '', stderr: '', problem: 'missing' }),
+  });
+
+  assert.equal(result.exitCode, 3);
+  assert.match(result.stderr, /^GK003 .*Node\.js/);
+});
+
+test('check reports missing sh for an unmigrated shell validator', async (t) => {
   const repository = await createRepositoryFixture();
   t.after(repository.cleanup);
   await mkdir(join(repository.root, 'scripts'), { recursive: true });
@@ -113,6 +148,6 @@ test('check fails safely when the repository validator is missing', async (t) =>
   });
 
   assert.equal(result.exitCode, 4);
-  assert.match(result.stderr, /^GK004 .*scripts[\\/]validate\.sh/);
+  assert.match(result.stderr, /^GK004 .*scripts[\\/]validate\.mjs/);
   assert.equal(invoked, false);
 });

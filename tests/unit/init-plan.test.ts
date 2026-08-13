@@ -18,6 +18,7 @@ const targets = [
   'graph/SCHEMA.md',
   '.agents/skills/graphkeeper/SKILL.md',
   'scripts/validate.sh',
+  'scripts/validate.mjs',
 ];
 
 const codexBlock = [
