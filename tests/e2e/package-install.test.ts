@@ -6,6 +6,7 @@ import { fileURLToPath } from 'node:url';
 import test from 'node:test';
 
 import { runProcess } from '../../src/lib/process.js';
+import { parsePackManifest } from '../helpers/npm-pack.js';
 import { createRepositoryFixture } from '../helpers/repository.js';
 
 const projectRoot = fileURLToPath(new URL('../../../', import.meta.url));
@@ -46,10 +47,6 @@ async function nativeEnvironment(): Promise<NodeJS.ProcessEnv> {
   return environment;
 }
 
-interface PackManifest {
-  readonly filename: string;
-}
-
 test('a tarball installs in a clean directory and runs init, check, query, and doctor', {
   timeout: 120_000,
 }, async (t) => {
@@ -74,8 +71,7 @@ test('a tarball installs in a clean directory and runs init, check, query, and d
     timeoutMs: 45_000,
   });
   assert.equal(packed.exitCode, 0, packed.stderr || packed.stdout);
-  const manifest = (JSON.parse(packed.stdout) as PackManifest[])[0];
-  assert.ok(manifest);
+  const manifest = parsePackManifest(packed.stdout);
   const archive = join(installationRoot, manifest.filename);
   await copyFile(join(packingRoot, manifest.filename), archive);
 
