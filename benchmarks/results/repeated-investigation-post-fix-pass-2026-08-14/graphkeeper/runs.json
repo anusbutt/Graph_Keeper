@@ -1,0 +1,20 @@
+[
+  {
+    "id": "run_2026-08-14-opacity-a1",
+    "started": "2026-08-14T11:02:20Z",
+    "tool": "coding_agent",
+    "task": "capture and record the homepage project-card opacity finding",
+    "evidence": [
+      "evidence/homepage-project-opacity-2026-08-14.txt"
+    ],
+    "claims_written": [
+      "claim_4a7c2e91",
+      "claim_b8d4e2a6",
+      "claim_c19e5f73",
+      "claim_d2f6a804",
+      "claim_e5b7c391"
+    ],
+    "ended": "2026-08-14T11:02:20Z",
+    "verdict": "passed"
+  }
+]
