@@ -3,6 +3,25 @@
 All notable changes to GraphKeeper are documented here. GraphKeeper follows semantic
 versioning; while the package is below 1.0, minor releases may change public behavior.
 
+## [Unreleased]
+
+### Added
+
+- The post-fix GraphKeeper Memory Bench #1 result, recording a PASS for grounded
+  memory reuse with bounded current-state verification and the progression
+  FAIL → fix → FAIL → fix → PASS.
+
+### Changed
+
+- Canonical agent guidance now requires querying active GraphKeeper claims and
+  inspecting their provenance before repeating repository investigation, while
+  preserving explicit evidence checks instead of treating memory as automatically
+  true.
+- Minimum freshness verification now has a concrete stopping rule: reuse grounded
+  historical evidence, inspect only relevant current state by default, avoid
+  reconfirming it through Git history, broad searches, or unnecessary tests, and
+  stop once current state is consistent and no contradiction is found.
+
 ## [0.4.0] - 2026-08-14
 
 ### Added
