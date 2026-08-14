@@ -6,6 +6,7 @@ import { fileURLToPath } from 'node:url';
 import test from 'node:test';
 
 import { runProcess } from '../../src/lib/process.js';
+import { parsePackManifest } from '../helpers/npm-pack.js';
 
 const projectRoot = fileURLToPath(new URL('../../../', import.meta.url));
 
@@ -18,11 +19,6 @@ function npmInvocation(args: readonly string[]): {
     command: process.execPath,
     args: [join(dirname(process.execPath), 'node_modules', 'npm', 'bin', 'npm-cli.js'), ...args],
   };
-}
-
-interface PackManifest {
-  readonly filename: string;
-  readonly files: ReadonlyArray<{ readonly path: string; readonly mode: number }>;
 }
 
 test('release tarball contains every runtime asset and excludes development-only files', {
@@ -42,9 +38,8 @@ test('release tarball contains every runtime asset and excludes development-only
     timeoutMs: 90_000,
   });
   assert.equal(packed.exitCode, 0, packed.stderr || packed.stdout);
-  const manifests = JSON.parse(packed.stdout) as PackManifest[];
-  const manifest = manifests[0];
-  assert.ok(manifest, 'npm pack must return one manifest');
+  const manifest = parsePackManifest(packed.stdout);
+  assert.ok(manifest.files, 'npm pack manifest must list packaged files');
   const paths = new Set(manifest.files.map((file) => file.path));
 
   for (const required of [
