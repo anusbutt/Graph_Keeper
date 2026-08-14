@@ -121,7 +121,7 @@ test('a tarball installs in a clean directory and runs init, check, query, and d
   assert.match(help.stdout, /graphkeeper update/);
   const version = await runCli(['--version']);
   assert.equal(version.exitCode, 0, version.stderr);
-  assert.equal(version.stdout, '0.4.0\n');
+  assert.equal(version.stdout, '0.4.1\n');
   const initialized = await runCli(['init']);
   assert.equal(initialized.exitCode, 0, initialized.stderr);
   assert.match(initialized.stdout, /CREATE graph\/entities\.json/);

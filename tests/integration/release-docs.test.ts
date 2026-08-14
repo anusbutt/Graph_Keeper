@@ -73,7 +73,7 @@ test('release version stays aligned across package, lockfile, CLI, README, and c
   const changelog = await readFile(join(projectRoot, 'CHANGELOG.md'), 'utf8');
   const version = manifest.version;
 
-  assert.equal(version, '0.4.0');
+  assert.equal(version, '0.4.1');
   assert.equal(lockfile.version, version);
   assert.equal(lockfile.packages?.['']?.version, version);
   assert.match(cli, new RegExp("const VERSION = '" + version?.replaceAll('.', '\\.') + "';"));

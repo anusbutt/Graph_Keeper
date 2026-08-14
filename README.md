@@ -220,7 +220,7 @@ See [`CONTRIBUTING.md`](CONTRIBUTING.md) for the development workflow, extension
 and boundaries, [prepared contribution issues](docs/contributor-issues.md),
 [`SUPPORT.md`](.github/SUPPORT.md) for usage help, and
 [`SECURITY.md`](.github/SECURITY.md) for private vulnerability reporting. Version
-`0.4.0` is pre-1.0 and its API may change. Release ownership and the target version
+`0.4.1` is pre-1.0 and its API may change. Release ownership and the target version
 must be verified immediately before publishing; completing the repository release
 gates does not publish anything.
 
