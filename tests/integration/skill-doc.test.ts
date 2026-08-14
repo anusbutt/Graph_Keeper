@@ -57,18 +57,22 @@ test('requires retrieval-first investigation without blind trust', async () => {
   assert.match(skill, /query relevant GraphKeeper memory before repeating.*investigation/is);
   assert.match(skill, /inspect active claims and their provenance first/is);
   assert.match(skill, /grounded claim directly addresses.*starting point/is);
-  assert.match(skill, /only the minimum freshness verification required/is);
-  assert.match(skill, /do not repeat historical or source investigation already supported/is);
+  assert.match(skill, /evidence already\s+establishes the historical reasoning.*do not repeat/is);
+  assert.match(skill, /limit freshness verification to current state.*relevant current files.*working-tree or HEAD changes.*contradictory evidence/is);
+  assert.match(skill, /do not rerun git log, git blame, historical diffs, broad repository\s+searches, tests/is);
+  assert.match(skill, /original investigation.*reconfirm evidence/is);
+  assert.match(skill, /stop investigating and answer from the claim plus the\s+minimal freshness check/is);
   for (const exception of [
-    'contradictory evidence',
-    'ambiguity',
+    'current state contradicts',
+    'provenance is missing or insufficient',
     'inference-only',
-    'stale or superseded',
-    'explicitly requires re-verification',
+    'stale, superseded, or ambiguous',
+    'fresh independent verification',
   ]) {
-    assert.match(skill, new RegExp(exception, 'i'));
+    assert.match(skill, new RegExp(exception.replaceAll(' ', '\\s+'), 'i'));
   }
   assert.match(skill, /never treat retrieved memory as automatically true/is);
+  assert.match(skill, /inspect its evidence\s+and provenance first/is);
 });
 
 test('keeps structured detail in evidence and excludes session chatter', async () => {

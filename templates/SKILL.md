@@ -35,14 +35,24 @@ behavioral responsibility that software cannot infer reliably.
   kind, source.ref or inference basis, producing run, and any supersession state.
 - [GUIDANCE] When an active grounded claim directly addresses the current task, use
   its supported fact as the starting point for the work.
-- [GUIDANCE] Perform only the minimum freshness verification required by the current
-  task, such as checking the current affected file or behavior.
-- [GUIDANCE] Do not repeat historical or source investigation already supported by
-  the claim unless there is contradictory evidence, ambiguity, an inference-only
-  claim, stale or superseded state, or the task explicitly requires re-verification.
-- [GUIDANCE] Never treat retrieved memory as automatically true. Keep the claim's
-  scope and evidence strength visible, and investigate further when its support does
-  not justify relying on it for the current task.
+- [GUIDANCE] If that claim directly answers the task and its evidence already
+  establishes the historical reasoning, do not repeat that historical investigation.
+- [GUIDANCE] Normally limit freshness verification to current state that could have
+  changed since the claim: relevant current files, working-tree or HEAD changes, or
+  directly contradictory evidence.
+- [GUIDANCE] Do not rerun git log, git blame, historical diffs, broad repository
+  searches, tests, or other original investigation merely to reconfirm evidence the
+  claim already cites.
+- [GUIDANCE] Escalate into deeper reinvestigation only when current state contradicts
+  the claim, provenance is missing or insufficient, the claim is inference-only,
+  stale, superseded, or ambiguous, or the user explicitly asks for fresh independent
+  verification.
+- [GUIDANCE] Once current state is consistent with the grounded claim and no
+  contradiction is found, stop investigating and answer from the claim plus the
+  minimal freshness check.
+- [GUIDANCE] Never treat retrieved memory as automatically true. Inspect its evidence
+  and provenance first, keep the claim's scope and evidence strength visible, and
+  investigate further only when its support does not justify relying on it.
 
 ## Write
 
