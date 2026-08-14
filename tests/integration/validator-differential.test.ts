@@ -7,7 +7,7 @@ import { loadValidationSnapshot } from '../../src/lib/git-snapshot.js';
 import { validateSnapshot } from '../../src/lib/validation.js';
 import {
   createValidatorFixture,
-  runValidator,
+  runLegacyValidator,
   validClaim,
   validEntity,
   validRun,
@@ -17,7 +17,7 @@ async function compare(
   fixture: Awaited<ReturnType<typeof createValidatorFixture>>,
   mode: '--staged' | '--worktree' = '--worktree',
 ): Promise<void> {
-  const shell = await runValidator(fixture, mode);
+  const shell = await runLegacyValidator(fixture, mode);
   const typescript = validateSnapshot(await loadValidationSnapshot({
     repositoryRoot: fixture.root,
     mode,

@@ -24,7 +24,10 @@ The core flow is deliberately small:
 3. `graphkeeper check` validates schema, provenance, and append-only history against
    the committed Git state.
 4. A future session retrieves the active claim with `graphkeeper query <subject>`.
-5. If the fact changes, the agent appends a new claim with `supersedes`; both
+5. It starts from a directly relevant grounded claim and performs only the freshness
+   verification the current task requires, while treating the claim as evidence to
+   assess rather than automatic truth.
+6. If the fact changes, the agent appends a new claim with `supersedes`; both
    generations remain auditable.
 
 GraphKeeper does not ingest conversations or decide what should become memory. The

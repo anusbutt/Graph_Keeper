@@ -27,6 +27,23 @@ behavioral responsibility that software cannot infer reliably.
 - [HOOK] Keep entity identity fixed after commit and only add unique aliases or
   source_docs entries.
 
+## Retrieve before investigating
+
+- [GUIDANCE] Query relevant GraphKeeper memory before repeating repository, source,
+  history, build, or validation investigation.
+- [GUIDANCE] Inspect active claims and their provenance first, including the source
+  kind, source.ref or inference basis, producing run, and any supersession state.
+- [GUIDANCE] When an active grounded claim directly addresses the current task, use
+  its supported fact as the starting point for the work.
+- [GUIDANCE] Perform only the minimum freshness verification required by the current
+  task, such as checking the current affected file or behavior.
+- [GUIDANCE] Do not repeat historical or source investigation already supported by
+  the claim unless there is contradictory evidence, ambiguity, an inference-only
+  claim, stale or superseded state, or the task explicitly requires re-verification.
+- [GUIDANCE] Never treat retrieved memory as automatically true. Keep the claim's
+  scope and evidence strength visible, and investigate further when its support does
+  not justify relying on it for the current task.
+
 ## Write
 
 - [GUIDANCE] Retain only a finding expected to help another session, contributor, or
