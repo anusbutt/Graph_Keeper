@@ -4,7 +4,7 @@ import test from 'node:test';
 import { parsePackManifest } from '../helpers/npm-pack.js';
 
 const manifest = {
-  filename: 'graphkeeper-0.4.0.tgz',
+  filename: 'graphkeeper-0.4.1.tgz',
   files: [{ path: 'package.json', mode: 420 }],
 };
 

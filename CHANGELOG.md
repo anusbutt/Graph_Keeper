@@ -5,6 +5,8 @@ versioning; while the package is below 1.0, minor releases may change public beh
 
 ## [Unreleased]
 
+## [0.4.1] - 2026-08-14
+
 ### Added
 
 - The post-fix GraphKeeper Memory Bench #1 result, recording a PASS for grounded
