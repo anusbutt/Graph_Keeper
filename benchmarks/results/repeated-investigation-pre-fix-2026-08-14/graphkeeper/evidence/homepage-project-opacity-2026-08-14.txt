@@ -1,0 +1,27 @@
+CAPTURED_AT: 2026-08-14T11:02:20Z
+COMMAND: [DateTime]::UtcNow.ToString('yyyy-MM-ddTHH:mm:ssZ'); $n=0; Get-Content tests\homepage.spec.ts | ForEach-Object { $n++; if($n -ge 69 -and $n -le 76){ '{0}: {1}' -f $n,$_ } }; $n=0; Get-Content src\components\sections\projects\ProjectCard.tsx | ForEach-Object { $n++; if($n -ge 10 -and $n -le 18){ '{0}: {1}' -f $n,$_ } }; git show b839ff9:components/projects/ProjectCard.tsx | Select-String -Pattern 'initial=|whileInView=|viewport=|transition=' | ForEach-Object { $_.Line }
+EXIT_CODE: 0
+tests/homepage.spec.ts:69:   const mainProjectCards = page.locator('#projects article[data-project-tier="main"]');
+tests/homepage.spec.ts:70:   for (let index = 0; index < (await mainProjectCards.count()); index += 1) {
+tests/homepage.spec.ts:71:     const projectCard = mainProjectCards.nth(index);
+tests/homepage.spec.ts:72:     await projectCard.scrollIntoViewIfNeeded();
+tests/homepage.spec.ts:73:     await expect
+tests/homepage.spec.ts:74:       .poll(() => projectCard.evaluate((element) => Number(getComputedStyle(element).opacity)))
+tests/homepage.spec.ts:75:       .toBeGreaterThan(0.99);
+tests/homepage.spec.ts:76:   }
+CURRENT_PROJECT_CARD:
+src/components/sections/projects/ProjectCard.tsx:10:   return (
+src/components/sections/projects/ProjectCard.tsx:11:     <article
+src/components/sections/projects/ProjectCard.tsx:12:       data-project-tier="main"
+src/components/sections/projects/ProjectCard.tsx:13:       className={`group relative grid gap-6 border-t py-9 transition-colors md:grid-cols-[3rem_minmax(0,0.8fr)_minmax(0,1.2fr)] md:gap-8 md:py-11 lg:grid-cols-[4rem_minmax(16rem,0.75fr)_minmax(20rem,1.25fr)] lg:gap-12 ${
+src/components/sections/projects/ProjectCard.tsx:14:         project.featured
+src/components/sections/projects/ProjectCard.tsx:15:           ? "border-accent/60 bg-accent/[0.045] px-5 py-11 sm:px-7 md:py-14"
+src/components/sections/projects/ProjectCard.tsx:16:           : "border-white/[0.09]"
+src/components/sections/projects/ProjectCard.tsx:17:       }`}
+src/components/sections/projects/ProjectCard.tsx:18:     >
+HISTORICAL_PROJECT_CARD:
+git show b839ff9:components/projects/ProjectCard.tsx:
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-50px" }}
+      transition={{ duration: 0.5, delay: index * 0.1 }}
