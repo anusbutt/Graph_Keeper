@@ -51,6 +51,26 @@ test('teaches exact alias reuse, safe new identity, and append-only correction',
   assert.match(skill, /never edit or delete.*committed/is);
 });
 
+test('requires retrieval-first investigation without blind trust', async () => {
+  const skill = await readFile(skillUrl, 'utf8');
+  assert.match(skill, /^## Retrieve before investigating$/m);
+  assert.match(skill, /query relevant GraphKeeper memory before repeating.*investigation/is);
+  assert.match(skill, /inspect active claims and their provenance first/is);
+  assert.match(skill, /grounded claim directly addresses.*starting point/is);
+  assert.match(skill, /only the minimum freshness verification required/is);
+  assert.match(skill, /do not repeat historical or source investigation already supported/is);
+  for (const exception of [
+    'contradictory evidence',
+    'ambiguity',
+    'inference-only',
+    'stale or superseded',
+    'explicitly requires re-verification',
+  ]) {
+    assert.match(skill, new RegExp(exception, 'i'));
+  }
+  assert.match(skill, /never treat retrieved memory as automatically true/is);
+});
+
 test('keeps structured detail in evidence and excludes session chatter', async () => {
   const skill = await readFile(skillUrl, 'utf8');
   assert.match(skill, /structured detail.*evidence/is);

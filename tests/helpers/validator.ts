@@ -47,6 +47,7 @@ export const validRun = {
 
 export interface ValidatorFixture extends RepositoryFixture {
   readonly validator: string;
+  readonly legacyValidator: string;
   readonly writeGraph: (
     entities?: unknown,
     claims?: unknown,
@@ -60,11 +61,12 @@ export async function createValidatorFixture(
   prefix = 'graphkeeper-test-',
 ): Promise<ValidatorFixture> {
   const fixture = await createRepositoryFixture(true, prefix);
-  const validator = join(fixture.root, 'scripts', 'validate.sh');
+  const legacyValidator = join(fixture.root, 'scripts', 'validate.sh');
+  const validator = join(fixture.root, 'scripts', 'validate.mjs');
   await mkdir(dirname(validator), { recursive: true });
-  await copyFile(validatorSource, validator);
-  await chmod(validator, 0o755);
-  await copyFile(nodeValidatorSource, join(fixture.root, 'scripts', 'validate.mjs'));
+  await copyFile(validatorSource, legacyValidator);
+  await chmod(legacyValidator, 0o755);
+  await copyFile(nodeValidatorSource, validator);
 
   const writeGraph = async (
     entities: unknown = [validEntity],
@@ -89,7 +91,7 @@ export async function createValidatorFixture(
     if (result.exitCode !== 0) throw new Error(result.stderr);
   };
 
-  return { ...fixture, validator, writeGraph, stageAll, commitAll };
+  return { ...fixture, validator, legacyValidator, writeGraph, stageAll, commitAll };
 }
 
 function shellExecutable(): string {
@@ -102,7 +104,19 @@ export async function runValidator(
   mode: '--staged' | '--worktree',
   env: NodeJS.ProcessEnv = process.env,
 ): Promise<ProcessResult> {
-  const script = fixture.validator.replaceAll('\\', '/');
+  return runProcess(process.execPath, [fixture.validator, mode], {
+    cwd: fixture.root,
+    env,
+    timeoutMs: 10_000,
+  });
+}
+
+export async function runLegacyValidator(
+  fixture: ValidatorFixture,
+  mode: '--staged' | '--worktree',
+  env: NodeJS.ProcessEnv = process.env,
+): Promise<ProcessResult> {
+  const script = fixture.legacyValidator.replaceAll('\\', '/');
   return runProcess(shellExecutable(), [script, mode], {
     cwd: fixture.root,
     env,
