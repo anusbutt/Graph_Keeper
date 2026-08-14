@@ -5,6 +5,7 @@ import test from 'node:test';
 
 import {
   createValidatorFixture,
+  runLegacyValidator,
   runValidator,
   validClaim,
 } from '../helpers/validator.js';
@@ -50,9 +51,8 @@ test('accumulates independent failures with stable codes and a final count', asy
 test('rejects unsupported modes as usage errors', async () => {
   const fixture = await createValidatorFixture();
   try {
-    const shell = process.env.GRAPHKEEPER_TEST_SH ?? (process.platform === 'win32' ? 'C:\\Program Files\\Git\\bin\\sh.exe' : 'sh');
     const { runProcess } = await import('../../src/lib/process.js');
-    const result = await runProcess(shell, [fixture.validator.replaceAll('\\', '/'), '--other'], { cwd: fixture.root });
+    const result = await runProcess(process.execPath, [fixture.validator, '--other'], { cwd: fixture.root });
     assert.equal(result.exitCode, 2);
     assert.match(result.stderr, /GK002/);
   } finally {
@@ -82,7 +82,7 @@ test('reports a missing jq prerequisite before reading repository data', async (
     await mkdir(fakeBin, { recursive: true });
     await writeFile(fakeGit, '#!/bin/sh\nexit 0\n', 'utf8');
     await chmod(fakeGit, 0o755);
-    const result = await runValidator(fixture, '--worktree', {
+    const result = await runLegacyValidator(fixture, '--worktree', {
       ...process.env,
       PATH: fakeBin,
     });
@@ -105,7 +105,7 @@ test('rejects jq older than 1.6 as a prerequisite failure', async () => {
       ...process.env,
       PATH: fakeBin + delimiter + (process.env.PATH ?? ''),
     };
-    const result = await runValidator(fixture, '--worktree', env);
+    const result = await runLegacyValidator(fixture, '--worktree', env);
     assert.equal(result.exitCode, 3);
     assert.match(result.stderr, /GK003 jq 1\.6 or newer is required/);
   } finally {
