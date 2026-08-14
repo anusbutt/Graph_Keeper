@@ -4,25 +4,6 @@ These are launch-ready drafts, not committed roadmap promises. A maintainer shou
 confirm priority and create the GitHub issue before work starts. Each task stays
 inside GraphKeeper's v1 boundaries.
 
-## Document every public `GKnnn` diagnostic
-
-**Suggested labels:** `good first issue`, `type:docs`, `area:cli`
-
-**Context:** Diagnostics are stable and searchable, but users currently have to read
-source and tests to learn which command emits each code and what recovery is safe.
-
-**Scope:** Add a concise diagnostic reference derived from `src/lib/errors.ts`, CLI
-call sites, and validator output. Link it from README recovery guidance. Do not change
-codes or exit behavior.
-
-**Acceptance criteria:**
-
-- Every public code family and stable exit code has a plain-language meaning.
-- Each entry names the emitting command or validator and a safe next step.
-- The reference distinguishes validation, prerequisite, operational, and internal
-  failures.
-- A documentation test fails if the reference or README link is removed.
-
 ## Add a second worked example for a durable architecture constraint
 
 **Suggested labels:** `good first issue`, `type:docs`, `area:testing`
@@ -97,7 +78,7 @@ POSIX paths. Keep evidence contents inert.
 
 - Each hostile shape has a rejecting test with the expected stable diagnostic.
 - Valid nested repository-relative evidence remains accepted.
-- Tests run in the existing Linux and Windows/Git Bash CI jobs.
+- Tests run in the existing Linux, macOS, Windows/Git Bash, and native Windows PowerShell CI jobs as applicable.
 - No test executes stored commands or follows an escaping symlink.
 
 ## Document and test a shared-hook chaining recipe

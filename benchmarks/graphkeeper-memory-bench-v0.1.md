@@ -2,7 +2,7 @@
 
 This document defines the first four scenarios for evaluating durable project memory in coding agents.
 
-At this stage, the goal is only to define the tests. Scoring methodology and benchmark implementation will come later.
+The benchmark defines the scenarios. Test A also has manually recorded pre-fix and post-fix executions; reusable scoring methodology, automated evaluation, and datasets remain future work.
 
 ## Test A — Repeated Investigation
 
@@ -71,4 +71,4 @@ GraphKeeper Memory Bench v0.1 currently defines only these four scenarios:
 3. Provenance
 4. Correction history
 
-Scoring methodology, automated evaluation, datasets, and benchmark execution are intentionally left for later versions.
+Test A has recorded [pre-fix FAIL](results/repeated-investigation-pre-fix-2026-08-14/README.md) and [post-fix PASS](results/repeated-investigation-post-fix-pass-2026-08-14/README.md) results. These are manual evidence records, not an automated benchmark harness. Tests B-D, reusable scoring methodology, automated evaluation, and datasets remain future work.
