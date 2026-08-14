@@ -1,0 +1,15 @@
+[
+  {
+    "id": "homepage_project_card_opacity_check",
+    "type": "repository_test",
+    "aliases": [
+      "homepage Playwright test",
+      "project-card opacity check"
+    ],
+    "source_docs": [
+      "evidence/homepage-project-opacity-2026-08-14.txt#L4-L11",
+      "evidence/homepage-project-opacity-2026-08-14.txt#L22-L27"
+    ],
+    "first_seen": "2026-08-14T11:02:20Z"
+  }
+]

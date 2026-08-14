@@ -1,0 +1,79 @@
+[
+  {
+    "id": "claim_4a7c2e91",
+    "subject": "homepage_project_card_opacity_check",
+    "predicate": "scrolls_main_cards_into_view",
+    "object": "the homepage test scrolls each main project card into view before checking it",
+    "confidence": 1,
+    "source": {
+      "kind": "tool_output",
+      "command": "[DateTime]::UtcNow.ToString('yyyy-MM-ddTHH:mm:ssZ'); $n=0; Get-Content tests\\homepage.spec.ts | ForEach-Object { $n++; if($n -ge 69 -and $n -le 76){ '{0}: {1}' -f $n,$_ } }; $n=0; Get-Content src\\components\\sections\\projects\\ProjectCard.tsx | ForEach-Object { $n++; if($n -ge 10 -and $n -le 18){ '{0}: {1}' -f $n,$_ } }; git show b839ff9:components/projects/ProjectCard.tsx | Select-String -Pattern 'initial=|whileInView=|viewport=|transition=' | ForEach-Object { $_.Line }",
+      "exit_code": 0,
+      "ref": "evidence/homepage-project-opacity-2026-08-14.txt#L4-L7",
+      "captured": "2026-08-14T11:02:20Z"
+    },
+    "produced_by": "run_2026-08-14-opacity-a1",
+    "created": "2026-08-14T11:02:20Z"
+  },
+  {
+    "id": "claim_b8d4e2a6",
+    "subject": "homepage_project_card_opacity_check",
+    "predicate": "polls_computed_opacity",
+    "object": "the homepage test polls each card's computed opacity until it exceeds 0.99",
+    "confidence": 1,
+    "source": {
+      "kind": "tool_output",
+      "command": "[DateTime]::UtcNow.ToString('yyyy-MM-ddTHH:mm:ssZ'); $n=0; Get-Content tests\\homepage.spec.ts | ForEach-Object { $n++; if($n -ge 69 -and $n -le 76){ '{0}: {1}' -f $n,$_ } }; $n=0; Get-Content src\\components\\sections\\projects\\ProjectCard.tsx | ForEach-Object { $n++; if($n -ge 10 -and $n -le 18){ '{0}: {1}' -f $n,$_ } }; git show b839ff9:components/projects/ProjectCard.tsx | Select-String -Pattern 'initial=|whileInView=|viewport=|transition=' | ForEach-Object { $_.Line }",
+      "exit_code": 0,
+      "ref": "evidence/homepage-project-opacity-2026-08-14.txt#L8-L11",
+      "captured": "2026-08-14T11:02:20Z"
+    },
+    "produced_by": "run_2026-08-14-opacity-a1",
+    "created": "2026-08-14T11:02:20Z"
+  },
+  {
+    "id": "claim_c19e5f73",
+    "subject": "homepage_project_card_opacity_check",
+    "predicate": "historically_used_scroll_reveal",
+    "object": "the historical ProjectCard animated opacity from 0 to 1 on viewport entry with a 0.5 second duration and index-based delay",
+    "confidence": 1,
+    "source": {
+      "kind": "tool_output",
+      "command": "[DateTime]::UtcNow.ToString('yyyy-MM-ddTHH:mm:ssZ'); $n=0; Get-Content tests\\homepage.spec.ts | ForEach-Object { $n++; if($n -ge 69 -and $n -le 76){ '{0}: {1}' -f $n,$_ } }; $n=0; Get-Content src\\components\\sections\\projects\\ProjectCard.tsx | ForEach-Object { $n++; if($n -ge 10 -and $n -le 18){ '{0}: {1}' -f $n,$_ } }; git show b839ff9:components/projects/ProjectCard.tsx | Select-String -Pattern 'initial=|whileInView=|viewport=|transition=' | ForEach-Object { $_.Line }",
+      "exit_code": 0,
+      "ref": "evidence/homepage-project-opacity-2026-08-14.txt#L23-L26",
+      "captured": "2026-08-14T11:02:20Z"
+    },
+    "produced_by": "run_2026-08-14-opacity-a1",
+    "created": "2026-08-14T11:02:20Z"
+  },
+  {
+    "id": "claim_d2f6a804",
+    "subject": "homepage_project_card_opacity_check",
+    "predicate": "currently_renders_plain_article",
+    "object": "the current ProjectCard renders a plain article without opacity or viewport animation props",
+    "confidence": 1,
+    "source": {
+      "kind": "tool_output",
+      "command": "[DateTime]::UtcNow.ToString('yyyy-MM-ddTHH:mm:ssZ'); $n=0; Get-Content tests\\homepage.spec.ts | ForEach-Object { $n++; if($n -ge 69 -and $n -le 76){ '{0}: {1}' -f $n,$_ } }; $n=0; Get-Content src\\components\\sections\\projects\\ProjectCard.tsx | ForEach-Object { $n++; if($n -ge 10 -and $n -le 18){ '{0}: {1}' -f $n,$_ } }; git show b839ff9:components/projects/ProjectCard.tsx | Select-String -Pattern 'initial=|whileInView=|viewport=|transition=' | ForEach-Object { $_.Line }",
+      "exit_code": 0,
+      "ref": "evidence/homepage-project-opacity-2026-08-14.txt#L12-L21",
+      "captured": "2026-08-14T11:02:20Z"
+    },
+    "produced_by": "run_2026-08-14-opacity-a1",
+    "created": "2026-08-14T11:02:20Z"
+  },
+  {
+    "id": "claim_e5b7c391",
+    "subject": "homepage_project_card_opacity_check",
+    "predicate": "opacity_poll_is_legacy",
+    "object": "the opacity poll now appears redundant because the current card has no opacity animation",
+    "confidence": 0.95,
+    "source": {
+      "kind": "inference",
+      "basis": "The test still scrolls and polls opacity, while the current card is a plain article and the historical animation props are present only in the earlier b839ff9 implementation."
+    },
+    "produced_by": "run_2026-08-14-opacity-a1",
+    "created": "2026-08-14T11:02:20Z"
+  }
+]
