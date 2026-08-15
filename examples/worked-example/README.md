@@ -17,6 +17,17 @@ WSL:
     node dist/src/cli.js check
     node dist/src/cli.js doctor
 
+From native Windows PowerShell:
+
+```powershell
+npm run build
+New-Item -ItemType Directory -Force graph, evidence | Out-Null
+Copy-Item -Path examples/worked-example/graph/* -Destination graph/ -Recurse -Force
+Copy-Item -Path examples/worked-example/evidence/* -Destination evidence/ -Recurse -Force
+node dist/src/cli.js check
+node dist/src/cli.js doctor
+```
+
 Installed-package users can run `npx graphkeeper check` and
 `npx graphkeeper doctor` instead. Both commands should succeed, and doctor should
 report zero errors and zero warnings.

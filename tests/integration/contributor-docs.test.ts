@@ -131,6 +131,33 @@ test('contribution guide documents recovery and known scale limits', async () =>
   assert.match(guide, /(?:20 percent.*regression|regression.*20 percent)/is);
 });
 
+test('diagnostic reference covers every public code and stable exit class', async () => {
+  const readme = await read('README.md');
+  const reference = await read('docs/diagnostics.md');
+
+  assert.match(readme, /\[diagnostic reference\]\(docs\/diagnostics\.md\)/i);
+  assert.match(reference, /src\/lib\/validation\.ts.*canonical/is);
+  assert.match(reference, /restore.*committed claims.*append.*superseding/is);
+
+  const publicCodes = [
+    'GK002', 'GK003', 'GK004', 'GK005',
+    'GK101', 'GK102', 'GK110', 'GK120', 'GK130', 'GK140',
+    'GK150', 'GK151', 'GK152', 'GK153', 'GK154',
+    'GK201', 'GK202',
+    'GK300', 'GK301', 'GK310', 'GK311', 'GK312', 'GK313', 'GK314', 'GK315', 'GK316',
+    'GK320', 'GK321', 'GK322', 'GK323', 'GK324', 'GK325', 'GK390',
+  ] as const;
+  for (const code of publicCodes) {
+    assert.ok(reference.includes('| `' + code + '` |'), 'Missing diagnostic reference for ' + code);
+  }
+
+  for (const exitCode of ['0', '1', '2', '3', '4', '5']) {
+    assert.ok(reference.includes('| `' + exitCode + '` |'), 'Missing exit code ' + exitCode);
+  }
+  assert.match(reference, /doctor.*uses `0`.*warnings/is);
+  assert.match(reference, /`GK390` is a warning.*does not fail/is);
+});
+
 test('SQLite and PostgreSQL remain a future good-first-issue design exploration', async () => {
   const guide = await read('CONTRIBUTING.md');
   assert.match(guide, /good first issue/i);
@@ -175,9 +202,9 @@ test('issue and pull-request templates require actionable engineering context', 
   assert.match(conduct, /report.*privately/is);
 
   const issueDrafts = await read('docs/contributor-issues.md');
-  assert.equal((issueDrafts.match(/^## /gm) ?? []).length, 7);
+  assert.equal((issueDrafts.match(/^## /gm) ?? []).length, 6);
   for (const field of ['Suggested labels', 'Context', 'Scope', 'Acceptance criteria']) {
-    assert.equal((issueDrafts.match(new RegExp('\\*\\*' + field, 'g')) ?? []).length, 7);
+    assert.equal((issueDrafts.match(new RegExp('\\*\\*' + field, 'g')) ?? []).length, 6);
   }
 
   const guide = await read('CONTRIBUTING.md');

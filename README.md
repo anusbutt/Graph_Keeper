@@ -137,6 +137,8 @@ The older claim remains in history and is marked as superseded. Reviewers can fo
 | `graphkeeper query <subject>` | Resolve an exact ID or unique alias and print active claims with provenance. It does not read evidence contents. |
 | `graphkeeper doctor` | Run fast validation plus file existence, containment, line-range, dangling-reference, and unused-entity checks. |
 | `graphkeeper update` | Check npm's stable `latest` release and globally install one exact newer version. Repository files are never changed. |
+| `graphkeeper --help` | Print the supported command grammar and options. |
+| `graphkeeper --version` (`-v`) | Print the installed GraphKeeper version. |
 
 Exit codes are stable: `0` success, `1` validation failure, `2` usage error, `3` missing prerequisite, `4` operational failure, and `5` unexpected internal failure. Diagnostics begin with a searchable `GKnnn` code.
 
@@ -164,6 +166,8 @@ prompt.
 ## Recovery and adoption
 
 - Re-running `init` is safe: existing graph data is skipped. Use `--force` only to refresh `graph/SCHEMA.md` and `.agents/skills/graphkeeper/SKILL.md`.
+- For a `GKnnn` failure, use the [diagnostic reference](docs/diagnostics.md) to identify
+  the emitting command, exit class, and safe recovery before changing graph data.
 - A root `SKILL.md` created by an older GraphKeeper version is legacy user content. It is reported and preserved; migrate by committing the generated `.agents/skills/graphkeeper/SKILL.md`.
 - `--integrate codex` manages the Codex skill plus one marked block in `AGENTS.md`;
   `--integrate claude` does the same for the Claude skill and `CLAUDE.md`. Multiple
