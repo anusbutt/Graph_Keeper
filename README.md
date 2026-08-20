@@ -26,6 +26,37 @@ transcript store, a vector database, or a hosted memory service. It does not req
 backend, a database, or a separate memory server. Node.js 18+, npm, and Git are all
 you need.
 
+Works with any of the major coding agents you already use.
+
+## Works with your coding agent
+
+GraphKeeper ships first-class integrations for the coding agents below. If you use one
+of them, GraphKeeper works with it.
+
+| Coding agent | Integration flag | Skill | Guidance | Invocation |
+|---|---|---|---|---|
+| Codex | `--integrate codex` | `.agents/skills/graphkeeper/SKILL.md` | `AGENTS.md` | `$graphkeeper` |
+| Claude Code | `--integrate claude` | `.claude/skills/graphkeeper/SKILL.md` | `CLAUDE.md` | `/graphkeeper` |
+| Cursor | `--integrate cursor` | `.cursor/skills/graphkeeper/SKILL.md` | `.cursor/rules/graphkeeper.md` | `@graphkeeper` |
+| OpenCode | `--integrate opencode` | `.opencode/skills/graphkeeper/SKILL.md` | `AGENTS.md` | `graphkeeper` |
+| Kilo Code | `--integrate kilo` | `.kilo/skills/graphkeeper/SKILL.md` | `.kilo/rules/graphkeeper.md` | `@graphkeeper` |
+| Windsurf | `--integrate windsurf` | `.windsurf/skills/graphkeeper/SKILL.md` | `.windsurf/rules/graphkeeper.md` | `@graphkeeper` |
+| Gemini CLI | `--integrate geminicli` | `.gemini/skills/graphkeeper/SKILL.md` | `GEMINI.md` | `@graphkeeper` |
+
+Install any subset, or all of them at once:
+
+```sh
+npx graphkeeper@latest init --integrate codex --integrate claude
+# Or install every registered adapter:
+npx graphkeeper@latest init --integrate all
+```
+
+Each integration installs a canonical skill your agent invokes, plus a small reminder
+in the agent's guidance file. All skills are generated from one vendor-neutral
+`templates/SKILL.md`. Adapters that share a guidance file (Codex and OpenCode both use
+`AGENTS.md`) coexist: each owns one marked block, and your existing guidance outside
+that block is preserved.
+
 ## Why GraphKeeper
 
 Without durable memory, a coding agent that investigated something in one session
@@ -83,40 +114,6 @@ The memory contract is deliberately small and explicit. An agent:
 
 GraphKeeper does not ingest conversations or decide what should become memory. The
 shipped agent skills give every supported agent the same explicit writing contract.
-
-## Works with your coding agent
-
-GraphKeeper ships first-class integrations for the agents below. If you use one of
-them, GraphKeeper works with it.
-
-```text
-Codex · Claude Code · Cursor · OpenCode · Kilo Code · Windsurf · Gemini CLI
-```
-
-Each integration installs a canonical skill your agent invokes, plus a small reminder
-in the agent's guidance file. All skills are generated from one vendor-neutral
-`templates/SKILL.md`.
-
-| Coding agent | Integration flag | Skill | Guidance | Invocation |
-|---|---|---|---|---|
-| Codex | `--integrate codex` | `.agents/skills/graphkeeper/SKILL.md` | `AGENTS.md` | `$graphkeeper` |
-| Claude Code | `--integrate claude` | `.claude/skills/graphkeeper/SKILL.md` | `CLAUDE.md` | `/graphkeeper` |
-| Cursor | `--integrate cursor` | `.cursor/skills/graphkeeper/SKILL.md` | `.cursor/rules/graphkeeper.md` | `@graphkeeper` |
-| OpenCode | `--integrate opencode` | `.opencode/skills/graphkeeper/SKILL.md` | `AGENTS.md` | `graphkeeper` |
-| Kilo Code | `--integrate kilo` | `.kilo/skills/graphkeeper/SKILL.md` | `.kilo/rules/graphkeeper.md` | `@graphkeeper` |
-| Windsurf | `--integrate windsurf` | `.windsurf/skills/graphkeeper/SKILL.md` | `.windsurf/rules/graphkeeper.md` | `@graphkeeper` |
-| Gemini CLI | `--integrate geminicli` | `.gemini/skills/graphkeeper/SKILL.md` | `GEMINI.md` | `@graphkeeper` |
-
-Install any subset, or all of them at once:
-
-```sh
-npx graphkeeper@latest init --integrate codex --integrate claude
-# Or install every registered adapter:
-npx graphkeeper@latest init --integrate all
-```
-
-Adapters that share a guidance file (Codex and OpenCode both use `AGENTS.md`) coexist:
-each owns one marked block, and your existing guidance outside that block is preserved.
 
 ## Two-minute quickstart
 
