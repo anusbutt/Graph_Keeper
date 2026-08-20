@@ -61,6 +61,36 @@ const adapters = [
     endMarker: '<!-- graphkeeper:opencode:end -->',
     postInstallNote: 'Restart opencode if .opencode/skills did not exist when the current session began.',
   },
+  {
+    id: 'kilo',
+    displayName: 'Kilo Code',
+    skillTarget: '.kilo/skills/graphkeeper/SKILL.md',
+    guidanceTarget: '.kilo/rules/graphkeeper.md',
+    invocation: '`@graphkeeper`',
+    startMarker: '<!-- graphkeeper:kilo:start -->',
+    endMarker: '<!-- graphkeeper:kilo:end -->',
+    postInstallNote: 'Restart Kilo Code if .kilo/skills did not exist when the current session began.',
+  },
+  {
+    id: 'windsurf',
+    displayName: 'Windsurf',
+    skillTarget: '.windsurf/skills/graphkeeper/SKILL.md',
+    guidanceTarget: '.windsurf/rules/graphkeeper.md',
+    invocation: '`@graphkeeper`',
+    startMarker: '<!-- graphkeeper:windsurf:start -->',
+    endMarker: '<!-- graphkeeper:windsurf:end -->',
+    postInstallNote: 'Restart Windsurf if .windsurf/skills did not exist when the current session began.',
+  },
+  {
+    id: 'geminicli',
+    displayName: 'Gemini CLI',
+    skillTarget: '.gemini/skills/graphkeeper/SKILL.md',
+    guidanceTarget: 'GEMINI.md',
+    invocation: '`@graphkeeper`',
+    startMarker: '<!-- graphkeeper:geminicli:start -->',
+    endMarker: '<!-- graphkeeper:geminicli:end -->',
+    postInstallNote: 'Restart Gemini CLI if .gemini/skills did not exist when the current session began.',
+  },
 ] as const;
 
 export type AgentId = (typeof adapters)[number]['id'];

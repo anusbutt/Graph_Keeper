@@ -24,7 +24,7 @@ function sourceFile(relativePath: string): Promise<string> {
 test('registers explicit adapters with independent destinations', () => {
   assert.deepEqual(
     AGENT_ADAPTERS.map((adapter) => adapter.id),
-    ['codex', 'claude', 'cursor', 'opencode'],
+    ['codex', 'claude', 'cursor', 'opencode', 'kilo', 'windsurf', 'geminicli'],
   );
   assert.deepEqual(
     AGENT_ADAPTERS.map((adapter) => adapter.skillTarget),
@@ -33,11 +33,22 @@ test('registers explicit adapters with independent destinations', () => {
       '.claude/skills/graphkeeper/SKILL.md',
       '.cursor/skills/graphkeeper/SKILL.md',
       '.opencode/skills/graphkeeper/SKILL.md',
+      '.kilo/skills/graphkeeper/SKILL.md',
+      '.windsurf/skills/graphkeeper/SKILL.md',
+      '.gemini/skills/graphkeeper/SKILL.md',
     ],
   );
   assert.deepEqual(
     AGENT_ADAPTERS.map((adapter) => adapter.guidanceTarget),
-    ['AGENTS.md', 'CLAUDE.md', '.cursor/rules/graphkeeper.md', 'AGENTS.md'],
+    [
+      'AGENTS.md',
+      'CLAUDE.md',
+      '.cursor/rules/graphkeeper.md',
+      'AGENTS.md',
+      '.kilo/rules/graphkeeper.md',
+      '.windsurf/rules/graphkeeper.md',
+      'GEMINI.md',
+    ],
   );
   assert.notEqual(AGENT_ADAPTERS[0]?.startMarker, AGENT_ADAPTERS[1]?.startMarker);
   assert.notEqual(AGENT_ADAPTERS[1]?.startMarker, AGENT_ADAPTERS[2]?.startMarker);
@@ -66,6 +77,54 @@ test('plans Claude create, append, refresh, and skip without changing outside by
   assert.match(refreshed.content, /invoke \/graphkeeper/);
 
   assert.equal(planGuidanceContent(adapter, refreshed.content).kind, 'skip');
+});
+
+test('plans Kilo guidance create, append, refresh, and skip without changing outside bytes', () => {
+  const adapter = getAgentAdapter('kilo');
+  const created = planGuidanceContent(adapter, null);
+  assert.equal(created.kind, 'create');
+  assert.match(created.content, /invoke `@graphkeeper`/);
+  assert.match(created.content, /graphkeeper:kilo:start/);
+
+  const existing = '# Kilo rules\n';
+  const appended = planGuidanceContent(adapter, existing);
+  assert.equal(appended.kind, 'append');
+  assert.ok(appended.content.startsWith(existing));
+  assert.match(appended.content, /graphkeeper:kilo:start/);
+
+  assert.equal(planGuidanceContent(adapter, created.content).kind, 'skip');
+});
+
+test('plans Windsurf guidance create, append, refresh, and skip without changing outside bytes', () => {
+  const adapter = getAgentAdapter('windsurf');
+  const created = planGuidanceContent(adapter, null);
+  assert.equal(created.kind, 'create');
+  assert.match(created.content, /invoke `@graphkeeper`/);
+  assert.match(created.content, /graphkeeper:windsurf:start/);
+
+  const existing = '# Windsurf rules\n';
+  const appended = planGuidanceContent(adapter, existing);
+  assert.equal(appended.kind, 'append');
+  assert.ok(appended.content.startsWith(existing));
+  assert.match(appended.content, /graphkeeper:windsurf:start/);
+
+  assert.equal(planGuidanceContent(adapter, created.content).kind, 'skip');
+});
+
+test('plans Gemini CLI guidance create into GEMINI.md with its own marked block', () => {
+  const adapter = getAgentAdapter('geminicli');
+  const created = planGuidanceContent(adapter, null);
+  assert.equal(created.kind, 'create');
+  assert.match(created.content, /invoke `@graphkeeper`/);
+  assert.match(created.content, /graphkeeper:geminicli:start/);
+
+  const existing = '# Gemini context\n';
+  const appended = planGuidanceContent(adapter, existing);
+  assert.equal(appended.kind, 'append');
+  assert.ok(appended.content.startsWith(existing));
+  assert.match(appended.content, /graphkeeper:geminicli:start/);
+
+  assert.equal(planGuidanceContent(adapter, created.content).kind, 'skip');
 });
 
 test('rejects missing, repeated, reversed, mixed, and malformed adapter markers', () => {

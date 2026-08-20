@@ -15,6 +15,18 @@ versioning; while the package is below 1.0, minor releases may change public beh
   `.opencode/skills/graphkeeper/SKILL.md`, the marked reminder in `AGENTS.md`, and the
   `graphkeeper` invocation. It participates in `--integrate all`, `--dry-run`, and
   conservative `integrate remove`.
+- A Kilo Code adapter registered as `--integrate kilo` with the canonical skill at
+  `.kilo/skills/graphkeeper/SKILL.md`, the marked reminder at
+  `.kilo/rules/graphkeeper.md`, and the `@graphkeeper` invocation. It participates in
+  `--integrate all`, `--dry-run`, and conservative `integrate remove`.
+- A Windsurf adapter registered as `--integrate windsurf` with the canonical skill at
+  `.windsurf/skills/graphkeeper/SKILL.md`, the marked reminder at
+  `.windsurf/rules/graphkeeper.md`, and the `@graphkeeper` invocation. It participates in
+  `--integrate all`, `--dry-run`, and conservative `integrate remove`.
+- A Gemini CLI adapter registered as `--integrate geminicli` with the canonical skill at
+  `.gemini/skills/graphkeeper/SKILL.md`, the marked reminder in `GEMINI.md`, and the
+  `@graphkeeper` invocation. It participates in `--integrate all`, `--dry-run`, and
+  conservative `integrate remove`.
 
 ### Changed
 
