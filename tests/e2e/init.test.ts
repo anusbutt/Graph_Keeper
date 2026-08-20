@@ -106,6 +106,25 @@ test('explicit Cursor integration creates the managed rules block through the CL
   }
 });
 
+test('explicit OpenCode integration creates the managed AGENTS.md block through the CLI', async () => {
+  const fixture = await createRepositoryFixture();
+  try {
+    const result = await runInit(fixture.root, ['--integrate', 'opencode', '--yes']);
+    assert.equal(result.exitCode, EXIT_SUCCESS, result.stderr);
+    assert.match(result.stdout, /CREATE AGENTS\.md/);
+    const agents = await readFile(join(fixture.root, 'AGENTS.md'), 'utf8');
+    assert.match(agents, /<!-- graphkeeper:opencode:start -->/);
+    assert.match(agents, /invoke `graphkeeper`/);
+    assert.equal((agents.match(/graphkeeper:opencode:start/g) ?? []).length, 1);
+    assert.match(
+      await readFile(join(fixture.root, '.opencode', 'skills', 'graphkeeper', 'SKILL.md'), 'utf8'),
+      /^---\nname: graphkeeper\n/,
+    );
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
 test('non-interactive integration requires --yes and refuses before mutation', async () => {
   const fixture = await createRepositoryFixture();
   try {
@@ -133,6 +152,7 @@ test('--dry-run preflights all adapters without prompting or writing', async () 
     assert.match(result.stdout, /CREATE CLAUDE\.md/);
     assert.match(result.stdout, /CREATE \.cursor\/rules\/graphkeeper\.md/);
     assert.match(result.stdout, /\.claude\/skills\/graphkeeper\/SKILL\.md/);
+    assert.match(result.stdout, /\.opencode\/skills\/graphkeeper\/SKILL\.md/);
     assert.match(result.stdout, /DRY RUN No changes were made/);
     assert.doesNotMatch(result.stdout, /Restart Claude Code/);
     await assert.rejects(stat(join(fixture.root, 'graph')));
@@ -167,6 +187,7 @@ test('all adapters install and conservative removal works through the CLI', asyn
     const installed = await runInit(fixture.root, ['--integrate', 'all', '--yes']);
     assert.equal(installed.exitCode, EXIT_SUCCESS, installed.stderr);
     assert.match(await readFile(join(fixture.root, 'AGENTS.md'), 'utf8'), /graphkeeper:codex/);
+    assert.match(await readFile(join(fixture.root, 'AGENTS.md'), 'utf8'), /graphkeeper:opencode/);
     assert.match(await readFile(join(fixture.root, 'CLAUDE.md'), 'utf8'), /graphkeeper:claude/);
     assert.match(
       await readFile(join(fixture.root, '.cursor', 'rules', 'graphkeeper.md'), 'utf8'),

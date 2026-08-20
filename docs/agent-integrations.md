@@ -7,6 +7,13 @@ GraphKeeper v1 supports the following explicit internal adapters:
 | `codex` | `.agents/skills/graphkeeper/SKILL.md` | `AGENTS.md` | `$graphkeeper` |
 | `claude` | `.claude/skills/graphkeeper/SKILL.md` | `CLAUDE.md` | `/graphkeeper` |
 | `cursor` | `.cursor/skills/graphkeeper/SKILL.md` | `.cursor/rules/graphkeeper.md` | `@graphkeeper` |
+| `opencode` | `.opencode/skills/graphkeeper/SKILL.md` | `AGENTS.md` | `graphkeeper` |
+
+Some adapters (for example Codex and OpenCode) share `AGENTS.md` as their guidance
+file. GraphKeeper supports this: each adapter owns exactly one marked block, blocks
+from other registered adapters are allowed when properly paired, and planning, append,
+and remove always touch only the owning adapter's span. Unknown or malformed markers
+are still rejected with `GK004`.
 
 The closed registry in `src/lib/agent-adapters.ts` defines these destinations,
 invocations, unique markers, and post-install notes. It is an implementation detail,

@@ -112,6 +112,39 @@ test('Cursor removal deletes only canonical Cursor-owned material and leaves oth
   }
 });
 
+test('OpenCode shares AGENTS.md with Codex and removal preserves the sibling block', async () => {
+  const fixture = await createRepositoryFixture();
+  try {
+    await initialize({
+      cwd: fixture.root,
+      force: false,
+      integrations: ['codex', 'opencode'],
+      environment: supportedInitEnvironment(),
+    });
+    assert.equal(
+      await readFile(join(fixture.root, '.opencode', 'skills', 'graphkeeper', 'SKILL.md'), 'utf8'),
+      await template(),
+    );
+    const agents = await readFile(join(fixture.root, 'AGENTS.md'), 'utf8');
+    assert.match(agents, /graphkeeper:codex:start/);
+    assert.match(agents, /graphkeeper:opencode:start/);
+    assert.equal((agents.match(/graphkeeper:codex:start/g) ?? []).length, 1);
+    assert.equal((agents.match(/graphkeeper:opencode:start/g) ?? []).length, 1);
+
+    await applyAgentIntegrationPlan(await prepareAgentRemoval(fixture.root, 'opencode'));
+    const after = await readFile(join(fixture.root, 'AGENTS.md'), 'utf8');
+    assert.doesNotMatch(after, /graphkeeper:opencode/);
+    assert.match(after, /graphkeeper:codex:start/);
+    await assert.rejects(stat(join(fixture.root, '.opencode', 'skills', 'graphkeeper')));
+    assert.equal(
+      await readFile(join(fixture.root, '.agents', 'skills', 'graphkeeper', 'SKILL.md'), 'utf8'),
+      await template(),
+    );
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
 test('multi-adapter installation is deterministic, idempotent, and isolated', async () => {
   const fixture = await createRepositoryFixture();
   try {

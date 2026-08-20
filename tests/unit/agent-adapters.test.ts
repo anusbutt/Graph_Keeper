@@ -22,21 +22,26 @@ function sourceFile(relativePath: string): Promise<string> {
 }
 
 test('registers explicit adapters with independent destinations', () => {
-  assert.deepEqual(AGENT_ADAPTERS.map((adapter) => adapter.id), ['codex', 'claude', 'cursor']);
+  assert.deepEqual(
+    AGENT_ADAPTERS.map((adapter) => adapter.id),
+    ['codex', 'claude', 'cursor', 'opencode'],
+  );
   assert.deepEqual(
     AGENT_ADAPTERS.map((adapter) => adapter.skillTarget),
     [
       '.agents/skills/graphkeeper/SKILL.md',
       '.claude/skills/graphkeeper/SKILL.md',
       '.cursor/skills/graphkeeper/SKILL.md',
+      '.opencode/skills/graphkeeper/SKILL.md',
     ],
   );
   assert.deepEqual(
     AGENT_ADAPTERS.map((adapter) => adapter.guidanceTarget),
-    ['AGENTS.md', 'CLAUDE.md', '.cursor/rules/graphkeeper.md'],
+    ['AGENTS.md', 'CLAUDE.md', '.cursor/rules/graphkeeper.md', 'AGENTS.md'],
   );
   assert.notEqual(AGENT_ADAPTERS[0]?.startMarker, AGENT_ADAPTERS[1]?.startMarker);
   assert.notEqual(AGENT_ADAPTERS[1]?.startMarker, AGENT_ADAPTERS[2]?.startMarker);
+  assert.notEqual(AGENT_ADAPTERS[2]?.startMarker, AGENT_ADAPTERS[3]?.startMarker);
 });
 
 test('plans Claude create, append, refresh, and skip without changing outside bytes', () => {
@@ -97,6 +102,32 @@ test('removal deletes only the exact owned marker span', () => {
     content: '# No block',
     expected: '# No block',
   });
+});
+
+test('planning allows a properly-paired registered sibling block in a shared guidance file', () => {
+  const codex = getAgentAdapter('codex');
+  const claude = getAgentAdapter('claude');
+  const codexBlock = '<!-- graphkeeper:codex:start -->\n## GraphKeeper memory\n\ntext\n'
+    + '<!-- graphkeeper:codex:end -->\n';
+  const plan = planGuidanceContent(claude, codexBlock);
+  assert.equal(plan.kind, 'append');
+  assert.match(plan.content, /graphkeeper:codex:start/);
+  assert.match(plan.content, /graphkeeper:claude:start/);
+});
+
+test('removal in a shared guidance file preserves a properly-paired sibling block', () => {
+  const codex = getAgentAdapter('codex');
+  const claude = getAgentAdapter('claude');
+  const codexBlock = '<!-- graphkeeper:codex:start -->\nManaged\n'
+    + '<!-- graphkeeper:codex:end -->\n';
+  const claudeBlock = '<!-- graphkeeper:claude:start -->\nManaged\n'
+    + '<!-- graphkeeper:claude:end -->\n';
+  const shared = codexBlock + '\n' + claudeBlock;
+  const removed = planGuidanceRemovalContent(claude, shared);
+  if (removed.content === null) throw new Error('expected removal content');
+  assert.equal(removed.kind, 'remove');
+  assert.ok(removed.content.includes('graphkeeper:codex:start'));
+  assert.ok(!removed.content.includes('graphkeeper:claude:start'));
 });
 
 test('every registered adapter satisfies the contract with unique, ordered ids', () => {
