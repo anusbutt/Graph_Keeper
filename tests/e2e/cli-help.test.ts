@@ -15,6 +15,7 @@ import {
   type CliTerminal,
   run,
 } from '../../src/cli.js';
+import { AGENT_IDS } from '../../src/lib/agent-adapters.js';
 import { runCommand } from '../helpers/repository.js';
 
 function captureIO(): {
@@ -42,8 +43,9 @@ test('prints help successfully when no command is provided', async () => {
   assert.match(capture.stdout.join('\n'), /graphkeeper init/);
   assert.match(capture.stdout.join('\n'), /graphkeeper update/);
   assert.equal(capture.stderr.length, 0);
-  assert.match(capture.stdout.join('\n'), /--integrate <codex\|claude\|all>/);
-  assert.match(capture.stdout.join('\n'), /integrate remove <codex\|claude>/);
+  const grammar = AGENT_IDS.join('|');
+  assert.match(capture.stdout.join('\n'), new RegExp(`--integrate <${grammar}\\|all>`));
+  assert.match(capture.stdout.join('\n'), new RegExp(`integrate remove <${grammar}>`));
 });
 
 test('parses the documented multi-adapter init option grammar deterministically', () => {
@@ -75,7 +77,7 @@ test('parses the documented multi-adapter init option grammar deterministically'
   );
   assert.deepEqual(
     parseInitArguments(['--integrate', 'all']),
-    { force: false, integrations: ['codex', 'claude'], yes: false, dryRun: false },
+    { force: false, integrations: [...AGENT_IDS], yes: false, dryRun: false },
   );
 
   for (const invalid of [

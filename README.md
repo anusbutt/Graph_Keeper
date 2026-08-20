@@ -77,12 +77,15 @@ npx graphkeeper@latest check
 Review the displayed plan and confirm it. `init` creates the JSON graph, `evidence/`,
 the canonical validator, a pre-commit hook, and the repository-scoped Codex skill.
 `--integrate codex` adds the Codex reminder to `AGENTS.md`; `--integrate claude` adds
-the Claude skill and reminder; `--integrate all` does both. Codex uses
+the Claude skill and reminder; `--integrate cursor` adds the Cursor skill and rule;
+`--integrate all` installs every registered adapter. Codex uses
 `.agents/skills/graphkeeper/SKILL.md`, `AGENTS.md`, and
 `$graphkeeper`. Claude Code uses `.claude/skills/graphkeeper/SKILL.md`,
-`CLAUDE.md`, and `/graphkeeper`. Both skills are generated from the same
-`templates/SKILL.md`. Existing guidance outside the matching marked block is
-preserved. Integration plans are shown before writing; answer the prompt, or pass
+`CLAUDE.md`, and `/graphkeeper`. Cursor uses `.cursor/skills/graphkeeper/SKILL.md`,
+`.cursor/rules/graphkeeper.md`, and `@graphkeeper`. All skills are generated from the
+same `templates/SKILL.md`. The set of adapters is a closed data-driven registry in
+`src/lib/agent-adapters.ts`; `graphkeeper --help` lists the installed adapters.
+Existing guidance outside the matching marked block is preserved. Integration plans are shown before writing; answer the prompt, or pass
 `--yes` in non-interactive automation. Use `--dry-run` for a complete read-only
 preflight. Default init and `--force` do not create or change `AGENTS.md` or
 `CLAUDE.md`.
@@ -131,8 +134,8 @@ The older claim remains in history and is marked as superseded. Reviewers can fo
 
 | Command | Role |
 |---|---|
-| `graphkeeper init [--force] [--integrate <codex\|claude\|all>]... [--yes] [--dry-run]` | Scaffold safely and optionally install explicit Codex and/or Claude adapters. Distinct `--integrate` flags may repeat; `all` must stand alone. `--yes --dry-run` is accepted as a harmless dry run. |
-| `graphkeeper integrate remove <codex\|claude> [--yes] [--dry-run]` | Remove only recognizable GraphKeeper-owned material for one adapter. Modified skills and unexpected supporting files are preserved for manual review. |
+| `graphkeeper init [--force] [--integrate <adapter\|all>]... [--yes] [--dry-run]` | Scaffold safely and optionally install explicit agent adapters (currently `codex`, `claude`, `cursor`). Distinct `--integrate` flags may repeat; `all` must stand alone. `--yes --dry-run` is accepted as a harmless dry run. |
+| `graphkeeper integrate remove <adapter> [--yes] [--dry-run]` | Remove only recognizable GraphKeeper-owned material for one adapter. Modified skills and unexpected supporting files are preserved for manual review. |
 | `graphkeeper check` | Run the same fast schema, append-only history, and committed-evidence protection checks used by the Git hook. |
 | `graphkeeper query <subject>` | Resolve an exact ID or unique alias and print active claims with provenance. It does not read evidence contents. |
 | `graphkeeper doctor` | Run fast validation plus file existence, containment, line-range, dangling-reference, and unused-entity checks. |

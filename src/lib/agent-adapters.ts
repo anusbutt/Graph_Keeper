@@ -1,7 +1,5 @@
 import { GraphKeeperError } from './errors.js';
 
-export type AgentId = 'codex' | 'claude';
-
 export interface AgentAdapter {
   readonly id: AgentId;
   readonly displayName: string;
@@ -10,6 +8,7 @@ export interface AgentAdapter {
   readonly invocation: string;
   readonly startMarker: string;
   readonly endMarker: string;
+  readonly scaffoldSkillByInit?: boolean;
   readonly postInstallNote?: string;
 }
 
@@ -30,6 +29,7 @@ const adapters = [
     invocation: '`$graphkeeper`',
     startMarker: '<!-- graphkeeper:codex:start -->',
     endMarker: '<!-- graphkeeper:codex:end -->',
+    scaffoldSkillByInit: true,
   },
   {
     id: 'claude',
@@ -41,7 +41,19 @@ const adapters = [
     endMarker: '<!-- graphkeeper:claude:end -->',
     postInstallNote: 'Restart Claude Code if .claude/skills did not exist when the current session started.',
   },
-] as const satisfies readonly AgentAdapter[];
+  {
+    id: 'cursor',
+    displayName: 'Cursor',
+    skillTarget: '.cursor/skills/graphkeeper/SKILL.md',
+    guidanceTarget: '.cursor/rules/graphkeeper.md',
+    invocation: '`@graphkeeper`',
+    startMarker: '<!-- graphkeeper:cursor:start -->',
+    endMarker: '<!-- graphkeeper:cursor:end -->',
+    postInstallNote: 'Restart Cursor if .cursor/skills did not exist when the current session began.',
+  },
+] as const;
+
+export type AgentId = (typeof adapters)[number]['id'];
 
 export const AGENT_ADAPTERS: readonly AgentAdapter[] = adapters;
 export const AGENT_IDS: readonly AgentId[] = adapters.map((adapter) => adapter.id);

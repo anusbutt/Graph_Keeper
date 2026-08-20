@@ -48,13 +48,14 @@ export interface CliTerminal {
 
 const VERSION = '0.4.1';
 const COMMANDS = new Set(['init', 'integrate', 'check', 'query', 'doctor', 'update']);
+const AGENT_GRAMMAR = AGENT_IDS.join('|');
 
 const USAGE = [
   'GraphKeeper - grounded, auditable memory for coding agents',
   '',
   'Usage:',
-  '  graphkeeper init [--force] [--integrate <codex|claude|all>]... [--yes] [--dry-run]',
-  '  graphkeeper integrate remove <codex|claude> [--yes] [--dry-run]',
+  `  graphkeeper init [--force] [--integrate <${AGENT_GRAMMAR}|all>]... [--yes] [--dry-run]`,
+  `  graphkeeper integrate remove <${AGENT_GRAMMAR}> [--yes] [--dry-run]`,
   '  graphkeeper check',
   '  graphkeeper query <subject>',
   '  graphkeeper doctor',
@@ -248,7 +249,7 @@ export async function run(
     if (parsed === null) {
       io.stderr(diagnostic(
         'GK002',
-        'init accepts --force, distinct --integrate codex|claude flags or --integrate all, --yes, and --dry-run',
+        'init accepts --force, distinct --integrate ' + AGENT_GRAMMAR + ' flags or --integrate all, --yes, and --dry-run',
       ));
       return EXIT_USAGE;
     }
@@ -287,7 +288,7 @@ export async function run(
     if (parsed === null) {
       io.stderr(diagnostic(
         'GK002',
-        'integrate accepts remove <codex|claude> followed by optional --yes and --dry-run',
+        'integrate accepts remove <' + AGENT_GRAMMAR + '> followed by optional --yes and --dry-run',
       ));
       return EXIT_USAGE;
     }

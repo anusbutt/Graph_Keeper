@@ -19,9 +19,10 @@ transcript store.
   intentionally stay out of the fast hook path.
 - `templates/graph/SCHEMA.md` is the data contract; `templates/SKILL.md` is
   vendor-neutral agent guidance; `templates/pre-commit` is the hook wrapper.
-- `src/lib/agent-adapters.ts` defines the closed Codex and Claude Code adapter
-  registry. Preserve independent destinations, marked-block ownership, planning,
-  rollback, and conservative removal.
+- `src/lib/agent-adapters.ts` defines the closed, data-driven adapter registry
+  (Codex, Claude Code, Cursor). Adding an adapter is a single registry entry; the CLI
+  grammar and `--integrate all` derive from it. Preserve independent destinations,
+  marked-block ownership, planning, rollback, and conservative removal.
 - `examples/`, `tests/`, `docs/`, and `.github/` contain demonstrations, coverage,
   supporting documentation, and repository automation respectively.
 

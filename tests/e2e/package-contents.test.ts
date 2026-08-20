@@ -5,6 +5,7 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import test from 'node:test';
 
+import { AGENT_IDS } from '../../src/lib/agent-adapters.js';
 import { runProcess } from '../../src/lib/process.js';
 import { parsePackManifest } from '../helpers/npm-pack.js';
 
@@ -97,7 +98,7 @@ test('release tarball contains every runtime asset and excludes development-only
   assert.match(help.stdout, /GraphKeeper - grounded, auditable memory/);
   assert.match(help.stdout, /graphkeeper doctor/);
   assert.match(help.stdout, /graphkeeper update/);
-  assert.match(help.stdout, /integrate remove <codex\|claude>/);
+  assert.match(help.stdout, new RegExp(`integrate remove <${AGENT_IDS.join('|')}>`));
   assert.match(await readFile(join(packageRoot, 'scripts', 'validate.sh'), 'utf8'), /GraphKeeper: validation passed/);
   assert.match(await readFile(join(packageRoot, 'scripts', 'validate.mjs'), 'utf8'), /GraphKeeper: validation passed/);
   assert.match(
