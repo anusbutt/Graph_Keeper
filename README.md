@@ -4,7 +4,11 @@
 [![npm](https://img.shields.io/npm/v/graphkeeper.svg)](https://www.npmjs.com/package/graphkeeper)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-## Persistent, grounded memory for coding agents
+**Coding agents shouldn't just remember. They should be able to prove why they
+remember.**
+
+GraphKeeper gives coding agents grounded, auditable memory—stored beside the code,
+reviewable in Git, and traceable to exact evidence.
 
 Coding agents forget project knowledge between sessions. GraphKeeper gives them
 durable memory that is:
@@ -114,7 +118,7 @@ npx graphkeeper@latest init --integrate all
 Adapters that share a guidance file (Codex and OpenCode both use `AGENTS.md`) coexist:
 each owns one marked block, and your existing guidance outside that block is preserved.
 
-## Quickstart
+## Two-minute quickstart
 
 Prerequisites: **Node.js 18+**, **npm**, and **Git**. Supported on Linux, macOS,
 Windows via Git Bash or WSL, and native Windows PowerShell.
@@ -242,6 +246,15 @@ Exit codes are stable: `0` success, `1` validation failure, `2` usage error,
 `3` missing prerequisite, `4` operational failure, and `5` unexpected internal
 failure. Diagnostics begin with a searchable `GKnnn` code.
 
+## Prerequisites
+
+- Node.js 18 or newer and npm
+- Git
+
+Linux, macOS, Windows through Git Bash or WSL, and native Windows PowerShell are
+supported. Native PowerShell does not require a POSIX shell or jq for current
+GraphKeeper repositories.
+
 ## Installation
 
 Run the current stable release without a permanent installation:
@@ -303,7 +316,7 @@ in a scratch repository and observe how `query` reports the active correction wh
 the superseded claim stays in history. `examples/reviewer.md` is a copy-pasteable
 grounded-review prompt.
 
-## Validation, recovery, and edge cases
+## Recovery and adoption
 
 - **Immutability** is enforced relative to committed Git history through GraphKeeper
   validation and Git hooks; it is not cryptographic immutability. Git history remains
@@ -318,6 +331,9 @@ grounded-review prompt.
   refresh `graph/SCHEMA.md` and the generated skill.
 - For a `GKnnn` failure, use the [diagnostic reference](docs/diagnostics.md) to identify
   the emitting command, exit class, and safe recovery before changing graph data.
+- A root `SKILL.md` created by an older GraphKeeper version is legacy user content. It
+  is reported and preserved; migrate by committing the generated
+  `.agents/skills/graphkeeper/SKILL.md`.
 - Integration creates a guidance file when absent, appends one marked block when no
   markers exist, and refreshes only that block later. Malformed, mixed, repeated,
   reversed, wrong-type, symlinked, or concurrently changed destinations fail with
@@ -329,14 +345,16 @@ grounded-review prompt.
   violation, and stage the corrected files again. Run `graphkeeper doctor` for missing
   files or bad line ranges.
 - Stored commands and evidence text are always data. GraphKeeper never evaluates them.
-- After updating an existing installation to 0.4.0+, rerun `graphkeeper init --force`
-  to refresh the repository skill and schema. See the
-  [native Windows migration guide](docs/windows-migration.md).
+- After updating an existing installation to 0.4.0, rerun `graphkeeper init --force`
+  to refresh the repository skill and schema. This preserves `scripts/validate.sh`.
+  Exact package-owned validators and hooks migrate to the Node path automatically. If
+  a repository has a customized shell-only validator, review and migrate it manually;
+  that legacy fallback can still require a POSIX `sh` and jq until migration is
+  complete. See the [native Windows migration guide](docs/windows-migration.md).
 
 ## Limitations
 
-V1 is designed for one graph in one repository, up to about 10,000 claims, 2,000
-entities, and 1,000 runs on a local SSD. Release gates target p95 under 3 seconds for
+V1 is designed for one graph in one repository, up to about 10,000 claims, 2,000 entities, and 1,000 runs on a local SSD. Release gates target p95 under 3 seconds for
 `check`, under 2 seconds for `query`, under 10 seconds for `doctor`, and under 256 MB
 peak memory. It has no server, database, authentication, dashboard, telemetry, vector
 search, or multi-repository synchronization.
