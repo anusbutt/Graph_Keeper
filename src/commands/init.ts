@@ -680,7 +680,9 @@ export async function prepareInitialization(
   const integrationPlan = integrations.length === 0
     ? null
     : await prepareAgentInstall(root, integrations, options.force, {
-      skipSkillFor: new Set<AgentId>(['codex']),
+      skipSkillFor: new Set<AgentId>(
+        AGENT_IDS.filter((id) => getAgentAdapter(id).scaffoldSkillByInit === true),
+      ),
     });
   const assets = await loadRequiredAssets(scaffoldActions);
   const hookPlan = isGitRepository ? await prepareHookPlan(root) : null;

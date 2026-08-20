@@ -5,6 +5,31 @@ versioning; while the package is below 1.0, minor releases may change public beh
 
 ## [Unreleased]
 
+### Added
+
+- A Cursor adapter registered as `--integrate cursor` with the canonical skill at
+  `.cursor/skills/graphkeeper/SKILL.md`, the marked reminder at
+  `.cursor/rules/graphkeeper.md`, and the `@graphkeeper` invocation. It participates in
+  `--integrate all`, `--dry-run`, and conservative `integrate remove`.
+- An OpenCode adapter registered as `--integrate opencode` with the canonical skill at
+  `.opencode/skills/graphkeeper/SKILL.md`, the marked reminder in `AGENTS.md`, and the
+  `graphkeeper` invocation. It participates in `--integrate all`, `--dry-run`, and
+  conservative `integrate remove`.
+
+### Changed
+
+- Agent adapters are now a closed, data-driven registry. Adding an adapter is a single
+  entry in `src/lib/agent-adapters.ts`; the CLI `--integrate` grammar, the
+  `--integrate all` expansion, and removal machinery all derive from it, and `AgentId`
+  is derived from the registry instead of a hardcoded union.
+- The `init` skill-scaffolding special case is expressed as adapter data
+  (`scaffoldSkillByInit`) instead of a hardcoded agent id.
+- Multiple registered adapters may now share one guidance file. Codex and OpenCode both
+  use `AGENTS.md`; each owns one marked block, sibling blocks are allowed when properly
+  paired, and unknown or malformed markers are still rejected with `GK004`. Installing
+  adapters that share a file in one plan (for example `--integrate all`) appends each
+  block sequentially.
+
 ## [0.4.1] - 2026-08-14
 
 ### Added

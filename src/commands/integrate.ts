@@ -162,14 +162,18 @@ export async function prepareAgentInstall(
   const operations: FileOperation[] = [];
   const notes: string[] = [];
   const fileSnapshots: FileSnapshot[] = [];
+  const snapshotTargets = new Set<string>();
+  const pushSnapshot = (relativeTarget: string, content: string | null): void => {
+    if (snapshotTargets.has(relativeTarget)) return;
+    snapshotTargets.add(relativeTarget);
+    fileSnapshots.push({ relativeTarget, content });
+  };
+  const plannedGuidance = new Map<string, string | null>();
 
   for (const id of adapterIds) {
     const adapter = getAgentAdapter(id);
     const existingSkill = await readOptionalRegularFile(root, adapter.skillTarget);
-    fileSnapshots.push({
-      relativeTarget: adapter.skillTarget,
-      content: existingSkill,
-    });
+    pushSnapshot(adapter.skillTarget, existingSkill);
     if (!options.skipSkillFor?.has(id)) {
       const skillKind = existingSkill === null
         ? 'create'
@@ -202,11 +206,11 @@ export async function prepareAgentInstall(
       }
     }
 
-    const existingGuidance = await readOptionalRegularFile(root, adapter.guidanceTarget);
-    fileSnapshots.push({
-      relativeTarget: adapter.guidanceTarget,
-      content: existingGuidance,
-    });
+    let existingGuidance = plannedGuidance.get(adapter.guidanceTarget);
+    if (existingGuidance === undefined) {
+      existingGuidance = await readOptionalRegularFile(root, adapter.guidanceTarget);
+    }
+    pushSnapshot(adapter.guidanceTarget, existingGuidance);
     const guidance = planGuidanceContent(adapter, existingGuidance);
     actions.push({
       kind: guidance.kind,
@@ -223,6 +227,7 @@ export async function prepareAgentInstall(
         expected: guidance.expected,
         mode: 0o644,
       });
+      plannedGuidance.set(adapter.guidanceTarget, guidance.content);
     }
 
     if (adapter.postInstallNote !== undefined) {
@@ -436,11 +441,19 @@ export async function validateAgentIntegrationPlan(
       throw operational(snapshot.relativeTarget + ' changed after planning and was preserved');
     }
   }
+  const writeCounts = new Map<string, number>();
   for (const operation of plan.operations) {
     if (operation.type === 'write') {
-      const current = await readOptionalRegularFile(plan.root, operation.relativeTarget);
-      if (current !== operation.expected) {
-        throw operational(operation.relativeTarget + ' changed after planning and was preserved');
+      writeCounts.set(operation.relativeTarget, (writeCounts.get(operation.relativeTarget) ?? 0) + 1);
+    }
+  }
+  for (const operation of plan.operations) {
+    if (operation.type === 'write') {
+      if ((writeCounts.get(operation.relativeTarget) ?? 0) <= 1) {
+        const current = await readOptionalRegularFile(plan.root, operation.relativeTarget);
+        if (current !== operation.expected) {
+          throw operational(operation.relativeTarget + ' changed after planning and was preserved');
+        }
       }
       continue;
     }

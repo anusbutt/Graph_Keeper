@@ -57,6 +57,94 @@ test('Claude integration installs the canonical skill and one independent guidan
   }
 });
 
+test('Cursor integration installs the canonical skill and one independent guidance block', async () => {
+  const fixture = await createRepositoryFixture();
+  try {
+    const report = await initialize({
+      cwd: fixture.root,
+      force: false,
+      integrations: ['cursor'],
+      environment: supportedInitEnvironment(),
+    });
+    assert.equal(
+      await readFile(join(fixture.root, '.cursor', 'skills', 'graphkeeper', 'SKILL.md'), 'utf8'),
+      await template(),
+    );
+    const rules = await readFile(
+      join(fixture.root, '.cursor', 'rules', 'graphkeeper.md'),
+      'utf8',
+    );
+    assert.match(rules, /<!-- graphkeeper:cursor:start -->/);
+    assert.match(rules, /invoke `@graphkeeper`/);
+    assert.equal((rules.match(/graphkeeper:cursor:start/g) ?? []).length, 1);
+    assert.ok(report.notes.some((note) => /Restart Cursor/.test(note)));
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+test('Cursor removal deletes only canonical Cursor-owned material and leaves others intact', async () => {
+  const fixture = await createRepositoryFixture();
+  try {
+    await initialize({
+      cwd: fixture.root,
+      force: false,
+      integrations: ['codex', 'claude', 'cursor'],
+      environment: supportedInitEnvironment(),
+    });
+    const plan = await prepareAgentRemoval(fixture.root, 'cursor');
+    assert.ok(plan.actions.some((action) =>
+      action.kind === 'remove' && action.target === '.cursor/rules/graphkeeper.md'));
+    await applyAgentIntegrationPlan(plan);
+
+    assert.doesNotMatch(
+      await readFile(join(fixture.root, '.cursor', 'rules', 'graphkeeper.md'), 'utf8'),
+      /graphkeeper:cursor/,
+    );
+    await assert.rejects(stat(join(fixture.root, '.cursor', 'skills', 'graphkeeper')));
+    assert.match(await readFile(join(fixture.root, 'AGENTS.md'), 'utf8'), /graphkeeper:codex:start/);
+    assert.match(await readFile(join(fixture.root, 'CLAUDE.md'), 'utf8'), /graphkeeper:claude:start/);
+
+    const repeated = await prepareAgentRemoval(fixture.root, 'cursor');
+    assert.ok(repeated.actions.every((action) => action.kind === 'skip'));
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+test('OpenCode shares AGENTS.md with Codex and removal preserves the sibling block', async () => {
+  const fixture = await createRepositoryFixture();
+  try {
+    await initialize({
+      cwd: fixture.root,
+      force: false,
+      integrations: ['codex', 'opencode'],
+      environment: supportedInitEnvironment(),
+    });
+    assert.equal(
+      await readFile(join(fixture.root, '.opencode', 'skills', 'graphkeeper', 'SKILL.md'), 'utf8'),
+      await template(),
+    );
+    const agents = await readFile(join(fixture.root, 'AGENTS.md'), 'utf8');
+    assert.match(agents, /graphkeeper:codex:start/);
+    assert.match(agents, /graphkeeper:opencode:start/);
+    assert.equal((agents.match(/graphkeeper:codex:start/g) ?? []).length, 1);
+    assert.equal((agents.match(/graphkeeper:opencode:start/g) ?? []).length, 1);
+
+    await applyAgentIntegrationPlan(await prepareAgentRemoval(fixture.root, 'opencode'));
+    const after = await readFile(join(fixture.root, 'AGENTS.md'), 'utf8');
+    assert.doesNotMatch(after, /graphkeeper:opencode/);
+    assert.match(after, /graphkeeper:codex:start/);
+    await assert.rejects(stat(join(fixture.root, '.opencode', 'skills', 'graphkeeper')));
+    assert.equal(
+      await readFile(join(fixture.root, '.agents', 'skills', 'graphkeeper', 'SKILL.md'), 'utf8'),
+      await template(),
+    );
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
 test('multi-adapter installation is deterministic, idempotent, and isolated', async () => {
   const fixture = await createRepositoryFixture();
   try {

@@ -1,7 +1,5 @@
 import { GraphKeeperError } from './errors.js';
 
-export type AgentId = 'codex' | 'claude';
-
 export interface AgentAdapter {
   readonly id: AgentId;
   readonly displayName: string;
@@ -10,6 +8,7 @@ export interface AgentAdapter {
   readonly invocation: string;
   readonly startMarker: string;
   readonly endMarker: string;
+  readonly scaffoldSkillByInit?: boolean;
   readonly postInstallNote?: string;
 }
 
@@ -30,6 +29,7 @@ const adapters = [
     invocation: '`$graphkeeper`',
     startMarker: '<!-- graphkeeper:codex:start -->',
     endMarker: '<!-- graphkeeper:codex:end -->',
+    scaffoldSkillByInit: true,
   },
   {
     id: 'claude',
@@ -41,7 +41,29 @@ const adapters = [
     endMarker: '<!-- graphkeeper:claude:end -->',
     postInstallNote: 'Restart Claude Code if .claude/skills did not exist when the current session started.',
   },
-] as const satisfies readonly AgentAdapter[];
+  {
+    id: 'cursor',
+    displayName: 'Cursor',
+    skillTarget: '.cursor/skills/graphkeeper/SKILL.md',
+    guidanceTarget: '.cursor/rules/graphkeeper.md',
+    invocation: '`@graphkeeper`',
+    startMarker: '<!-- graphkeeper:cursor:start -->',
+    endMarker: '<!-- graphkeeper:cursor:end -->',
+    postInstallNote: 'Restart Cursor if .cursor/skills did not exist when the current session began.',
+  },
+  {
+    id: 'opencode',
+    displayName: 'OpenCode',
+    skillTarget: '.opencode/skills/graphkeeper/SKILL.md',
+    guidanceTarget: 'AGENTS.md',
+    invocation: '`graphkeeper`',
+    startMarker: '<!-- graphkeeper:opencode:start -->',
+    endMarker: '<!-- graphkeeper:opencode:end -->',
+    postInstallNote: 'Restart opencode if .opencode/skills did not exist when the current session began.',
+  },
+] as const;
+
+export type AgentId = (typeof adapters)[number]['id'];
 
 export const AGENT_ADAPTERS: readonly AgentAdapter[] = adapters;
 export const AGENT_IDS: readonly AgentId[] = adapters.map((adapter) => adapter.id);
@@ -83,16 +105,59 @@ function guidanceBlock(adapter: AgentAdapter, newline: string): string {
   ].join(newline);
 }
 
+interface MarkerTally {
+  start: number;
+  end: number;
+  firstStart?: number;
+  lastEnd?: number;
+}
+
+const GRAPH_KEEPER_MARKER = /graphkeeper:([a-z0-9_-]+):(start|end)/gi;
+
+function foreignMarkerProblem(
+  adapter: AgentAdapter,
+  content: string,
+): { id: string; detail: string } | null {
+  const tallies = new Map<string, MarkerTally>();
+  for (const match of content.matchAll(GRAPH_KEEPER_MARKER)) {
+    const id = match[1] as string;
+    const kind = match[2] as 'start' | 'end';
+    if (id === adapter.id) continue;
+    let tally = tallies.get(id);
+    if (tally === undefined) {
+      tally = { start: 0, end: 0 };
+      tallies.set(id, tally);
+    }
+    if (kind === 'start') {
+      tally.start += 1;
+      if (tally.firstStart === undefined) tally.firstStart = match.index ?? 0;
+    } else {
+      tally.end += 1;
+      tally.lastEnd = match.index ?? 0;
+    }
+  }
+  for (const [id, tally] of tallies) {
+    if (!isAgentId(id)) {
+      return { id, detail: 'contains an unregistered GraphKeeper marker' };
+    }
+    if (tally.start !== 1 || tally.end !== 1) {
+      return { id, detail: 'contains malformed or repeated GraphKeeper markers' };
+    }
+    if (tally.firstStart !== undefined && tally.lastEnd !== undefined && tally.firstStart > tally.lastEnd) {
+      return { id, detail: 'contains reversed GraphKeeper markers' };
+    }
+  }
+  return null;
+}
+
 function rejectForeignOrMalformedMarkers(
   adapter: AgentAdapter,
   content: string,
 ): void {
-  const withoutOwnedMarkers = content
-    .split(adapter.startMarker).join('')
-    .split(adapter.endMarker).join('');
-  if (/graphkeeper:[a-z0-9_-]+:(?:start|end)/i.test(withoutOwnedMarkers)) {
+  const problem = foreignMarkerProblem(adapter, content);
+  if (problem !== null) {
     throw operational(
-      adapter.guidanceTarget + ' contains mixed or malformed GraphKeeper markers',
+      adapter.guidanceTarget + ' ' + problem.detail + ' (' + problem.id + ')',
     );
   }
 }
