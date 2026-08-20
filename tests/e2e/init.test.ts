@@ -125,6 +125,69 @@ test('explicit OpenCode integration creates the managed AGENTS.md block through 
   }
 });
 
+test('explicit Kilo integration creates the managed rules block and skill through the CLI', async () => {
+  const fixture = await createRepositoryFixture();
+  try {
+    const result = await runInit(fixture.root, ['--integrate', 'kilo', '--yes']);
+    assert.equal(result.exitCode, EXIT_SUCCESS, result.stderr);
+    assert.match(result.stdout, /CREATE \.kilo\/rules\/graphkeeper\.md/);
+    const rules = await readFile(
+      join(fixture.root, '.kilo', 'rules', 'graphkeeper.md'),
+      'utf8',
+    );
+    assert.match(rules, /<!-- graphkeeper:kilo:start -->/);
+    assert.match(rules, /invoke `@graphkeeper`/);
+    assert.equal((rules.match(/graphkeeper:kilo:start/g) ?? []).length, 1);
+    assert.match(
+      await readFile(join(fixture.root, '.kilo', 'skills', 'graphkeeper', 'SKILL.md'), 'utf8'),
+      /^---\nname: graphkeeper\n/,
+    );
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+test('explicit Windsurf integration creates the managed rules block and skill through the CLI', async () => {
+  const fixture = await createRepositoryFixture();
+  try {
+    const result = await runInit(fixture.root, ['--integrate', 'windsurf', '--yes']);
+    assert.equal(result.exitCode, EXIT_SUCCESS, result.stderr);
+    assert.match(result.stdout, /CREATE \.windsurf\/rules\/graphkeeper\.md/);
+    const rules = await readFile(
+      join(fixture.root, '.windsurf', 'rules', 'graphkeeper.md'),
+      'utf8',
+    );
+    assert.match(rules, /<!-- graphkeeper:windsurf:start -->/);
+    assert.match(rules, /invoke `@graphkeeper`/);
+    assert.equal((rules.match(/graphkeeper:windsurf:start/g) ?? []).length, 1);
+    assert.match(
+      await readFile(join(fixture.root, '.windsurf', 'skills', 'graphkeeper', 'SKILL.md'), 'utf8'),
+      /^---\nname: graphkeeper\n/,
+    );
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+test('explicit Gemini CLI integration creates the managed GEMINI.md block and skill through the CLI', async () => {
+  const fixture = await createRepositoryFixture();
+  try {
+    const result = await runInit(fixture.root, ['--integrate', 'geminicli', '--yes']);
+    assert.equal(result.exitCode, EXIT_SUCCESS, result.stderr);
+    assert.match(result.stdout, /CREATE GEMINI\.md/);
+    const gemini = await readFile(join(fixture.root, 'GEMINI.md'), 'utf8');
+    assert.match(gemini, /<!-- graphkeeper:geminicli:start -->/);
+    assert.match(gemini, /invoke `@graphkeeper`/);
+    assert.equal((gemini.match(/graphkeeper:geminicli:start/g) ?? []).length, 1);
+    assert.match(
+      await readFile(join(fixture.root, '.gemini', 'skills', 'graphkeeper', 'SKILL.md'), 'utf8'),
+      /^---\nname: graphkeeper\n/,
+    );
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
 test('non-interactive integration requires --yes and refuses before mutation', async () => {
   const fixture = await createRepositoryFixture();
   try {
@@ -151,8 +214,14 @@ test('--dry-run preflights all adapters without prompting or writing', async () 
     assert.match(result.stdout, /CREATE AGENTS\.md/);
     assert.match(result.stdout, /CREATE CLAUDE\.md/);
     assert.match(result.stdout, /CREATE \.cursor\/rules\/graphkeeper\.md/);
+    assert.match(result.stdout, /CREATE \.kilo\/rules\/graphkeeper\.md/);
+    assert.match(result.stdout, /CREATE \.windsurf\/rules\/graphkeeper\.md/);
+    assert.match(result.stdout, /CREATE GEMINI\.md/);
     assert.match(result.stdout, /\.claude\/skills\/graphkeeper\/SKILL\.md/);
     assert.match(result.stdout, /\.opencode\/skills\/graphkeeper\/SKILL\.md/);
+    assert.match(result.stdout, /\.kilo\/skills\/graphkeeper\/SKILL\.md/);
+    assert.match(result.stdout, /\.windsurf\/skills\/graphkeeper\/SKILL\.md/);
+    assert.match(result.stdout, /\.gemini\/skills\/graphkeeper\/SKILL\.md/);
     assert.match(result.stdout, /DRY RUN No changes were made/);
     assert.doesNotMatch(result.stdout, /Restart Claude Code/);
     await assert.rejects(stat(join(fixture.root, 'graph')));
@@ -193,6 +262,15 @@ test('all adapters install and conservative removal works through the CLI', asyn
       await readFile(join(fixture.root, '.cursor', 'rules', 'graphkeeper.md'), 'utf8'),
       /graphkeeper:cursor/,
     );
+    assert.match(
+      await readFile(join(fixture.root, '.kilo', 'rules', 'graphkeeper.md'), 'utf8'),
+      /graphkeeper:kilo/,
+    );
+    assert.match(
+      await readFile(join(fixture.root, '.windsurf', 'rules', 'graphkeeper.md'), 'utf8'),
+      /graphkeeper:windsurf/,
+    );
+    assert.match(await readFile(join(fixture.root, 'GEMINI.md'), 'utf8'), /graphkeeper:geminicli/);
 
     const refused = await runCli(fixture.root, ['integrate', 'remove', 'claude']);
     assert.equal(refused.exitCode, EXIT_USAGE);

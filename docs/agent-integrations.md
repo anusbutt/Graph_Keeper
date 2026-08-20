@@ -8,6 +8,9 @@ GraphKeeper v1 supports the following explicit internal adapters:
 | `claude` | `.claude/skills/graphkeeper/SKILL.md` | `CLAUDE.md` | `/graphkeeper` |
 | `cursor` | `.cursor/skills/graphkeeper/SKILL.md` | `.cursor/rules/graphkeeper.md` | `@graphkeeper` |
 | `opencode` | `.opencode/skills/graphkeeper/SKILL.md` | `AGENTS.md` | `graphkeeper` |
+| `kilo` | `.kilo/skills/graphkeeper/SKILL.md` | `.kilo/rules/graphkeeper.md` | `@graphkeeper` |
+| `windsurf` | `.windsurf/skills/graphkeeper/SKILL.md` | `.windsurf/rules/graphkeeper.md` | `@graphkeeper` |
+| `geminicli` | `.gemini/skills/graphkeeper/SKILL.md` | `GEMINI.md` | `@graphkeeper` |
 
 Some adapters (for example Codex and OpenCode) share `AGENTS.md` as their guidance
 file. GraphKeeper supports this: each adapter owns exactly one marked block, blocks

@@ -145,6 +145,119 @@ test('OpenCode shares AGENTS.md with Codex and removal preserves the sibling blo
   }
 });
 
+test('Kilo integration installs the canonical skill and one independent guidance block', async () => {
+  const fixture = await createRepositoryFixture();
+  try {
+    const report = await initialize({
+      cwd: fixture.root,
+      force: false,
+      integrations: ['kilo'],
+      environment: supportedInitEnvironment(),
+    });
+    assert.equal(
+      await readFile(join(fixture.root, '.kilo', 'skills', 'graphkeeper', 'SKILL.md'), 'utf8'),
+      await template(),
+    );
+    const rules = await readFile(
+      join(fixture.root, '.kilo', 'rules', 'graphkeeper.md'),
+      'utf8',
+    );
+    assert.match(rules, /<!-- graphkeeper:kilo:start -->/);
+    assert.match(rules, /invoke `@graphkeeper`/);
+    assert.equal((rules.match(/graphkeeper:kilo:start/g) ?? []).length, 1);
+    assert.ok(report.notes.some((note) => /Restart Kilo Code/.test(note)));
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+test('Windsurf integration installs the canonical skill and one independent guidance block', async () => {
+  const fixture = await createRepositoryFixture();
+  try {
+    const report = await initialize({
+      cwd: fixture.root,
+      force: false,
+      integrations: ['windsurf'],
+      environment: supportedInitEnvironment(),
+    });
+    assert.equal(
+      await readFile(join(fixture.root, '.windsurf', 'skills', 'graphkeeper', 'SKILL.md'), 'utf8'),
+      await template(),
+    );
+    const rules = await readFile(
+      join(fixture.root, '.windsurf', 'rules', 'graphkeeper.md'),
+      'utf8',
+    );
+    assert.match(rules, /<!-- graphkeeper:windsurf:start -->/);
+    assert.match(rules, /invoke `@graphkeeper`/);
+    assert.equal((rules.match(/graphkeeper:windsurf:start/g) ?? []).length, 1);
+    assert.ok(report.notes.some((note) => /Restart Windsurf/.test(note)));
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+test('Gemini CLI integration installs the canonical skill and one independent GEMINI.md block', async () => {
+  const fixture = await createRepositoryFixture();
+  try {
+    const report = await initialize({
+      cwd: fixture.root,
+      force: false,
+      integrations: ['geminicli'],
+      environment: supportedInitEnvironment(),
+    });
+    assert.equal(
+      await readFile(join(fixture.root, '.gemini', 'skills', 'graphkeeper', 'SKILL.md'), 'utf8'),
+      await template(),
+    );
+    const gemini = await readFile(join(fixture.root, 'GEMINI.md'), 'utf8');
+    assert.match(gemini, /<!-- graphkeeper:geminicli:start -->/);
+    assert.match(gemini, /invoke `@graphkeeper`/);
+    assert.equal((gemini.match(/graphkeeper:geminicli:start/g) ?? []).length, 1);
+    assert.ok(report.notes.some((note) => /Restart Gemini CLI/.test(note)));
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+test('Kilo, Windsurf, and Gemini CLI removal deletes only canonical owned material and leaves others intact', async () => {
+  const fixture = await createRepositoryFixture();
+  try {
+    await initialize({
+      cwd: fixture.root,
+      force: false,
+      integrations: ['kilo', 'windsurf', 'geminicli', 'codex'],
+      environment: supportedInitEnvironment(),
+    });
+    for (const adapter of ['kilo', 'windsurf', 'geminicli'] as const) {
+      const plan = await prepareAgentRemoval(fixture.root, adapter);
+      await applyAgentIntegrationPlan(plan);
+    }
+    assert.doesNotMatch(
+      await readFile(join(fixture.root, '.kilo', 'rules', 'graphkeeper.md'), 'utf8'),
+      /graphkeeper:kilo/,
+    );
+    assert.doesNotMatch(
+      await readFile(join(fixture.root, '.windsurf', 'rules', 'graphkeeper.md'), 'utf8'),
+      /graphkeeper:windsurf/,
+    );
+    assert.doesNotMatch(await readFile(join(fixture.root, 'GEMINI.md'), 'utf8'), /graphkeeper:geminicli/);
+    await assert.rejects(stat(join(fixture.root, '.kilo', 'skills', 'graphkeeper')));
+    await assert.rejects(stat(join(fixture.root, '.windsurf', 'skills', 'graphkeeper')));
+    await assert.rejects(stat(join(fixture.root, '.gemini', 'skills', 'graphkeeper')));
+    assert.match(await readFile(join(fixture.root, 'AGENTS.md'), 'utf8'), /graphkeeper:codex:start/);
+    assert.equal(
+      await readFile(join(fixture.root, '.agents', 'skills', 'graphkeeper', 'SKILL.md'), 'utf8'),
+      await template(),
+    );
+
+    const repeated = await prepareAgentRemoval(fixture.root, 'geminicli');
+    assert.ok(repeated.actions.every((action) => action.kind === 'skip'));
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
 test('multi-adapter installation is deterministic, idempotent, and isolated', async () => {
   const fixture = await createRepositoryFixture();
   try {

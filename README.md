@@ -78,13 +78,19 @@ Review the displayed plan and confirm it. `init` creates the JSON graph, `eviden
 the canonical validator, a pre-commit hook, and the repository-scoped Codex skill.
 `--integrate codex` adds the Codex reminder to `AGENTS.md`; `--integrate claude` adds
 the Claude skill and reminder; `--integrate cursor` adds the Cursor skill and rule;
-`--integrate opencode` adds the OpenCode skill and reminder;
+`--integrate opencode` adds the OpenCode skill and reminder; `--integrate kilo` adds
+the Kilo Code skill and rule; `--integrate windsurf` adds the Windsurf skill and rule;
+`--integrate geminicli` adds the Gemini CLI skill and reminder;
 `--integrate all` installs every registered adapter. Codex uses
 `.agents/skills/graphkeeper/SKILL.md`, `AGENTS.md`, and
 `$graphkeeper`. Claude Code uses `.claude/skills/graphkeeper/SKILL.md`,
 `CLAUDE.md`, and `/graphkeeper`. Cursor uses `.cursor/skills/graphkeeper/SKILL.md`,
 `.cursor/rules/graphkeeper.md`, and `@graphkeeper`. OpenCode uses
-`.opencode/skills/graphkeeper/SKILL.md`, `AGENTS.md`, and `graphkeeper`. All skills
+`.opencode/skills/graphkeeper/SKILL.md`, `AGENTS.md`, and `graphkeeper`. Kilo Code uses
+`.kilo/skills/graphkeeper/SKILL.md`, `.kilo/rules/graphkeeper.md`, and `@graphkeeper`.
+Windsurf uses `.windsurf/skills/graphkeeper/SKILL.md`, `.windsurf/rules/graphkeeper.md`,
+and `@graphkeeper`. Gemini CLI uses `.gemini/skills/graphkeeper/SKILL.md`, `GEMINI.md`,
+and `@graphkeeper`. All skills
 are generated from the same `templates/SKILL.md`. The set of adapters is a closed
 data-driven registry in `src/lib/agent-adapters.ts`; `graphkeeper --help` lists the
 installed adapters. Adapters that share a guidance file (Codex and OpenCode both use
@@ -138,7 +144,7 @@ The older claim remains in history and is marked as superseded. Reviewers can fo
 
 | Command | Role |
 |---|---|
-| `graphkeeper init [--force] [--integrate <adapter\|all>]... [--yes] [--dry-run]` | Scaffold safely and optionally install explicit agent adapters (currently `codex`, `claude`, `cursor`, `opencode`). Distinct `--integrate` flags may repeat; `all` must stand alone. `--yes --dry-run` is accepted as a harmless dry run. |
+| `graphkeeper init [--force] [--integrate <adapter\|all>]... [--yes] [--dry-run]` | Scaffold safely and optionally install explicit agent adapters (currently `codex`, `claude`, `cursor`, `opencode`, `kilo`, `windsurf`, `geminicli`). Distinct `--integrate` flags may repeat; `all` must stand alone. `--yes --dry-run` is accepted as a harmless dry run. |
 | `graphkeeper integrate remove <adapter> [--yes] [--dry-run]` | Remove only recognizable GraphKeeper-owned material for one adapter. Modified skills and unexpected supporting files are preserved for manual review. |
 | `graphkeeper check` | Run the same fast schema, append-only history, and committed-evidence protection checks used by the Git hook. |
 | `graphkeeper query <subject>` | Resolve an exact ID or unique alias and print active claims with provenance. It does not read evidence contents. |
