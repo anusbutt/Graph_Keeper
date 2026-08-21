@@ -91,6 +91,27 @@ const adapters = [
     endMarker: '<!-- graphkeeper:geminicli:end -->',
     postInstallNote: 'Restart Gemini CLI if .gemini/skills did not exist when the current session began.',
   },
+  {
+    id: 'kiro',
+    displayName: 'Kiro',
+    skillTarget: '.kiro/skills/graphkeeper/SKILL.md',
+    guidanceTarget: '.kiro/steering/graphkeeper.md',
+    invocation: '`/graphkeeper`',
+    startMarker: '<!-- graphkeeper:kiro:start -->',
+    endMarker: '<!-- graphkeeper:kiro:end -->',
+    postInstallNote: 'Restart Kiro if .kiro/skills did not exist when the current session began.',
+  },
+  {
+    id: 'antigravity',
+    displayName: 'Antigravity',
+    skillTarget: '.agents/skills/graphkeeper/SKILL.md',
+    guidanceTarget: '.agents/rules/graphkeeper.md',
+    invocation: '`graphkeeper`',
+    startMarker: '<!-- graphkeeper:antigravity:start -->',
+    endMarker: '<!-- graphkeeper:antigravity:end -->',
+    scaffoldSkillByInit: true,
+    postInstallNote: 'Restart Antigravity if .agents/skills did not exist when the current session began.',
+  },
 ] as const;
 
 export type AgentId = (typeof adapters)[number]['id'];

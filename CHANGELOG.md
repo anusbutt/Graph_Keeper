@@ -27,6 +27,16 @@ versioning; while the package is below 1.0, minor releases may change public beh
   `.gemini/skills/graphkeeper/SKILL.md`, the marked reminder in `GEMINI.md`, and the
   `@graphkeeper` invocation. It participates in `--integrate all`, `--dry-run`, and
   conservative `integrate remove`.
+- A Kiro adapter registered as `--integrate kiro` with the canonical skill at
+  `.kiro/skills/graphkeeper/SKILL.md`, the marked reminder at `.kiro/steering/graphkeeper.md`,
+  and the `/graphkeeper` invocation. It participates in `--integrate all`, `--dry-run`, and
+  conservative `integrate remove`.
+- An Antigravity adapter registered as `--integrate antigravity` with the canonical skill at
+  `.agents/skills/graphkeeper/SKILL.md` (shared with Codex), the marked reminder at
+  `.agents/rules/graphkeeper.md`, and the `graphkeeper` invocation. It participates in
+  `--integrate all`, `--dry-run`, and conservative `integrate remove`; because the skill path
+  is shared with Codex, removal is owner-scoped so removing Antigravity preserves the
+  Codex-owned skill directory.
 
 ### Changed
 

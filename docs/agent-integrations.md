@@ -11,12 +11,23 @@ GraphKeeper v1 supports the following explicit internal adapters:
 | `kilo` | `.kilo/skills/graphkeeper/SKILL.md` | `.kilo/rules/graphkeeper.md` | `@graphkeeper` |
 | `windsurf` | `.windsurf/skills/graphkeeper/SKILL.md` | `.windsurf/rules/graphkeeper.md` | `@graphkeeper` |
 | `geminicli` | `.gemini/skills/graphkeeper/SKILL.md` | `GEMINI.md` | `@graphkeeper` |
+| `kiro` | `.kiro/skills/graphkeeper/SKILL.md` | `.kiro/steering/graphkeeper.md` | `/graphkeeper` |
+| `antigravity` | `.agents/skills/graphkeeper/SKILL.md` | `.agents/rules/graphkeeper.md` | `graphkeeper` |
 
 Some adapters (for example Codex and OpenCode) share `AGENTS.md` as their guidance
 file. GraphKeeper supports this: each adapter owns exactly one marked block, blocks
 from other registered adapters are allowed when properly paired, and planning, append,
 and remove always touch only the owning adapter's span. Unknown or malformed markers
 are still rejected with `GK004`.
+
+### Shared skill paths
+
+Antigravity and Codex share the same skill file, `.agents/skills/graphkeeper/SKILL.md`.
+Both are `scaffoldSkillByInit`, so `init` scaffolds that canonical file exactly once and
+neither adapter rewrites it during `--integrate`. Removal is owner-scoped by the **primary
+owner**: the first registered adapter on a shared skill path (Codex) is the only one that
+removes the skill directory. Removing a non-owner sharer (Antigravity) preserves the shared
+skill directory and removes only its guidance block, reporting a `preserve` action.
 
 The closed registry in `src/lib/agent-adapters.ts` defines these destinations,
 invocations, unique markers, and post-install notes. It is an implementation detail,

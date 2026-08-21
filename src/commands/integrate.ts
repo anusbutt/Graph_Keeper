@@ -15,6 +15,7 @@ import { basename, dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import {
+  AGENT_ADAPTERS,
   getAgentAdapter,
   planGuidanceContent,
   planGuidanceRemovalContent,
@@ -302,12 +303,27 @@ export async function prepareAgentRemoval(
 
   const skillDirectory = adapter.skillTarget.split('/').slice(0, -1).join('/');
   const entries = await directoryEntries(root, skillDirectory);
+  const sharedSkillOwners = AGENT_ADAPTERS.filter(
+    (other) => other.skillTarget === adapter.skillTarget && other.id !== adapter.id,
+  );
+  const primaryOwner = AGENT_ADAPTERS.find(
+    (other) => other.skillTarget === adapter.skillTarget,
+  );
+  const isPrimarySkillOwner = primaryOwner?.id === adapter.id;
   if (entries === null) {
     actions.push({
       kind: 'skip',
       target: adapter.skillTarget,
       adapter: adapterId,
       reason: 'generated GraphKeeper skill is already absent',
+    });
+  } else if (sharedSkillOwners.length > 0 && !isPrimarySkillOwner) {
+    actions.push({
+      kind: 'preserve',
+      target: adapter.skillTarget,
+      adapter: adapterId,
+      reason: 'skill path is shared with ' + sharedSkillOwners.map((other) => other.displayName).join(', ')
+        + '; preserved for review',
     });
   } else if (entries.some((entry) => entry !== 'SKILL.md')) {
     actions.push({
