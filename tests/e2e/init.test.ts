@@ -188,6 +188,50 @@ test('explicit Gemini CLI integration creates the managed GEMINI.md block and sk
   }
 });
 
+test('explicit Kiro integration creates the managed steering block and skill through the CLI', async () => {
+  const fixture = await createRepositoryFixture();
+  try {
+    const result = await runInit(fixture.root, ['--integrate', 'kiro', '--yes']);
+    assert.equal(result.exitCode, EXIT_SUCCESS, result.stderr);
+    assert.match(result.stdout, /CREATE \.kiro\/steering\/graphkeeper\.md/);
+    const steering = await readFile(
+      join(fixture.root, '.kiro', 'steering', 'graphkeeper.md'),
+      'utf8',
+    );
+    assert.match(steering, /<!-- graphkeeper:kiro:start -->/);
+    assert.match(steering, /invoke `\/graphkeeper`/);
+    assert.equal((steering.match(/graphkeeper:kiro:start/g) ?? []).length, 1);
+    assert.match(
+      await readFile(join(fixture.root, '.kiro', 'skills', 'graphkeeper', 'SKILL.md'), 'utf8'),
+      /^---\nname: graphkeeper\n/,
+    );
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+test('explicit Antigravity integration creates the managed rules block and reuses the shared skill', async () => {
+  const fixture = await createRepositoryFixture();
+  try {
+    const result = await runInit(fixture.root, ['--integrate', 'antigravity', '--yes']);
+    assert.equal(result.exitCode, EXIT_SUCCESS, result.stderr);
+    assert.match(result.stdout, /CREATE \.agents\/rules\/graphkeeper\.md/);
+    const rules = await readFile(
+      join(fixture.root, '.agents', 'rules', 'graphkeeper.md'),
+      'utf8',
+    );
+    assert.match(rules, /<!-- graphkeeper:antigravity:start -->/);
+    assert.match(rules, /invoke `graphkeeper`/);
+    assert.equal((rules.match(/graphkeeper:antigravity:start/g) ?? []).length, 1);
+    assert.match(
+      await readFile(join(fixture.root, '.agents', 'skills', 'graphkeeper', 'SKILL.md'), 'utf8'),
+      /^---\nname: graphkeeper\n/,
+    );
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
 test('non-interactive integration requires --yes and refuses before mutation', async () => {
   const fixture = await createRepositoryFixture();
   try {
@@ -217,6 +261,8 @@ test('--dry-run preflights all adapters without prompting or writing', async () 
     assert.match(result.stdout, /CREATE \.kilo\/rules\/graphkeeper\.md/);
     assert.match(result.stdout, /CREATE \.windsurf\/rules\/graphkeeper\.md/);
     assert.match(result.stdout, /CREATE GEMINI\.md/);
+    assert.match(result.stdout, /CREATE \.kiro\/steering\/graphkeeper\.md/);
+    assert.match(result.stdout, /CREATE \.agents\/rules\/graphkeeper\.md/);
     assert.match(result.stdout, /\.claude\/skills\/graphkeeper\/SKILL\.md/);
     assert.match(result.stdout, /\.opencode\/skills\/graphkeeper\/SKILL\.md/);
     assert.match(result.stdout, /\.kilo\/skills\/graphkeeper\/SKILL\.md/);
@@ -271,6 +317,14 @@ test('all adapters install and conservative removal works through the CLI', asyn
       /graphkeeper:windsurf/,
     );
     assert.match(await readFile(join(fixture.root, 'GEMINI.md'), 'utf8'), /graphkeeper:geminicli/);
+    assert.match(
+      await readFile(join(fixture.root, '.kiro', 'steering', 'graphkeeper.md'), 'utf8'),
+      /graphkeeper:kiro/,
+    );
+    assert.match(
+      await readFile(join(fixture.root, '.agents', 'rules', 'graphkeeper.md'), 'utf8'),
+      /graphkeeper:antigravity/,
+    );
 
     const refused = await runCli(fixture.root, ['integrate', 'remove', 'claude']);
     assert.equal(refused.exitCode, EXIT_USAGE);
@@ -300,6 +354,20 @@ test('all adapters install and conservative removal works through the CLI', asyn
     );
     await assert.rejects(stat(join(fixture.root, '.claude', 'skills', 'graphkeeper')));
     assert.match(await readFile(join(fixture.root, 'AGENTS.md'), 'utf8'), /graphkeeper:codex/);
+
+    const antigravityRemoved = await runCli(
+      fixture.root,
+      ['integrate', 'remove', 'antigravity', '--yes'],
+    );
+    assert.equal(antigravityRemoved.exitCode, EXIT_SUCCESS, antigravityRemoved.stderr);
+    assert.doesNotMatch(
+      await readFile(join(fixture.root, '.agents', 'rules', 'graphkeeper.md'), 'utf8'),
+      /graphkeeper:antigravity/,
+    );
+    assert.match(
+      await readFile(join(fixture.root, '.agents', 'skills', 'graphkeeper', 'SKILL.md'), 'utf8'),
+      /^---\nname: graphkeeper\n/,
+    );
   } finally {
     await fixture.cleanup();
   }

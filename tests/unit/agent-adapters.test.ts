@@ -24,7 +24,7 @@ function sourceFile(relativePath: string): Promise<string> {
 test('registers explicit adapters with independent destinations', () => {
   assert.deepEqual(
     AGENT_ADAPTERS.map((adapter) => adapter.id),
-    ['codex', 'claude', 'cursor', 'opencode', 'kilo', 'windsurf', 'geminicli'],
+    ['codex', 'claude', 'cursor', 'opencode', 'kilo', 'windsurf', 'geminicli', 'kiro', 'antigravity'],
   );
   assert.deepEqual(
     AGENT_ADAPTERS.map((adapter) => adapter.skillTarget),
@@ -36,6 +36,8 @@ test('registers explicit adapters with independent destinations', () => {
       '.kilo/skills/graphkeeper/SKILL.md',
       '.windsurf/skills/graphkeeper/SKILL.md',
       '.gemini/skills/graphkeeper/SKILL.md',
+      '.kiro/skills/graphkeeper/SKILL.md',
+      '.agents/skills/graphkeeper/SKILL.md',
     ],
   );
   assert.deepEqual(
@@ -48,6 +50,8 @@ test('registers explicit adapters with independent destinations', () => {
       '.kilo/rules/graphkeeper.md',
       '.windsurf/rules/graphkeeper.md',
       'GEMINI.md',
+      '.kiro/steering/graphkeeper.md',
+      '.agents/rules/graphkeeper.md',
     ],
   );
   assert.notEqual(AGENT_ADAPTERS[0]?.startMarker, AGENT_ADAPTERS[1]?.startMarker);
@@ -123,6 +127,38 @@ test('plans Gemini CLI guidance create into GEMINI.md with its own marked block'
   assert.equal(appended.kind, 'append');
   assert.ok(appended.content.startsWith(existing));
   assert.match(appended.content, /graphkeeper:geminicli:start/);
+
+  assert.equal(planGuidanceContent(adapter, created.content).kind, 'skip');
+});
+
+test('plans Kiro guidance create, append, refresh, and skip without changing outside bytes', () => {
+  const adapter = getAgentAdapter('kiro');
+  const created = planGuidanceContent(adapter, null);
+  assert.equal(created.kind, 'create');
+  assert.match(created.content, /invoke `\/graphkeeper`/);
+  assert.match(created.content, /graphkeeper:kiro:start/);
+
+  const existing = '# Kiro steering\n';
+  const appended = planGuidanceContent(adapter, existing);
+  assert.equal(appended.kind, 'append');
+  assert.ok(appended.content.startsWith(existing));
+  assert.match(appended.content, /graphkeeper:kiro:start/);
+
+  assert.equal(planGuidanceContent(adapter, created.content).kind, 'skip');
+});
+
+test('plans Antigravity guidance create, append, refresh, and skip without changing outside bytes', () => {
+  const adapter = getAgentAdapter('antigravity');
+  const created = planGuidanceContent(adapter, null);
+  assert.equal(created.kind, 'create');
+  assert.match(created.content, /invoke `graphkeeper`/);
+  assert.match(created.content, /graphkeeper:antigravity:start/);
+
+  const existing = '# Antigravity rules\n';
+  const appended = planGuidanceContent(adapter, existing);
+  assert.equal(appended.kind, 'append');
+  assert.ok(appended.content.startsWith(existing));
+  assert.match(appended.content, /graphkeeper:antigravity:start/);
 
   assert.equal(planGuidanceContent(adapter, created.content).kind, 'skip');
 });

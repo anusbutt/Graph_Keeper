@@ -42,6 +42,8 @@ of them, GraphKeeper works with it.
 | Kilo Code | `--integrate kilo` | `.kilo/skills/graphkeeper/SKILL.md` | `.kilo/rules/graphkeeper.md` | `@graphkeeper` |
 | Windsurf | `--integrate windsurf` | `.windsurf/skills/graphkeeper/SKILL.md` | `.windsurf/rules/graphkeeper.md` | `@graphkeeper` |
 | Gemini CLI | `--integrate geminicli` | `.gemini/skills/graphkeeper/SKILL.md` | `GEMINI.md` | `@graphkeeper` |
+| Kiro | `--integrate kiro` | `.kiro/skills/graphkeeper/SKILL.md` | `.kiro/steering/graphkeeper.md` | `/graphkeeper` |
+| Antigravity | `--integrate antigravity` | `.agents/skills/graphkeeper/SKILL.md` | `.agents/rules/graphkeeper.md` | `graphkeeper` |
 
 Install any subset, or all of them at once:
 
@@ -206,7 +208,7 @@ plain JSON and text — no database, no server, no vector index.
 ```text
                  CODING AGENTS
         ┌────────┬────────┬────────┬────────┐
-        │ Codex  │ Claude │ Cursor │ OpenCode│ ... Kilo · Windsurf · Gemini
+        │ Codex  │ Claude │ Cursor │ OpenCode│ ... Kilo · Windsurf · Gemini · Kiro · Antigravity
         └────────┴───┬────┴────────┴────────┘
                      │  skill + guidance
                      ▼
