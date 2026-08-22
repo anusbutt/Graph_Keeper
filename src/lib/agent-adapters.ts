@@ -45,7 +45,7 @@ const adapters = [
     id: 'cursor',
     displayName: 'Cursor',
     skillTarget: '.cursor/skills/graphkeeper/SKILL.md',
-    guidanceTarget: '.cursor/rules/graphkeeper.md',
+    guidanceTarget: 'AGENTS.md',
     invocation: '`@graphkeeper`',
     startMarker: '<!-- graphkeeper:cursor:start -->',
     endMarker: '<!-- graphkeeper:cursor:end -->',

@@ -40,6 +40,11 @@ versioning; while the package is below 1.0, minor releases may change public beh
 
 ### Changed
 
+- The Cursor adapter now targets `AGENTS.md` (which Cursor reads) instead of
+  `.cursor/rules/graphkeeper.md`. `AGENTS.md` is now the shared guidance file for Codex,
+  OpenCode, and Cursor, each owning one marked block. A legacy
+  `.cursor/rules/graphkeeper.md` from an older install is no longer GraphKeeper-owned and is
+  safe to delete manually.
 - Agent adapters are now a closed, data-driven registry. Adding an adapter is a single
   entry in `src/lib/agent-adapters.ts`; the CLI `--integrate` grammar, the
   `--integrate all` expansion, and removal machinery all derive from it, and `AgentId`

@@ -45,7 +45,7 @@ test('registers explicit adapters with independent destinations', () => {
     [
       'AGENTS.md',
       'CLAUDE.md',
-      '.cursor/rules/graphkeeper.md',
+      'AGENTS.md',
       'AGENTS.md',
       '.kilo/rules/graphkeeper.md',
       '.windsurf/rules/graphkeeper.md',
@@ -208,6 +208,23 @@ test('planning allows a properly-paired registered sibling block in a shared gui
   assert.equal(plan.kind, 'append');
   assert.match(plan.content, /graphkeeper:codex:start/);
   assert.match(plan.content, /graphkeeper:claude:start/);
+});
+
+test('Cursor planning appends a third properly-paired block into a shared AGENTS.md', () => {
+  const codex = getAgentAdapter('codex');
+  const opencode = getAgentAdapter('opencode');
+  const cursor = getAgentAdapter('cursor');
+  const codexBlock = '<!-- graphkeeper:codex:start -->\nManaged\n'
+    + '<!-- graphkeeper:codex:end -->\n';
+  const opencodeBlock = '<!-- graphkeeper:opencode:start -->\nManaged\n'
+    + '<!-- graphkeeper:opencode:end -->\n';
+  const shared = codexBlock + '\n' + opencodeBlock;
+  const plan = planGuidanceContent(cursor, shared);
+  assert.equal(plan.kind, 'append');
+  assert.match(plan.content, /graphkeeper:codex:start/);
+  assert.match(plan.content, /graphkeeper:opencode:start/);
+  assert.match(plan.content, /graphkeeper:cursor:start/);
+  assert.equal((plan.content.match(/graphkeeper:cursor:start/g) ?? []).length, 1);
 });
 
 test('removal in a shared guidance file preserves a properly-paired sibling block', () => {
