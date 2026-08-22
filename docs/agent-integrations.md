@@ -6,7 +6,7 @@ GraphKeeper v1 supports the following explicit internal adapters:
 |---|---|---|---|
 | `codex` | `.agents/skills/graphkeeper/SKILL.md` | `AGENTS.md` | `$graphkeeper` |
 | `claude` | `.claude/skills/graphkeeper/SKILL.md` | `CLAUDE.md` | `/graphkeeper` |
-| `cursor` | `.cursor/skills/graphkeeper/SKILL.md` | `.cursor/rules/graphkeeper.md` | `@graphkeeper` |
+| `cursor` | `.cursor/skills/graphkeeper/SKILL.md` | `AGENTS.md` | `@graphkeeper` |
 | `opencode` | `.opencode/skills/graphkeeper/SKILL.md` | `AGENTS.md` | `graphkeeper` |
 | `kilo` | `.kilo/skills/graphkeeper/SKILL.md` | `.kilo/rules/graphkeeper.md` | `@graphkeeper` |
 | `windsurf` | `.windsurf/skills/graphkeeper/SKILL.md` | `.windsurf/rules/graphkeeper.md` | `@graphkeeper` |
@@ -14,9 +14,12 @@ GraphKeeper v1 supports the following explicit internal adapters:
 | `kiro` | `.kiro/skills/graphkeeper/SKILL.md` | `.kiro/steering/graphkeeper.md` | `/graphkeeper` |
 | `antigravity` | `.agents/skills/graphkeeper/SKILL.md` | `.agents/rules/graphkeeper.md` | `graphkeeper` |
 
-Some adapters (for example Codex and OpenCode) share `AGENTS.md` as their guidance
-file. GraphKeeper supports this: each adapter owns exactly one marked block, blocks
-from other registered adapters are allowed when properly paired, and planning, append,
+Some adapters share `AGENTS.md` as their guidance file: Codex, OpenCode, and Cursor. Cursor
+now reads the `AGENTS.md` standard, so it targets `AGENTS.md` rather than a
+`.cursor/rules/graphkeeper.md` file. A legacy `.cursor/rules/graphkeeper.md` from an older
+GraphKeeper install is no longer owned by GraphKeeper; it is safe to delete manually.
+GraphKeeper supports shared guidance files: each adapter owns exactly one marked block,
+blocks from other registered adapters are allowed when properly paired, and planning, append,
 and remove always touch only the owning adapter's span. Unknown or malformed markers
 are still rejected with `GK004`.
 

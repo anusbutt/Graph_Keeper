@@ -37,7 +37,7 @@ of them, GraphKeeper works with it.
 |---|---|---|---|---|
 | Codex | `--integrate codex` | `.agents/skills/graphkeeper/SKILL.md` | `AGENTS.md` | `$graphkeeper` |
 | Claude Code | `--integrate claude` | `.claude/skills/graphkeeper/SKILL.md` | `CLAUDE.md` | `/graphkeeper` |
-| Cursor | `--integrate cursor` | `.cursor/skills/graphkeeper/SKILL.md` | `.cursor/rules/graphkeeper.md` | `@graphkeeper` |
+| Cursor | `--integrate cursor` | `.cursor/skills/graphkeeper/SKILL.md` | `AGENTS.md` | `@graphkeeper` |
 | OpenCode | `--integrate opencode` | `.opencode/skills/graphkeeper/SKILL.md` | `AGENTS.md` | `graphkeeper` |
 | Kilo Code | `--integrate kilo` | `.kilo/skills/graphkeeper/SKILL.md` | `.kilo/rules/graphkeeper.md` | `@graphkeeper` |
 | Windsurf | `--integrate windsurf` | `.windsurf/skills/graphkeeper/SKILL.md` | `.windsurf/rules/graphkeeper.md` | `@graphkeeper` |

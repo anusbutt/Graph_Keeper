@@ -70,13 +70,11 @@ test('Cursor integration installs the canonical skill and one independent guidan
       await readFile(join(fixture.root, '.cursor', 'skills', 'graphkeeper', 'SKILL.md'), 'utf8'),
       await template(),
     );
-    const rules = await readFile(
-      join(fixture.root, '.cursor', 'rules', 'graphkeeper.md'),
-      'utf8',
-    );
-    assert.match(rules, /<!-- graphkeeper:cursor:start -->/);
-    assert.match(rules, /invoke `@graphkeeper`/);
-    assert.equal((rules.match(/graphkeeper:cursor:start/g) ?? []).length, 1);
+    const agents = await readFile(join(fixture.root, 'AGENTS.md'), 'utf8');
+    assert.match(agents, /<!-- graphkeeper:cursor:start -->/);
+    assert.match(agents, /invoke `@graphkeeper`/);
+    assert.equal((agents.match(/graphkeeper:cursor:start/g) ?? []).length, 1);
+    await assert.rejects(stat(join(fixture.root, '.cursor', 'rules', 'graphkeeper.md')));
     assert.ok(report.notes.some((note) => /Restart Cursor/.test(note)));
   } finally {
     await fixture.cleanup();
@@ -94,11 +92,11 @@ test('Cursor removal deletes only canonical Cursor-owned material and leaves oth
     });
     const plan = await prepareAgentRemoval(fixture.root, 'cursor');
     assert.ok(plan.actions.some((action) =>
-      action.kind === 'remove' && action.target === '.cursor/rules/graphkeeper.md'));
+      action.kind === 'remove' && action.target === 'AGENTS.md'));
     await applyAgentIntegrationPlan(plan);
 
     assert.doesNotMatch(
-      await readFile(join(fixture.root, '.cursor', 'rules', 'graphkeeper.md'), 'utf8'),
+      await readFile(join(fixture.root, 'AGENTS.md'), 'utf8'),
       /graphkeeper:cursor/,
     );
     await assert.rejects(stat(join(fixture.root, '.cursor', 'skills', 'graphkeeper')));

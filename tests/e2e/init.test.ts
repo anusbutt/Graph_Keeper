@@ -84,19 +84,16 @@ test('explicit Codex integration creates the managed AGENTS.md block through the
   }
 });
 
-test('explicit Cursor integration creates the managed rules block through the CLI', async () => {
+test('explicit Cursor integration creates the managed AGENTS.md block through the CLI', async () => {
   const fixture = await createRepositoryFixture();
   try {
     const result = await runInit(fixture.root, ['--integrate', 'cursor', '--yes']);
     assert.equal(result.exitCode, EXIT_SUCCESS, result.stderr);
-    assert.match(result.stdout, /CREATE \.cursor\/rules\/graphkeeper\.md/);
-    const rules = await readFile(
-      join(fixture.root, '.cursor', 'rules', 'graphkeeper.md'),
-      'utf8',
-    );
-    assert.match(rules, /<!-- graphkeeper:cursor:start -->/);
-    assert.match(rules, /invoke `@graphkeeper`/);
-    assert.equal((rules.match(/graphkeeper:cursor:start/g) ?? []).length, 1);
+    assert.match(result.stdout, /CREATE AGENTS\.md/);
+    const agents = await readFile(join(fixture.root, 'AGENTS.md'), 'utf8');
+    assert.match(agents, /<!-- graphkeeper:cursor:start -->/);
+    assert.match(agents, /invoke `@graphkeeper`/);
+    assert.equal((agents.match(/graphkeeper:cursor:start/g) ?? []).length, 1);
     assert.match(
       await readFile(join(fixture.root, '.cursor', 'skills', 'graphkeeper', 'SKILL.md'), 'utf8'),
       /^---\nname: graphkeeper\n/,
@@ -257,7 +254,6 @@ test('--dry-run preflights all adapters without prompting or writing', async () 
     assert.equal(result.exitCode, EXIT_SUCCESS, result.stderr);
     assert.match(result.stdout, /CREATE AGENTS\.md/);
     assert.match(result.stdout, /CREATE CLAUDE\.md/);
-    assert.match(result.stdout, /CREATE \.cursor\/rules\/graphkeeper\.md/);
     assert.match(result.stdout, /CREATE \.kilo\/rules\/graphkeeper\.md/);
     assert.match(result.stdout, /CREATE \.windsurf\/rules\/graphkeeper\.md/);
     assert.match(result.stdout, /CREATE GEMINI\.md/);
@@ -303,11 +299,8 @@ test('all adapters install and conservative removal works through the CLI', asyn
     assert.equal(installed.exitCode, EXIT_SUCCESS, installed.stderr);
     assert.match(await readFile(join(fixture.root, 'AGENTS.md'), 'utf8'), /graphkeeper:codex/);
     assert.match(await readFile(join(fixture.root, 'AGENTS.md'), 'utf8'), /graphkeeper:opencode/);
+    assert.match(await readFile(join(fixture.root, 'AGENTS.md'), 'utf8'), /graphkeeper:cursor/);
     assert.match(await readFile(join(fixture.root, 'CLAUDE.md'), 'utf8'), /graphkeeper:claude/);
-    assert.match(
-      await readFile(join(fixture.root, '.cursor', 'rules', 'graphkeeper.md'), 'utf8'),
-      /graphkeeper:cursor/,
-    );
     assert.match(
       await readFile(join(fixture.root, '.kilo', 'rules', 'graphkeeper.md'), 'utf8'),
       /graphkeeper:kilo/,
