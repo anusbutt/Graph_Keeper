@@ -134,8 +134,11 @@ the canonical validator, a pre-commit hook, and the repository-scoped skill.
 `--integrate codex` also adds the Codex reminder to `AGENTS.md`.
 
 Now ask your agent to record a verified finding (with `$graphkeeper` in Codex,
-`/graphkeeper` in Claude Code, or your agent's invocation from the table above). After
-it writes the claim and evidence, validate and retrieve the result:
+`/graphkeeper` in Claude Code, or your agent's invocation from the table above). The
+agent appends claims and runs through `graphkeeper append claim ...` and
+`graphkeeper append run ...`, which serialize concurrent writers so parallel sessions
+never overwrite each other. After it writes the claim and evidence, validate and
+retrieve the result:
 
 ```sh
 npx graphkeeper check
@@ -237,6 +240,8 @@ installed pre-commit hook) validates the result. A future session calls
 | `graphkeeper check` | Run the same fast schema, append-only history, and committed-evidence checks used by the Git hook. |
 | `graphkeeper query <subject>` | Resolve an exact ID or unique alias and print active claims with provenance. It does not read evidence contents. |
 | `graphkeeper doctor` | Run fast validation plus file existence, containment, line-range, dangling-reference, and unused-entity checks. |
+| `graphkeeper append claim ...` | Concurrency-serially append a validating claim and link it into its producing run. See `graphkeeper --help` for the required/optional flags. |
+| `graphkeeper append run ...` | Concurrency-serially append a validating run record. See `graphkeeper --help` for the required/optional flags. |
 | `graphkeeper update` | Check npm's stable `latest` release and globally install one exact newer version. Repository files are never changed. |
 | `graphkeeper --help` | Print the supported command grammar and options. |
 | `graphkeeper --version` (`-v`) | Print the installed GraphKeeper version. |

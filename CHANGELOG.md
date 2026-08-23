@@ -7,6 +7,15 @@ versioning; while the package is below 1.0, minor releases may change public beh
 
 ### Added
 
+- `graphkeeper append claim` and `graphkeeper append run`, which append claim and run
+  records through a concurrency-safe shared write helper (exclusive graph-file lock +
+  compare-before-rename with bounded retry). Concurrent writers no longer silently
+  overwrite each other's records in `graph/claims.json`/`graph/runs.json`;
+  `append claim` also links the new claim into its producing run's `claims_written`.
+- The shared `mutateJsonArrayFile` helper in `src/lib` for concurrency-safe
+  mutate-and-persist of JSON-array graph files.
+- Two diagnostics: `GK400` (concurrent write did not stabilize or lock timeout) and
+  `GK401` (invalid claim/run input).
 - A Cursor adapter registered as `--integrate cursor` with the canonical skill at
   `.cursor/skills/graphkeeper/SKILL.md`, the marked reminder at
   `.cursor/rules/graphkeeper.md`, and the `@graphkeeper` invocation. It participates in

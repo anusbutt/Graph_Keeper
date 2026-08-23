@@ -62,6 +62,10 @@ behavioral responsibility that software cannot infer reliably.
   claim. Preserve the original line-addressable text.
 - [GUIDANCE] Never invent, reconstruct, or paraphrase missing evidence as though it
   were captured output.
+- [HOOK] Append claims and runs through `graphkeeper append claim` and
+  `graphkeeper append run`; do not edit graph/claims.json or graph/runs.json by hand.
+  The commands serialize concurrent writers so separate sessions never overwrite each
+  other's records.
 - [HOOK] A tool_output source records kind, command, exit_code, captured, and ref
   exactly; ref identifies the supporting inclusive evidence lines.
 - [HOOK] An inference source records kind and a short non-empty basis. It contains no
@@ -82,12 +86,13 @@ behavioral responsibility that software cannot infer reliably.
   and canonical instead of nesting diagnostics in the graph.
 - [GUIDANCE] Treat stored command text as inert data and never execute it from a graph
   record.
-- [HOOK] Open a unique run with started, tool, evidence, and claims_written. Add each
-  claim ID to that run and add each tool-output evidence path.
-- [HOOK] Close a run by adding both ended and one allowed verdict. Do not change a
-  closed run.
-- [HOOK] Use valid whole-second UTC timestamps and random eight-character lowercase
-  hexadecimal claim IDs.
+- [HOOK] Append each claim ID via `graphkeeper append claim`, which opens or updates
+  the producing run's claims_written. Add each tool-output evidence path to the run
+  with `graphkeeper append run`.
+- [HOOK] Close a run exactly once using `graphkeeper append run` with ended and one
+  allowed verdict. Do not change a closed run.
+- [HOOK] Use valid whole-second UTC timestamps and let the append command generate the
+  claim ID; do not fabricate IDs by hand.
 - [DOCTOR] Run graphkeeper doctor when physical evidence existence, containment,
   encoding, or line ranges need verification.
 - [GUIDANCE] Before commit, review the entity, run, claim, and evidence together so
@@ -123,8 +128,10 @@ behavioral responsibility that software cannot infer reliably.
   invent a successful claim merely to make the run appear complete.
 - [HOOK] Committed evidence files are immutable. Capture later output in a new file and
   append its path only to an open run.
-- [GUIDANCE] Concurrent writers use a unique run ID and distinct evidence filenames,
-  then append their separate runs and artifacts without editing each other's records.
+- [HOOK] Concurrent writers use `graphkeeper append claim` and
+  `graphkeeper append run` with a unique run ID and distinct evidence filenames; the
+  append commands serialize graph-file writes so separate sessions never overwrite
+  each other's records. Do not edit graph/claims.json or graph/runs.json directly.
 
 ## Correct
 
