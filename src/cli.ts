@@ -16,6 +16,7 @@ import {
   prepareAgentRemoval,
   type IntegrationAction,
 } from './commands/integrate.js';
+import { parseAppendArguments, runAppend } from './commands/append.js';
 import { query } from './commands/query.js';
 import { updateGraphKeeper } from './commands/update.js';
 import {
@@ -47,7 +48,7 @@ export interface CliTerminal {
 }
 
 const VERSION = '0.4.1';
-const COMMANDS = new Set(['init', 'integrate', 'check', 'query', 'doctor', 'update']);
+const COMMANDS = new Set(['init', 'integrate', 'check', 'query', 'doctor', 'update', 'append']);
 const AGENT_GRAMMAR = AGENT_IDS.join('|');
 
 const USAGE = [
@@ -60,6 +61,8 @@ const USAGE = [
   '  graphkeeper query <subject>',
   '  graphkeeper doctor',
   '  graphkeeper update',
+  '  graphkeeper append claim --subject <s> --predicate <p> --object <o> --kind <tool_output|inference> ...',
+  '  graphkeeper append run --started <ts> --tool <t> [--id <run-id>] [--task <t>]',
   '  graphkeeper --help',
   '  graphkeeper --version',
 ].join('\n');
@@ -376,6 +379,23 @@ export async function run(
       }
       throw error;
     }
+  }
+
+  if (command === 'append') {
+    const recordType = argv[1];
+    if (recordType !== 'claim' && recordType !== 'run') {
+      io.stderr(diagnostic('GK002', 'append requires a record type: claim or run'));
+      return EXIT_USAGE;
+    }
+    const parsed = parseAppendArguments(recordType, argv.slice(2));
+    if (!parsed.ok) {
+      io.stderr(diagnostic('GK002', parsed.usageError));
+      return EXIT_USAGE;
+    }
+    const report = await runAppend(parsed.options);
+    forwardOutput(report.stdout, io.stdout);
+    forwardOutput(report.stderr, io.stderr);
+    return report.exitCode;
   }
 
   io.stderr('Command not implemented in this phase: ' + command);
