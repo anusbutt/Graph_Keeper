@@ -1,4 +1,5 @@
 # GraphKeeper
+Version `0.5.0`
 
 [![CI](https://github.com/anusbutt/Graph_Keeper/actions/workflows/ci.yml/badge.svg)](https://github.com/anusbutt/Graph_Keeper/actions/workflows/ci.yml)
 
