@@ -146,6 +146,7 @@ test('diagnostic reference covers every public code and stable exit class', asyn
     'GK201', 'GK202',
     'GK300', 'GK301', 'GK310', 'GK311', 'GK312', 'GK313', 'GK314', 'GK315', 'GK316',
     'GK320', 'GK321', 'GK322', 'GK323', 'GK324', 'GK325', 'GK390',
+    'GK400', 'GK401',
   ] as const;
   for (const code of publicCodes) {
     assert.ok(reference.includes('| `' + code + '` |'), 'Missing diagnostic reference for ' + code);

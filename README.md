@@ -4,7 +4,11 @@
 [![npm](https://img.shields.io/npm/v/graphkeeper.svg)](https://www.npmjs.com/package/graphkeeper)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-## Persistent, grounded memory for coding agents
+**Coding agents shouldn't just remember. They should be able to prove why they
+remember.**
+
+GraphKeeper gives coding agents grounded, auditable memory—stored beside the code,
+reviewable in Git, and traceable to exact evidence.
 
 Coding agents forget project knowledge between sessions. GraphKeeper gives them
 durable memory that is:
@@ -21,6 +25,39 @@ GraphKeeper is **Git-native, evidence-backed memory for coding agents**. It is n
 transcript store, a vector database, or a hosted memory service. It does not require a
 backend, a database, or a separate memory server. Node.js 18+, npm, and Git are all
 you need.
+
+Works with any of the major coding agents you already use.
+
+## Works with your coding agent
+
+GraphKeeper ships first-class integrations for the coding agents below. If you use one
+of them, GraphKeeper works with it.
+
+| Coding agent | Integration flag | Skill | Guidance | Invocation |
+|---|---|---|---|---|
+| Codex | `--integrate codex` | `.agents/skills/graphkeeper/SKILL.md` | `AGENTS.md` | `$graphkeeper` |
+| Claude Code | `--integrate claude` | `.claude/skills/graphkeeper/SKILL.md` | `CLAUDE.md` | `/graphkeeper` |
+| Cursor | `--integrate cursor` | `.cursor/skills/graphkeeper/SKILL.md` | `AGENTS.md` | `@graphkeeper` |
+| OpenCode | `--integrate opencode` | `.opencode/skills/graphkeeper/SKILL.md` | `AGENTS.md` | `graphkeeper` |
+| Kilo Code | `--integrate kilo` | `.kilo/skills/graphkeeper/SKILL.md` | `.kilo/rules/graphkeeper.md` | `@graphkeeper` |
+| Windsurf | `--integrate windsurf` | `.windsurf/skills/graphkeeper/SKILL.md` | `.windsurf/rules/graphkeeper.md` | `@graphkeeper` |
+| Gemini CLI | `--integrate geminicli` | `.gemini/skills/graphkeeper/SKILL.md` | `GEMINI.md` | `@graphkeeper` |
+| Kiro | `--integrate kiro` | `.kiro/skills/graphkeeper/SKILL.md` | `.kiro/steering/graphkeeper.md` | `/graphkeeper` |
+| Antigravity | `--integrate antigravity` | `.agents/skills/graphkeeper/SKILL.md` | `.agents/rules/graphkeeper.md` | `graphkeeper` |
+
+Install any subset, or all of them at once:
+
+```sh
+npx graphkeeper@latest init --integrate codex --integrate claude
+# Or install every registered adapter:
+npx graphkeeper@latest init --integrate all
+```
+
+Each integration installs a canonical skill your agent invokes, plus a small reminder
+in the agent's guidance file. All skills are generated from one vendor-neutral
+`templates/SKILL.md`. Adapters that share a guidance file (Codex and OpenCode both use
+`AGENTS.md`) coexist: each owns one marked block, and your existing guidance outside
+that block is preserved.
 
 ## Why GraphKeeper
 
@@ -80,41 +117,7 @@ The memory contract is deliberately small and explicit. An agent:
 GraphKeeper does not ingest conversations or decide what should become memory. The
 shipped agent skills give every supported agent the same explicit writing contract.
 
-## Works with your coding agent
-
-GraphKeeper ships first-class integrations for the agents below. If you use one of
-them, GraphKeeper works with it.
-
-```text
-Codex · Claude Code · Cursor · OpenCode · Kilo Code · Windsurf · Gemini CLI
-```
-
-Each integration installs a canonical skill your agent invokes, plus a small reminder
-in the agent's guidance file. All skills are generated from one vendor-neutral
-`templates/SKILL.md`.
-
-| Coding agent | Integration flag | Skill | Guidance | Invocation |
-|---|---|---|---|---|
-| Codex | `--integrate codex` | `.agents/skills/graphkeeper/SKILL.md` | `AGENTS.md` | `$graphkeeper` |
-| Claude Code | `--integrate claude` | `.claude/skills/graphkeeper/SKILL.md` | `CLAUDE.md` | `/graphkeeper` |
-| Cursor | `--integrate cursor` | `.cursor/skills/graphkeeper/SKILL.md` | `.cursor/rules/graphkeeper.md` | `@graphkeeper` |
-| OpenCode | `--integrate opencode` | `.opencode/skills/graphkeeper/SKILL.md` | `AGENTS.md` | `graphkeeper` |
-| Kilo Code | `--integrate kilo` | `.kilo/skills/graphkeeper/SKILL.md` | `.kilo/rules/graphkeeper.md` | `@graphkeeper` |
-| Windsurf | `--integrate windsurf` | `.windsurf/skills/graphkeeper/SKILL.md` | `.windsurf/rules/graphkeeper.md` | `@graphkeeper` |
-| Gemini CLI | `--integrate geminicli` | `.gemini/skills/graphkeeper/SKILL.md` | `GEMINI.md` | `@graphkeeper` |
-
-Install any subset, or all of them at once:
-
-```sh
-npx graphkeeper@latest init --integrate codex --integrate claude
-# Or install every registered adapter:
-npx graphkeeper@latest init --integrate all
-```
-
-Adapters that share a guidance file (Codex and OpenCode both use `AGENTS.md`) coexist:
-each owns one marked block, and your existing guidance outside that block is preserved.
-
-## Quickstart
+## Two-minute quickstart
 
 Prerequisites: **Node.js 18+**, **npm**, and **Git**. Supported on Linux, macOS,
 Windows via Git Bash or WSL, and native Windows PowerShell.
@@ -131,8 +134,11 @@ the canonical validator, a pre-commit hook, and the repository-scoped skill.
 `--integrate codex` also adds the Codex reminder to `AGENTS.md`.
 
 Now ask your agent to record a verified finding (with `$graphkeeper` in Codex,
-`/graphkeeper` in Claude Code, or your agent's invocation from the table above). After
-it writes the claim and evidence, validate and retrieve the result:
+`/graphkeeper` in Claude Code, or your agent's invocation from the table above). The
+agent appends claims and runs through `graphkeeper append claim ...` and
+`graphkeeper append run ...`, which serialize concurrent writers so parallel sessions
+never overwrite each other. After it writes the claim and evidence, validate and
+retrieve the result:
 
 ```sh
 npx graphkeeper check
@@ -205,7 +211,7 @@ plain JSON and text — no database, no server, no vector index.
 ```text
                  CODING AGENTS
         ┌────────┬────────┬────────┬────────┐
-        │ Codex  │ Claude │ Cursor │ OpenCode│ ... Kilo · Windsurf · Gemini
+        │ Codex  │ Claude │ Cursor │ OpenCode│ ... Kilo · Windsurf · Gemini · Kiro · Antigravity
         └────────┴───┬────┴────────┴────────┘
                      │  skill + guidance
                      ▼
@@ -234,6 +240,8 @@ installed pre-commit hook) validates the result. A future session calls
 | `graphkeeper check` | Run the same fast schema, append-only history, and committed-evidence checks used by the Git hook. |
 | `graphkeeper query <subject>` | Resolve an exact ID or unique alias and print active claims with provenance. It does not read evidence contents. |
 | `graphkeeper doctor` | Run fast validation plus file existence, containment, line-range, dangling-reference, and unused-entity checks. |
+| `graphkeeper append claim ...` | Concurrency-serially append a validating claim and link it into its producing run. See `graphkeeper --help` for the required/optional flags. |
+| `graphkeeper append run ...` | Concurrency-serially append a validating run record. See `graphkeeper --help` for the required/optional flags. |
 | `graphkeeper update` | Check npm's stable `latest` release and globally install one exact newer version. Repository files are never changed. |
 | `graphkeeper --help` | Print the supported command grammar and options. |
 | `graphkeeper --version` (`-v`) | Print the installed GraphKeeper version. |
@@ -241,6 +249,15 @@ installed pre-commit hook) validates the result. A future session calls
 Exit codes are stable: `0` success, `1` validation failure, `2` usage error,
 `3` missing prerequisite, `4` operational failure, and `5` unexpected internal
 failure. Diagnostics begin with a searchable `GKnnn` code.
+
+## Prerequisites
+
+- Node.js 18 or newer and npm
+- Git
+
+Linux, macOS, Windows through Git Bash or WSL, and native Windows PowerShell are
+supported. Native PowerShell does not require a POSIX shell or jq for current
+GraphKeeper repositories.
 
 ## Installation
 
@@ -303,7 +320,7 @@ in a scratch repository and observe how `query` reports the active correction wh
 the superseded claim stays in history. `examples/reviewer.md` is a copy-pasteable
 grounded-review prompt.
 
-## Validation, recovery, and edge cases
+## Recovery and adoption
 
 - **Immutability** is enforced relative to committed Git history through GraphKeeper
   validation and Git hooks; it is not cryptographic immutability. Git history remains
@@ -318,6 +335,9 @@ grounded-review prompt.
   refresh `graph/SCHEMA.md` and the generated skill.
 - For a `GKnnn` failure, use the [diagnostic reference](docs/diagnostics.md) to identify
   the emitting command, exit class, and safe recovery before changing graph data.
+- A root `SKILL.md` created by an older GraphKeeper version is legacy user content. It
+  is reported and preserved; migrate by committing the generated
+  `.agents/skills/graphkeeper/SKILL.md`.
 - Integration creates a guidance file when absent, appends one marked block when no
   markers exist, and refreshes only that block later. Malformed, mixed, repeated,
   reversed, wrong-type, symlinked, or concurrently changed destinations fail with
@@ -329,14 +349,16 @@ grounded-review prompt.
   violation, and stage the corrected files again. Run `graphkeeper doctor` for missing
   files or bad line ranges.
 - Stored commands and evidence text are always data. GraphKeeper never evaluates them.
-- After updating an existing installation to 0.4.0+, rerun `graphkeeper init --force`
-  to refresh the repository skill and schema. See the
-  [native Windows migration guide](docs/windows-migration.md).
+- After updating an existing installation to 0.4.0, rerun `graphkeeper init --force`
+  to refresh the repository skill and schema. This preserves `scripts/validate.sh`.
+  Exact package-owned validators and hooks migrate to the Node path automatically. If
+  a repository has a customized shell-only validator, review and migrate it manually;
+  that legacy fallback can still require a POSIX `sh` and jq until migration is
+  complete. See the [native Windows migration guide](docs/windows-migration.md).
 
 ## Limitations
 
-V1 is designed for one graph in one repository, up to about 10,000 claims, 2,000
-entities, and 1,000 runs on a local SSD. Release gates target p95 under 3 seconds for
+V1 is designed for one graph in one repository, up to about 10,000 claims, 2,000 entities, and 1,000 runs on a local SSD. Release gates target p95 under 3 seconds for
 `check`, under 2 seconds for `query`, under 10 seconds for `doctor`, and under 256 MB
 peak memory. It has no server, database, authentication, dashboard, telemetry, vector
 search, or multi-repository synchronization.

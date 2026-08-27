@@ -70,13 +70,11 @@ test('Cursor integration installs the canonical skill and one independent guidan
       await readFile(join(fixture.root, '.cursor', 'skills', 'graphkeeper', 'SKILL.md'), 'utf8'),
       await template(),
     );
-    const rules = await readFile(
-      join(fixture.root, '.cursor', 'rules', 'graphkeeper.md'),
-      'utf8',
-    );
-    assert.match(rules, /<!-- graphkeeper:cursor:start -->/);
-    assert.match(rules, /invoke `@graphkeeper`/);
-    assert.equal((rules.match(/graphkeeper:cursor:start/g) ?? []).length, 1);
+    const agents = await readFile(join(fixture.root, 'AGENTS.md'), 'utf8');
+    assert.match(agents, /<!-- graphkeeper:cursor:start -->/);
+    assert.match(agents, /invoke `@graphkeeper`/);
+    assert.equal((agents.match(/graphkeeper:cursor:start/g) ?? []).length, 1);
+    await assert.rejects(stat(join(fixture.root, '.cursor', 'rules', 'graphkeeper.md')));
     assert.ok(report.notes.some((note) => /Restart Cursor/.test(note)));
   } finally {
     await fixture.cleanup();
@@ -94,11 +92,11 @@ test('Cursor removal deletes only canonical Cursor-owned material and leaves oth
     });
     const plan = await prepareAgentRemoval(fixture.root, 'cursor');
     assert.ok(plan.actions.some((action) =>
-      action.kind === 'remove' && action.target === '.cursor/rules/graphkeeper.md'));
+      action.kind === 'remove' && action.target === 'AGENTS.md'));
     await applyAgentIntegrationPlan(plan);
 
     assert.doesNotMatch(
-      await readFile(join(fixture.root, '.cursor', 'rules', 'graphkeeper.md'), 'utf8'),
+      await readFile(join(fixture.root, 'AGENTS.md'), 'utf8'),
       /graphkeeper:cursor/,
     );
     await assert.rejects(stat(join(fixture.root, '.cursor', 'skills', 'graphkeeper')));
@@ -508,6 +506,112 @@ test('wrong-type integration guidance is rejected before any writes', async () =
       (error: unknown) => error instanceof GraphKeeperError && error.code === 'GK004',
     );
     await assert.rejects(stat(join(fixture.root, 'graph')));
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+test('Kiro integration installs the canonical skill and one independent steering block', async () => {
+  const fixture = await createRepositoryFixture();
+  try {
+    const report = await initialize({
+      cwd: fixture.root,
+      force: false,
+      integrations: ['kiro'],
+      environment: supportedInitEnvironment(),
+    });
+    assert.equal(
+      await readFile(join(fixture.root, '.kiro', 'skills', 'graphkeeper', 'SKILL.md'), 'utf8'),
+      await template(),
+    );
+    const steering = await readFile(
+      join(fixture.root, '.kiro', 'steering', 'graphkeeper.md'),
+      'utf8',
+    );
+    assert.match(steering, /<!-- graphkeeper:kiro:start -->/);
+    assert.match(steering, /invoke `\/graphkeeper`/);
+    assert.equal((steering.match(/graphkeeper:kiro:start/g) ?? []).length, 1);
+    assert.ok(report.notes.some((note) => /Restart Kiro/.test(note)));
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+test('Antigravity integration installs its rules block and reuses the shared Codex skill', async () => {
+  const fixture = await createRepositoryFixture();
+  try {
+    const report = await initialize({
+      cwd: fixture.root,
+      force: false,
+      integrations: ['codex', 'antigravity'],
+      environment: supportedInitEnvironment(),
+    });
+    const rules = await readFile(
+      join(fixture.root, '.agents', 'rules', 'graphkeeper.md'),
+      'utf8',
+    );
+    assert.match(rules, /<!-- graphkeeper:antigravity:start -->/);
+    assert.match(rules, /invoke `graphkeeper`/);
+    assert.equal((rules.match(/graphkeeper:antigravity:start/g) ?? []).length, 1);
+    assert.ok(report.actions.some((action) =>
+      action.target === '.agents/skills/graphkeeper/SKILL.md' && action.kind === 'create'));
+    assert.equal(
+      await readFile(join(fixture.root, '.agents', 'skills', 'graphkeeper', 'SKILL.md'), 'utf8'),
+      await template(),
+    );
+    assert.ok(report.notes.some((note) => /Restart Antigravity/.test(note)));
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+test('Codex removal still removes the shared skill when Antigravity is installed', async () => {
+  const fixture = await createRepositoryFixture();
+  try {
+    await initialize({
+      cwd: fixture.root,
+      force: false,
+      integrations: ['codex', 'antigravity'],
+      environment: supportedInitEnvironment(),
+    });
+    await applyAgentIntegrationPlan(await prepareAgentRemoval(fixture.root, 'codex'));
+    await assert.rejects(stat(join(fixture.root, '.agents', 'skills', 'graphkeeper')));
+    assert.doesNotMatch(
+      await readFile(join(fixture.root, 'AGENTS.md'), 'utf8'),
+      /graphkeeper:codex/,
+    );
+    assert.match(
+      await readFile(join(fixture.root, '.agents', 'rules', 'graphkeeper.md'), 'utf8'),
+      /graphkeeper:antigravity:start/,
+    );
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+test('removing Antigravity preserves the Codex-owned shared skill while removing its rules block', async () => {
+  const fixture = await createRepositoryFixture();
+  try {
+    await initialize({
+      cwd: fixture.root,
+      force: false,
+      integrations: ['codex', 'antigravity'],
+      environment: supportedInitEnvironment(),
+    });
+    const plan = await prepareAgentRemoval(fixture.root, 'antigravity');
+    assert.ok(plan.actions.some((action) =>
+      action.kind === 'preserve' && /shared/.test(action.reason)));
+    await applyAgentIntegrationPlan(plan);
+
+    assert.doesNotMatch(
+      await readFile(join(fixture.root, '.agents', 'rules', 'graphkeeper.md'), 'utf8'),
+      /graphkeeper:antigravity/,
+    );
+    assert.equal(
+      await readFile(join(fixture.root, '.agents', 'skills', 'graphkeeper', 'SKILL.md'), 'utf8'),
+      await template(),
+    );
+    assert.match(await readFile(join(fixture.root, 'AGENTS.md'), 'utf8'), /graphkeeper:codex:start/);
   } finally {
     await fixture.cleanup();
   }

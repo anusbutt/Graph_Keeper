@@ -7,6 +7,15 @@ versioning; while the package is below 1.0, minor releases may change public beh
 
 ### Added
 
+- `graphkeeper append claim` and `graphkeeper append run`, which append claim and run
+  records through a concurrency-safe shared write helper (exclusive graph-file lock +
+  compare-before-rename with bounded retry). Concurrent writers no longer silently
+  overwrite each other's records in `graph/claims.json`/`graph/runs.json`;
+  `append claim` also links the new claim into its producing run's `claims_written`.
+- The shared `mutateJsonArrayFile` helper in `src/lib` for concurrency-safe
+  mutate-and-persist of JSON-array graph files.
+- Two diagnostics: `GK400` (concurrent write did not stabilize or lock timeout) and
+  `GK401` (invalid claim/run input).
 - A Cursor adapter registered as `--integrate cursor` with the canonical skill at
   `.cursor/skills/graphkeeper/SKILL.md`, the marked reminder at
   `.cursor/rules/graphkeeper.md`, and the `@graphkeeper` invocation. It participates in
@@ -27,9 +36,24 @@ versioning; while the package is below 1.0, minor releases may change public beh
   `.gemini/skills/graphkeeper/SKILL.md`, the marked reminder in `GEMINI.md`, and the
   `@graphkeeper` invocation. It participates in `--integrate all`, `--dry-run`, and
   conservative `integrate remove`.
+- A Kiro adapter registered as `--integrate kiro` with the canonical skill at
+  `.kiro/skills/graphkeeper/SKILL.md`, the marked reminder at `.kiro/steering/graphkeeper.md`,
+  and the `/graphkeeper` invocation. It participates in `--integrate all`, `--dry-run`, and
+  conservative `integrate remove`.
+- An Antigravity adapter registered as `--integrate antigravity` with the canonical skill at
+  `.agents/skills/graphkeeper/SKILL.md` (shared with Codex), the marked reminder at
+  `.agents/rules/graphkeeper.md`, and the `graphkeeper` invocation. It participates in
+  `--integrate all`, `--dry-run`, and conservative `integrate remove`; because the skill path
+  is shared with Codex, removal is owner-scoped so removing Antigravity preserves the
+  Codex-owned skill directory.
 
 ### Changed
 
+- The Cursor adapter now targets `AGENTS.md` (which Cursor reads) instead of
+  `.cursor/rules/graphkeeper.md`. `AGENTS.md` is now the shared guidance file for Codex,
+  OpenCode, and Cursor, each owning one marked block. A legacy
+  `.cursor/rules/graphkeeper.md` from an older install is no longer GraphKeeper-owned and is
+  safe to delete manually.
 - Agent adapters are now a closed, data-driven registry. Adding an adapter is a single
   entry in `src/lib/agent-adapters.ts`; the CLI `--integrate` grammar, the
   `--integrate all` expansion, and removal machinery all derive from it, and `AgentId`
