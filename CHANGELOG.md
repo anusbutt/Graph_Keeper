@@ -3,7 +3,7 @@
 All notable changes to GraphKeeper are documented here. GraphKeeper follows semantic
 versioning; while the package is below 1.0, minor releases may change public behavior.
 
-## [Unreleased]
+## [0.5.0] - 2026-08-22
 
 ### Added
 
@@ -65,6 +65,17 @@ versioning; while the package is below 1.0, minor releases may change public beh
   paired, and unknown or malformed markers are still rejected with `GK004`. Installing
   adapters that share a file in one plan (for example `--integrate all`) appends each
   block sequentially.
+
+### Notes
+
+- Across the nine registered adapters, only Codex and Claude Code have sustained,
+  benchmarked automatic skill invocation. A recorded Cursor benchmark
+  (`benchmarks/cursor-skill-invocation-2026-08-15`) showed automatic invocation failing
+  for Composer 2.5 in 2/2 runs (explicit `/graphkeeper` worked), and the Cursor,
+  OpenCode, Kilo Code, Windsurf, Gemini CLI, Kiro, and Antigravity destinations are
+  documented defaults rather than substitutes for each product's current skill layout.
+  GraphKeeper installs the skill file and reminder; whether each vendor's agent auto
+  invokes it is verified by real-product benchmark only for Codex and Claude Code.
 
 ## [0.4.1] - 2026-08-14
 
