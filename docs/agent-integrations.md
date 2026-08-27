@@ -2,6 +2,15 @@
 
 GraphKeeper v1 supports the following explicit internal adapters:
 
+> **Invocation status.** Only Codex and Claude Code have sustained, benchmarked
+> automatic skill invocation. A recorded Cursor benchmark
+> (`benchmarks/cursor-skill-invocation-2026-08-15`) showed automatic invocation failing
+> for Composer 2.5 in 2/2 runs (explicit `/graphkeeper` worked). The Cursor, OpenCode,
+> Kilo Code, Windsurf, Gemini CLI, Kiro, and Antigravity destinations are documented
+> defaults, not substitutes for each product's current skill layout. GraphKeeper
+> installs the skill file and reminder; whether each vendor's agent auto-invokes it is
+> verified by real-product benchmark only for Codex and Claude Code.
+
 | ID | Skill | Guidance | Invocation |
 |---|---|---|---|
 | `codex` | `.agents/skills/graphkeeper/SKILL.md` | `AGENTS.md` | `$graphkeeper` |
