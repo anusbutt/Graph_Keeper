@@ -146,7 +146,17 @@ export async function writeJsonArrayUnderLock(
   const maxAttempts = options.maxAttempts ?? DEFAULT_MAX_ATTEMPTS;
   for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
     const expected = await readFile(target, 'utf8');
-    const records = JSON.parse(expected) as unknown[];
+    let records: unknown[];
+    try {
+      records = JSON.parse(expected) as unknown[];
+    } catch (error: unknown) {
+      // A non-cooperating writer can briefly expose a truncated JSON file while
+      // replacing it. Treat that transient state like any other concurrent
+      // change so callers get the stable optimistic-write diagnostic rather
+      // than leaking a parser error.
+      if (!(error instanceof SyntaxError)) throw error;
+      continue;
+    }
     mutate(records);
     try {
       await atomicWriteIfCurrent(target, expected, records);
