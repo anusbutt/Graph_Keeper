@@ -1,0 +1,5 @@
+| Coding agent | Integration flag | Skill | Guidance | Invocation |
+|---|---|---|---|---|
+| Codex | `--integrate codex` | `.agents/skills/graphkeeper/SKILL.md` | `AGENTS.md` | `$graphkeeper` |
+| Claude Code | `--integrate claude` | `.claude/skills/graphkeeper/SKILL.md` | `CLAUDE.md` | `/graphkeeper` |
+| Cursor | `--integrate cursor` | `.cursor/skills/graphkeeper/SKILL.md` | `.cursor/rules/graphkeeper.md` | `@graphkeeper` |
