@@ -1,0 +1,16 @@
+[
+  {
+    "id": "run_2026-09-03-cursor_guidance",
+    "started": "2026-09-03T12:00:12Z",
+    "tool": "coding_agent",
+    "evidence": [
+      "evidence/cursor-adapter-guidance-target.txt"
+    ],
+    "claims_written": [
+      "claim_51efdfd4"
+    ],
+    "task": "verify Cursor adapter guidance destination",
+    "ended": "2026-09-03T12:01:10Z",
+    "verdict": "passed"
+  }
+]

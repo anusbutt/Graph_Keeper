@@ -1,0 +1,14 @@
+[
+  {
+    "id": "cursor_adapter",
+    "type": "integration_adapter",
+    "aliases": [
+      "Cursor adapter",
+      "--integrate cursor"
+    ],
+    "source_docs": [
+      "evidence/cursor-adapter-guidance-target.txt#L1-L5"
+    ],
+    "first_seen": "2026-09-03T12:00:12Z"
+  }
+]
