@@ -43,10 +43,17 @@ behavioral responsibility that software cannot infer reliably.
 - [GUIDANCE] Do not rerun git log, git blame, historical diffs, broad repository
   searches, tests, or other original investigation merely to reconfirm evidence the
   claim already cites.
-- [GUIDANCE] Escalate into deeper reinvestigation only when current state contradicts
-  the claim, provenance is missing or insufficient, the claim is inference-only,
-  stale, superseded, or ambiguous, or the user explicitly asks for fresh independent
-  verification.
+- [GUIDANCE] When current state appears to contradict an active claim, verify the
+  contradiction with current evidence.
+- [GUIDANCE] If the contradiction is confirmed and repository memory writes are
+  authorized, do not stop after reporting it. Follow the Correct workflow: capture
+  current evidence and append a replacement claim that supersedes the stale claim
+  before completing the task.
+- [GUIDANCE] If memory writes are not authorized or cannot be completed, report that
+  the stored claim remains stale and must not be treated as current.
+- [GUIDANCE] Escalate into deeper reinvestigation when provenance is missing or
+  insufficient, the claim is inference-only, already superseded, or ambiguous, or the
+  user explicitly asks for fresh independent verification.
 - [GUIDANCE] Once current state is consistent with the grounded claim and no
   contradiction is found, stop investigating and answer from the claim plus the
   minimal freshness check.

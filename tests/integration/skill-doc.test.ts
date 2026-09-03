@@ -51,7 +51,7 @@ test('teaches exact alias reuse, safe new identity, and append-only correction',
   assert.match(skill, /never edit or delete.*committed/is);
 });
 
-test('requires retrieval-first investigation without blind trust', async () => {
+test('requires retrieval-first investigation, stale-claim correction, and no blind trust', async () => {
   const skill = await readFile(skillUrl, 'utf8');
   assert.match(skill, /^## Retrieve before investigating$/m);
   assert.match(skill, /query relevant GraphKeeper memory before repeating.*investigation/is);
@@ -61,12 +61,15 @@ test('requires retrieval-first investigation without blind trust', async () => {
   assert.match(skill, /limit freshness verification to current state.*relevant current files.*working-tree or HEAD changes.*contradictory evidence/is);
   assert.match(skill, /do not rerun git log, git blame, historical diffs, broad repository\s+searches, tests/is);
   assert.match(skill, /original investigation.*reconfirm evidence/is);
+  assert.match(skill, /current state appears to contradict.*verify.*current evidence/is);
+  assert.match(skill, /contradiction is confirmed.*memory writes are\s+authorized.*follow the Correct workflow/is);
+  assert.match(skill, /append a replacement claim that supersedes the stale claim.*before completing/is);
+  assert.match(skill, /memory writes are not authorized or cannot be completed.*remains stale.*must not be treated as current/is);
   assert.match(skill, /stop investigating and answer from the claim plus the\s+minimal freshness check/is);
   for (const exception of [
-    'current state contradicts',
     'provenance is missing or insufficient',
     'inference-only',
-    'stale, superseded, or ambiguous',
+    'already superseded, or ambiguous',
     'fresh independent verification',
   ]) {
     assert.match(skill, new RegExp(exception.replaceAll(' ', '\\s+'), 'i'));
