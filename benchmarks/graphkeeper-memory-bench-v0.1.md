@@ -77,5 +77,7 @@ and [post-fix PASS](results/repeated-investigation-post-fix-pass-2026-08-14/READ
 results. Test B has recorded a
 [pre-fix FAIL](results/stale-memory-cursor-adapter-2026-09-03/README.md) and a
 [post-fix PASS](results/stale-memory-authentication-post-fix-2026-09-03/README.md).
+The separate open-run lifecycle defect observed in that pass has a subsequent
+[close-command PASS](results/stale-memory-authentication-close-run-2026-09-04/README.md).
 These are manual evidence records, not an automated benchmark harness. Tests C-D,
 reusable scoring methodology, automated evaluation, and datasets remain future work.

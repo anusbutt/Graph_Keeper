@@ -1,0 +1,31 @@
+[
+  {
+    "id": "run_2026-09-03-auth_discovery",
+    "started": "2026-09-03T21:56:00Z",
+    "tool": "coding_agent",
+    "evidence": [
+      "evidence/authentication_implementation_20260903.ts"
+    ],
+    "claims_written": [
+      "claim_c9cd4a1e",
+      "claim_30005cc4"
+    ],
+    "task": "discover authentication implementation",
+    "ended": "2026-09-03T21:56:03Z",
+    "verdict": "passed"
+  },
+  {
+    "id": "run_2026-09-03-auth_refactor_a7",
+    "started": "2026-09-03T21:58:42Z",
+    "tool": "coding_agent",
+    "evidence": [
+      "evidence/authentication_implementation_20260904.ts"
+    ],
+    "claims_written": [
+      "claim_16332d0e"
+    ],
+    "task": "verify current authentication implementation after module refactor",
+    "ended": "2026-09-03T21:59:00Z",
+    "verdict": "passed"
+  }
+]

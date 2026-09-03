@@ -32,8 +32,8 @@ instead of rewriting history. Run `graphkeeper check` after a repair and
 | `GK003` | `init`, `check`, `update`, and standalone validator | A named prerequisite is missing. Install or restore the named tool, confirm it is on `PATH`, and retry. A customized legacy validator may require POSIX `sh` and jq 1.6 or newer. |
 | `GK004` | All repository-mutating commands, `check`, `query`, `doctor`, `update`, and validator loading | An operation could not be completed safely. Follow the specific message: restore access or a missing generated validator, repair malformed integration markers, retry a timed-out process or registry request, and rerun without bypassing ownership checks. |
 | `GK005` | `check` | The repository validator returned an unexpected exit code. Preserve its preceding output, rerun once, and report a reproducible failure if it persists. |
-| `GK400` | `append` | A concurrent write did not stabilize, or a lock on a graph file could not be acquired. Nothing was written and no record was lost; reduce concurrent appends to the same file or retry. |
-| `GK401` | `append` | The claim or run input is invalid or cannot satisfy provenance: unknown subject, missing/closed producing run, duplicate ID, or a record that fails existing schema rules. Correct the input and retry; the graph was not modified. |
+| `GK400` | `append`, `close` | A concurrent write did not stabilize, or a lock on a graph file could not be acquired. Nothing was written and no record was lost; reduce contention on the same file or retry. |
+| `GK401` | `append`, `close` | The claim, run, or closure is invalid or cannot satisfy provenance and lifecycle rules: unknown subject or run, missing/closed producing run, duplicate ID, already closed target, invalid end time, or a record that fails existing schema rules. Correct the input and retry; the graph was not modified. |
 
 `GK002`, `GK003`, `GK004`, and `GK005` map to exit codes `2`, `3`, `4`, and `5`
 respectively. `GK400` maps to exit code `4` (operational); `GK401` maps to exit code `1` (validation).

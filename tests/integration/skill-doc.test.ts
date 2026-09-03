@@ -102,11 +102,13 @@ test('teaches the complete run and evidence lifecycle including interruption and
   assert.match(skill, /^## Track a run$/m);
   assert.match(skill, /open.*empty.*evidence.*claims_written/is);
   assert.match(skill, /append.*evidence.*claim/is);
-  assert.match(skill, /close.*ended.*verdict/is);
+  assert.match(skill, /close.*`graphkeeper close run`.*ended.*verdict/is);
+  assert.doesNotMatch(skill, /close a run.*`graphkeeper append run`/is);
   assert.match(skill, /interrupted.*aborted.*inconclusive/is);
   assert.match(skill, /do not\s+invent.*claim/is);
   assert.match(skill, /committed evidence.*immutable/is);
   assert.match(skill, /concurrent.*unique run ID/is);
+  assert.match(skill, /create.*`graphkeeper append run`.*close.*`graphkeeper close run`/is);
 });
 
 test('teaches portable evidence citations and precise run-verdict reporting', async () => {

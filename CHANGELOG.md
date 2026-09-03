@@ -3,6 +3,18 @@
 All notable changes to GraphKeeper are documented here. GraphKeeper follows semantic
 versioning; while the package is below 1.0, minor releases may change public behavior.
 
+## [Unreleased]
+
+### Added
+
+- `graphkeeper close run`, which atomically closes one existing open run with an end
+  timestamp and verdict while preserving its accumulated provenance.
+
+### Changed
+
+- The shipped agent skill and command documentation now direct agents to create runs
+  with `append run`, add claims with `append claim`, and close runs with `close run`.
+
 ## [0.5.0] - 2026-08-22
 
 ### Added
