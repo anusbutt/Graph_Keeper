@@ -1,0 +1,25 @@
+Entity: authentication
+Matched by: canonical ID
+Active claims: 2
+
+Claim: claim_8e7fe9d2
+  Predicate: implemented_in
+  Object: "src/auth.ts"
+  Source: tool_output
+  Command: "nl -ba src/auth.ts"
+  Exit code: 0
+  Evidence: evidence/authentication-implementation.txt#L1-L4
+  Captured: 2026-09-03T16:47:27Z
+  Producer: run_2026-09-03-auth_discovery
+  Created: 2026-09-03T16:47:50Z
+
+Claim: claim_3c339d8a
+  Predicate: validates_by
+  Object: "strict equality with the literal valid-token"
+  Source: tool_output
+  Command: "nl -ba src/auth.ts"
+  Exit code: 0
+  Evidence: evidence/authentication-implementation.txt#L2-L4
+  Captured: 2026-09-03T16:47:27Z
+  Producer: run_2026-09-03-auth_discovery
+  Created: 2026-09-03T16:47:51Z

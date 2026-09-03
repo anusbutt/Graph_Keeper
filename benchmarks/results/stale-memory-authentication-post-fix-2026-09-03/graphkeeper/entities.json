@@ -1,0 +1,14 @@
+[
+  {
+    "id": "authentication",
+    "type": "application_capability",
+    "aliases": [
+      "auth",
+      "authenticate"
+    ],
+    "source_docs": [
+      "evidence/authentication-implementation.txt#L1-L4"
+    ],
+    "first_seen": "2026-09-03T16:47:27Z"
+  }
+]

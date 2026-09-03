@@ -1,0 +1,57 @@
+diff --git a/templates/SKILL.md b/templates/SKILL.md
+index 378d314..2ab0f0c 100644
+--- a/templates/SKILL.md
++++ b/templates/SKILL.md
+@@ -43,10 +43,17 @@ behavioral responsibility that software cannot infer reliably.
+ - [GUIDANCE] Do not rerun git log, git blame, historical diffs, broad repository
+   searches, tests, or other original investigation merely to reconfirm evidence the
+   claim already cites.
+-- [GUIDANCE] Escalate into deeper reinvestigation only when current state contradicts
+-  the claim, provenance is missing or insufficient, the claim is inference-only,
+-  stale, superseded, or ambiguous, or the user explicitly asks for fresh independent
+-  verification.
++- [GUIDANCE] When current state appears to contradict an active claim, verify the
++  contradiction with current evidence.
++- [GUIDANCE] If the contradiction is confirmed and repository memory writes are
++  authorized, do not stop after reporting it. Follow the Correct workflow: capture
++  current evidence and append a replacement claim that supersedes the stale claim
++  before completing the task.
++- [GUIDANCE] If memory writes are not authorized or cannot be completed, report that
++  the stored claim remains stale and must not be treated as current.
++- [GUIDANCE] Escalate into deeper reinvestigation when provenance is missing or
++  insufficient, the claim is inference-only, already superseded, or ambiguous, or the
++  user explicitly asks for fresh independent verification.
+ - [GUIDANCE] Once current state is consistent with the grounded claim and no
+   contradiction is found, stop investigating and answer from the claim plus the
+   minimal freshness check.
+diff --git a/tests/integration/skill-doc.test.ts b/tests/integration/skill-doc.test.ts
+index 20121f5..1a58396 100644
+--- a/tests/integration/skill-doc.test.ts
++++ b/tests/integration/skill-doc.test.ts
+@@ -51,7 +51,7 @@ test('teaches exact alias reuse, safe new identity, and append-only correction',
+   assert.match(skill, /never edit or delete.*committed/is);
+ });
+ 
+-test('requires retrieval-first investigation without blind trust', async () => {
++test('requires retrieval-first investigation, stale-claim correction, and no blind trust', async () => {
+   const skill = await readFile(skillUrl, 'utf8');
+   assert.match(skill, /^## Retrieve before investigating$/m);
+   assert.match(skill, /query relevant GraphKeeper memory before repeating.*investigation/is);
+@@ -61,12 +61,15 @@ test('requires retrieval-first investigation without blind trust', async () => {
+   assert.match(skill, /limit freshness verification to current state.*relevant current files.*working-tree or HEAD changes.*contradictory evidence/is);
+   assert.match(skill, /do not rerun git log, git blame, historical diffs, broad repository\s+searches, tests/is);
+   assert.match(skill, /original investigation.*reconfirm evidence/is);
++  assert.match(skill, /current state appears to contradict.*verify.*current evidence/is);
++  assert.match(skill, /contradiction is confirmed.*memory writes are\s+authorized.*follow the Correct workflow/is);
++  assert.match(skill, /append a replacement claim that supersedes the stale claim.*before completing/is);
++  assert.match(skill, /memory writes are not authorized or cannot be completed.*remains stale.*must not be treated as current/is);
+   assert.match(skill, /stop investigating and answer from the claim plus the\s+minimal freshness check/is);
+   for (const exception of [
+-    'current state contradicts',
+     'provenance is missing or insufficient',
+     'inference-only',
+-    'stale, superseded, or ambiguous',
++    'already superseded, or ambiguous',
+     'fresh independent verification',
+   ]) {
+     assert.match(skill, new RegExp(exception.replaceAll(' ', '\\s+'), 'i'));
