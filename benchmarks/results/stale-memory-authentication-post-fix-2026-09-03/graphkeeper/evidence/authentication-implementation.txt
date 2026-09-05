@@ -1,0 +1,4 @@
+$ nl -ba src/auth.ts
+     1	export function authenticate(token: string): boolean {
+     2	  return token === "valid-token";
+     3	}

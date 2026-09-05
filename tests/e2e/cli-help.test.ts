@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { mkdtemp, rm, symlink } from 'node:fs/promises';
+import { mkdtemp, readFile, rm, symlink } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import test from 'node:test';
@@ -17,6 +17,7 @@ import {
 } from '../../src/cli.js';
 import { AGENT_IDS } from '../../src/lib/agent-adapters.js';
 import { runCommand } from '../helpers/repository.js';
+import { createValidatorFixture, timestamp } from '../helpers/validator.js';
 
 function captureIO(): {
   readonly io: CliIO;
@@ -42,6 +43,7 @@ test('prints help successfully when no command is provided', async () => {
   assert.equal(exitCode, EXIT_SUCCESS);
   assert.match(capture.stdout.join('\n'), /graphkeeper init/);
   assert.match(capture.stdout.join('\n'), /graphkeeper update/);
+  assert.match(capture.stdout.join('\n'), /graphkeeper close run.*--id.*--ended.*--verdict/);
   assert.equal(capture.stderr.length, 0);
   const grammar = AGENT_IDS.join('|');
   assert.match(capture.stdout.join('\n'), new RegExp(`--integrate <${grammar}\\|all>`));
@@ -178,6 +180,50 @@ test('rejects an unknown command as a usage error', async () => {
 
   assert.equal(exitCode, EXIT_USAGE);
   assert.match(capture.stderr.join('\n'), /Unknown command: unknown/);
+});
+
+test('close rejects malformed grammar with GK002 before repository access', async () => {
+  for (const args of [
+    ['close'],
+    ['close', 'claim'],
+    ['close', 'run', '--id', 'run_2026-09-04-a'],
+  ]) {
+    const capture = captureIO();
+    const exitCode = await run(args, capture.io, '/path/that/does/not/exist');
+    assert.equal(exitCode, EXIT_USAGE);
+    assert.match(capture.stderr.join('\n'), /GK002/);
+    assert.equal(capture.stdout.length, 0);
+  }
+});
+
+test('close run dispatches against the supplied repository root', async () => {
+  const fixture = await createValidatorFixture('graphkeeper-close-cli-');
+  try {
+    const selected = {
+      id: 'run_2026-07-21-cli',
+      started: timestamp,
+      tool: 'codex',
+      evidence: [],
+      claims_written: [],
+    };
+    await fixture.writeGraph([], [], [selected]);
+    const capture = captureIO();
+    const exitCode = await run([
+      'close', 'run',
+      '--id', selected.id,
+      '--ended', '2026-07-21T09:15:22Z',
+      '--verdict', 'passed',
+    ], capture.io, fixture.root);
+
+    assert.equal(exitCode, EXIT_SUCCESS, capture.stderr.join('\n'));
+    assert.deepEqual(capture.stdout, ['Closed run ' + selected.id]);
+    const runs = JSON.parse(
+      await readFile(join(fixture.root, 'graph', 'runs.json'), 'utf8'),
+    ) as unknown[];
+    assert.deepEqual(runs, [{ ...selected, ended: '2026-07-21T09:15:22Z', verdict: 'passed' }]);
+  } finally {
+    await fixture.cleanup();
+  }
 });
 
 test('update rejects every argument with GK002 before external work', async () => {

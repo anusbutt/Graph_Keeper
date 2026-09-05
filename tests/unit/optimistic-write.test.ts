@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { writeFileSync } from 'node:fs';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import test from 'node:test';
@@ -66,7 +67,7 @@ test('retries and succeeds when the file changes concurrently between attempts',
     await mutateJsonArrayFile(fixture.root, 'graph/claims.json', (r) => {
       if (!injected) {
         injected = true;
-        void writeFile(target, JSON.stringify([{ id: 'other' }]) + '\n', 'utf8');
+        writeFileSync(target, JSON.stringify([{ id: 'other' }]) + '\n', 'utf8');
       }
       r.push({ id: 'mine' });
     });
@@ -87,7 +88,7 @@ test('fails loudly when the file keeps changing beyond the max attempts', async 
     await assert.rejects(
       mutateJsonArrayFile(fixture.root, 'graph/claims.json', (r) => {
         counter += 1;
-        void writeFile(target, JSON.stringify([counter]) + '\n', 'utf8');
+        writeFileSync(target, JSON.stringify([counter]) + '\n', 'utf8');
         r.push({ id: 'mine' });
       }, { maxAttempts: 3 }),
       (error: unknown) =>

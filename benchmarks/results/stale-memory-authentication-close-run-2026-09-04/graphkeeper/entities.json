@@ -1,0 +1,14 @@
+[
+  {
+    "id": "authentication_function",
+    "type": "function",
+    "aliases": [
+      "authenticate"
+    ],
+    "source_docs": [
+      "evidence/authentication_implementation_20260903.ts#L1-L3",
+      "evidence/authentication_implementation_20260904.ts#L1-L3"
+    ],
+    "first_seen": "2026-09-03T21:56:00Z"
+  }
+]

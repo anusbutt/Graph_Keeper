@@ -43,6 +43,9 @@ jobs:
         run: npm run build && npm run typecheck
       - name: Test
         run: npm run test:functional
+      - name: Contributor onboarding
+        timeout-minutes: 16
+        run: npm run test:onboarding
       - name: Shell syntax
         run: sh -n scripts/validate.sh && node --check templates/pre-commit
       - name: Check and doctor worked example
@@ -76,6 +79,9 @@ jobs:
         run: npm run build && npm run typecheck
       - name: Test in Git Bash
         run: npm run test:functional
+      - name: Contributor onboarding
+        timeout-minutes: 16
+        run: npm run test:onboarding
       - name: Shell syntax
         run: sh -n scripts/validate.sh && node --check templates/pre-commit
       - name: Check and doctor worked example

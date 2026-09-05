@@ -42,6 +42,7 @@
     "test:unit": "npm run build && node scripts/run-tests.mjs dist/tests/unit",
     "test:integration": "npm run build && node scripts/run-tests.mjs dist/tests/integration",
     "test:e2e": "npm run build && node scripts/run-tests.mjs dist/tests/e2e",
+    "test:onboarding": "npm run build && node scripts/run-tests.mjs dist/tests/onboarding",
     "test:security": "npm run build && node scripts/run-tests.mjs dist/tests/security",
     "test:performance": "npm run build && node scripts/run-tests.mjs dist/tests/performance",
     "package:smoke": "npm pack --dry-run",

@@ -17,6 +17,7 @@ import {
   type IntegrationAction,
 } from './commands/integrate.js';
 import { parseAppendArguments, runAppend } from './commands/append.js';
+import { parseCloseArguments, runClose } from './commands/close.js';
 import { query } from './commands/query.js';
 import { updateGraphKeeper } from './commands/update.js';
 import {
@@ -48,7 +49,7 @@ export interface CliTerminal {
 }
 
 const VERSION = '0.5.0';
-const COMMANDS = new Set(['init', 'integrate', 'check', 'query', 'doctor', 'update', 'append']);
+const COMMANDS = new Set(['init', 'integrate', 'check', 'query', 'doctor', 'update', 'append', 'close']);
 const AGENT_GRAMMAR = AGENT_IDS.join('|');
 
 const USAGE = [
@@ -63,6 +64,7 @@ const USAGE = [
   '  graphkeeper update',
   '  graphkeeper append claim --subject <s> --predicate <p> --object <o> --kind <tool_output|inference> ...',
   '  graphkeeper append run --started <ts> --tool <t> [--id <run-id>] [--task <t>]',
+  '  graphkeeper close run --id <run-id> --ended <ts> --verdict <passed|failed|inconclusive|aborted>',
   '  graphkeeper --help',
   '  graphkeeper --version',
 ].join('\n');
@@ -393,6 +395,18 @@ export async function run(
       return EXIT_USAGE;
     }
     const report = await runAppend(parsed.options);
+    forwardOutput(report.stdout, io.stdout);
+    forwardOutput(report.stderr, io.stderr);
+    return report.exitCode;
+  }
+
+  if (command === 'close') {
+    const parsed = parseCloseArguments(argv[1], argv.slice(2));
+    if (!parsed.ok) {
+      io.stderr(diagnostic('GK002', parsed.usageError));
+      return EXIT_USAGE;
+    }
+    const report = await runClose(parsed.options, cwd);
     forwardOutput(report.stdout, io.stdout);
     forwardOutput(report.stderr, io.stderr);
     return report.exitCode;

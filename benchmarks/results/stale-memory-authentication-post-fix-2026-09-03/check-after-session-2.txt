@@ -1,0 +1,2 @@
+Command: graphkeeper check
+Exit code: 0

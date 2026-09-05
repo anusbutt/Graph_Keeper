@@ -1,0 +1,67 @@
+[
+  {
+    "id": "claim_8e7fe9d2",
+    "subject": "authentication",
+    "predicate": "implemented_in",
+    "object": "src/auth.ts",
+    "source": {
+      "kind": "tool_output",
+      "command": "nl -ba src/auth.ts",
+      "exit_code": 0,
+      "ref": "evidence/authentication-implementation.txt#L1-L4",
+      "captured": "2026-09-03T16:47:27Z"
+    },
+    "produced_by": "run_2026-09-03-auth_discovery",
+    "created": "2026-09-03T16:47:50Z",
+    "confidence": 1
+  },
+  {
+    "id": "claim_3c339d8a",
+    "subject": "authentication",
+    "predicate": "validates_by",
+    "object": "strict equality with the literal valid-token",
+    "source": {
+      "kind": "tool_output",
+      "command": "nl -ba src/auth.ts",
+      "exit_code": 0,
+      "ref": "evidence/authentication-implementation.txt#L2-L4",
+      "captured": "2026-09-03T16:47:27Z"
+    },
+    "produced_by": "run_2026-09-03-auth_discovery",
+    "created": "2026-09-03T16:47:51Z",
+    "confidence": 1
+  },
+  {
+    "id": "claim_317285cb",
+    "subject": "authentication",
+    "predicate": "implemented_in",
+    "object": "src/security/auth.ts",
+    "source": {
+      "kind": "tool_output",
+      "command": "nl -ba src/security/auth.ts",
+      "exit_code": 0,
+      "ref": "evidence/authentication-current-2026-09-03.txt#L1-L3",
+      "captured": "2026-09-03T16:50:59Z"
+    },
+    "produced_by": "run_2026-09-03-auth_refresh",
+    "created": "2026-09-03T16:51:00Z",
+    "confidence": 1,
+    "supersedes": "claim_8e7fe9d2"
+  },
+  {
+    "id": "claim_ead1ec11",
+    "subject": "authentication",
+    "predicate": "exposes_interface",
+    "object": "authenticate(token: string): boolean",
+    "source": {
+      "kind": "tool_output",
+      "command": "nl -ba src/security/auth.ts",
+      "exit_code": 0,
+      "ref": "evidence/authentication-current-2026-09-03.txt#L1-L3",
+      "captured": "2026-09-03T16:50:59Z"
+    },
+    "produced_by": "run_2026-09-03-auth_refresh",
+    "created": "2026-09-03T16:51:01Z",
+    "confidence": 1
+  }
+]

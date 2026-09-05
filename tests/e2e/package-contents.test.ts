@@ -47,6 +47,7 @@ test('release tarball contains every runtime asset and excludes development-only
     'dist/src/cli.js',
     'dist/src/commands/update.js',
     'dist/src/commands/integrate.js',
+    'dist/src/commands/close.js',
     'dist/src/lib/agent-adapters.js',
     'scripts/validate.sh',
     'scripts/validate.mjs',

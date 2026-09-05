@@ -1,0 +1,6 @@
+Command: graphkeeper doctor
+GraphKeeper doctor
+Warnings (0):
+Summary: 0 error(s), 0 warning(s)
+GraphKeeper: doctor healthy
+Exit code: 0

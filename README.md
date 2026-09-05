@@ -114,7 +114,7 @@ Run this at the root of the repository whose memory you want to protect:
 
 Review the displayed plan and confirm it. `init` creates the JSON graph, `evidence/`, the canonical validator, a pre-commit hook, and the repository-scoped skill. `--integrate codex` also adds the Codex reminder to `AGENTS.md`.
 
-Now ask your agent to record a verified finding (with `$graphkeeper` in Codex, `/graphkeeper` in Claude Code, or your agent's invocation from the table above). The agent appends claims and runs through `graphkeeper append claim ...` and `graphkeeper append run ...`, which serialize concurrent writers so parallel sessions never overwrite each other. After it writes the claim and evidence, validate and retrieve the result:
+Now ask your agent to record a verified finding (with `$graphkeeper` in Codex, `/graphkeeper` in Claude Code, or your agent's invocation from the table above). The agent creates a run with `graphkeeper append run ...`, records claims with `graphkeeper append claim ...`, and finishes with `graphkeeper close run ...`. These commands serialize concurrent writers so parallel sessions never overwrite each other. After it writes the claim and evidence, validate and retrieve the result:
 
     npx graphkeeper check
     npx graphkeeper query test_payments_flaky
@@ -206,8 +206,9 @@ An agent writes to `graph/` and `evidence/`, and `graphkeeper check` (and the in
 | `graphkeeper check` | Run the same fast schema, append-only history, and committed-evidence checks used by the Git hook. |
 | `graphkeeper query <subject>` | Resolve an exact ID or unique alias and print active claims with provenance. It does not read evidence contents. |
 | `graphkeeper doctor` | Run fast validation plus file existence, containment, line-range, dangling-reference, and unused-entity checks. |
-| `graphkeeper append claim ...` | Concurrency-serially append a validating claim and link it into its producing run. See `graphkeeper --help` for the required/optional flags. |
-| `graphkeeper append run ...` | Concurrency-serially append a validating run record. See `graphkeeper --help` for the required/optional flags. |
+| `graphkeeper append claim ...` | Concurrency-serially append a validating claim and link it into its producing run. See the [append command reference](docs/append-commands.md) for flags and lifecycle constraints. |
+| `graphkeeper append run ...` | Concurrency-serially create a validating run record. It remains create-only; see the [append command reference](docs/append-commands.md). |
+| `graphkeeper close run --id <id> --ended <timestamp> --verdict <value>` | Concurrency-serially close one existing open run without replacing its accumulated provenance. |
 | `graphkeeper update` | Check npm's stable `latest` release and globally install one exact newer version. Repository files are never changed. |
 | `graphkeeper --help` | Print the supported command grammar and options. |
 | `graphkeeper --version` (`-v`) | Print the installed GraphKeeper version. |

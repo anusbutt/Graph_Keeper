@@ -1,0 +1,51 @@
+[
+  {
+    "id": "claim_c9cd4a1e",
+    "subject": "authentication_function",
+    "predicate": "implemented_in",
+    "object": "src/auth.ts",
+    "source": {
+      "kind": "tool_output",
+      "command": "cp src/auth.ts evidence/authentication_implementation_20260903.ts",
+      "exit_code": 0,
+      "ref": "evidence/authentication_implementation_20260903.ts#L1-L3",
+      "captured": "2026-09-03T21:56:00Z"
+    },
+    "produced_by": "run_2026-09-03-auth_discovery",
+    "created": "2026-09-03T21:56:01Z",
+    "confidence": 1
+  },
+  {
+    "id": "claim_30005cc4",
+    "subject": "authentication_function",
+    "predicate": "accepts_when",
+    "object": "token equals literal valid-token using strict equality",
+    "source": {
+      "kind": "tool_output",
+      "command": "cp src/auth.ts evidence/authentication_implementation_20260903.ts",
+      "exit_code": 0,
+      "ref": "evidence/authentication_implementation_20260903.ts#L1-L3",
+      "captured": "2026-09-03T21:56:00Z"
+    },
+    "produced_by": "run_2026-09-03-auth_discovery",
+    "created": "2026-09-03T21:56:02Z",
+    "confidence": 1
+  },
+  {
+    "id": "claim_16332d0e",
+    "subject": "authentication_function",
+    "predicate": "implemented_in",
+    "object": "src/security/auth.ts",
+    "source": {
+      "kind": "tool_output",
+      "command": "cp src/security/auth.ts evidence/authentication_implementation_20260904.ts",
+      "exit_code": 0,
+      "ref": "evidence/authentication_implementation_20260904.ts#L1-L3",
+      "captured": "2026-09-03T21:58:42Z"
+    },
+    "produced_by": "run_2026-09-03-auth_refactor_a7",
+    "created": "2026-09-03T21:58:56Z",
+    "confidence": 1,
+    "supersedes": "claim_c9cd4a1e"
+  }
+]

@@ -22,6 +22,8 @@ test('release README covers onboarding, operation, recovery, limits, and future 
     /graphkeeper check/,
     /graphkeeper query <subject>/,
     /graphkeeper doctor/,
+    /append command reference.*docs\/append-commands\.md/is,
+    /graphkeeper close run/is,
     /native Windows PowerShell/i,
     /legacy.*validate\.sh.*sh.*jq/is,
     /## Recovery and adoption/,
@@ -33,6 +35,16 @@ test('release README covers onboarding, operation, recovery, limits, and future 
     /SQLite or PostgreSQL/,
   ]) assert.match(readme, contract);
   assert.doesNotMatch(readme, /Native PowerShell is not supported/i);
+});
+
+test('append command reference documents the explicit create-claim-close lifecycle', async () => {
+  const reference = await readFile(join(projectRoot, 'docs', 'append-commands.md'), 'utf8');
+  assert.match(reference, /create an open producing run.*`graphkeeper append run`/is);
+  assert.match(reference, /close the existing run.*`graphkeeper close run`/is);
+  assert.match(reference, /close run.*--id.*--ended.*--verdict/is);
+  assert.match(reference, /append run.*remains create-only/is);
+  assert.doesNotMatch(reference, /no concurrency-safe CLI command.*closing an existing open run/is);
+  assert.doesNotMatch(reference, /transition directly in\s+`graph\/runs\.json`/is);
 });
 
 test('npm metadata points to the canonical public repository and support channels', async () => {
