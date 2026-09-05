@@ -21,6 +21,7 @@ time.
 - [ ] Run `npm ci`.
 - [ ] Run `npm run typecheck`.
 - [ ] Run `npm run test:functional`.
+- [ ] Run `npm run test:onboarding`.
 - [ ] Run `npm run test:security` and review every aggregate regression result.
 - [ ] Run `npm run test:performance` and compare the reported p95/RSS values with the fixed budgets and the 20-percent release regression gates.
 - [ ] Run `npm ls --all`; investigate missing, invalid, or unexpected dependencies.

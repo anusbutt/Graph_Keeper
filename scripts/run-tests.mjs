@@ -37,8 +37,10 @@ const isPerformanceTest = (file) => file.endsWith('.bench.js')
 const benchmarks = files.filter(isPerformanceTest);
 const tests = files.filter((file) => !isPerformanceTest(file));
 const isPackagingTest = (file) => file.includes(sep + 'e2e' + sep + 'package-');
+const isOnboardingTest = (file) => file.includes(sep + 'onboarding' + sep);
 const packagingTests = tests.filter(isPackagingTest);
-const regularTests = tests.filter((file) => !isPackagingTest(file));
+const onboardingTests = tests.filter(isOnboardingTest);
+const regularTests = tests.filter((file) => !isPackagingTest(file) && !isOnboardingTest(file));
 
 function run(filesToRun, extraArgs = []) {
   if (filesToRun.length === 0) return 0;
@@ -57,7 +59,10 @@ if (files.length === 0) {
   const packagingStatus = testStatus === 0
     ? run(packagingTests, ['--test-concurrency=1'])
     : testStatus;
-  process.exitCode = packagingStatus === 0
-    ? run(benchmarks, ['--test-concurrency=1'])
+  const onboardingStatus = packagingStatus === 0
+    ? run(onboardingTests, ['--test-concurrency=1'])
     : packagingStatus;
+  process.exitCode = onboardingStatus === 0
+    ? run(benchmarks, ['--test-concurrency=1'])
+    : onboardingStatus;
 }

@@ -132,6 +132,7 @@ Run these before opening a pull request:
     npm run build
     npm run typecheck
     npm run test:functional
+    npm run test:onboarding
     npm test
     npm run test:security
     npm run test:performance
@@ -141,7 +142,9 @@ Run these before opening a pull request:
     node --check templates/pre-commit
     git diff --check
 
-`npm test` includes all compiled tests and benchmarks for a complete local check.
+`npm run test:onboarding` isolates the clean-clone install journey because it depends
+on package-registry and cache performance. `npm test` includes all compiled tests and
+benchmarks for a complete local check.
 `npm run release:verify` deliberately runs the deterministic functional, security,
 and package gates; performance budgets run separately in dedicated Ubuntu and
 Windows CI jobs. This keeps performance regressions visible without making
