@@ -4,6 +4,10 @@ import { dirname, join } from 'node:path';
 
 import { EXIT_CODES, GraphKeeperError, diagnostic, type ExitCode } from '../lib/errors.js';
 import { findGitRoot } from '../lib/git.js';
+import type {
+  CommandHelpOption,
+  CommandHelpTopic,
+} from '../lib/command-help.js';
 import {
   acquireLock,
   LockTimeoutError,
@@ -271,13 +275,176 @@ export async function runAppend(options: AppendOptions, cwd: string = process.cw
   }
 }
 
-const CLAIM_FLAGS = new Set([
-  'subject', 'predicate', 'object', 'confidence', 'kind', 'command',
-  'exit-code', 'ref', 'captured', 'basis', 'produced-by', 'created', 'id', 'supersedes',
-]);
+type ClaimOptionGroup =
+  | 'common'
+  | 'source'
+  | 'tool-output'
+  | 'inference'
+  | 'optional';
+
+export interface ClaimOptionDefinition extends CommandHelpOption {
+  readonly group: ClaimOptionGroup;
+}
+
+export const CLAIM_OPTION_DEFINITIONS: readonly ClaimOptionDefinition[] = [
+  {
+    name: 'subject',
+    value: 'entity-id',
+    group: 'common',
+    description: 'Existing canonical entity ID.',
+  },
+  {
+    name: 'predicate',
+    value: 'value',
+    group: 'common',
+    description: 'One flat relationship or property name.',
+  },
+  {
+    name: 'object',
+    value: 'value',
+    group: 'common',
+    description: 'The claimed value.',
+  },
+  {
+    name: 'produced-by',
+    value: 'run-id',
+    group: 'common',
+    description: 'Existing open run that produced the claim.',
+  },
+  {
+    name: 'kind',
+    value: 'tool_output|inference',
+    group: 'source',
+    description: 'Source kind; tool_output is the default.',
+  },
+  {
+    name: 'command',
+    value: 'text',
+    group: 'tool-output',
+    description: 'Command recorded as inert data.',
+  },
+  {
+    name: 'exit-code',
+    value: 'integer',
+    group: 'tool-output',
+    description: 'Captured command exit code.',
+  },
+  {
+    name: 'ref',
+    value: 'reference',
+    group: 'tool-output',
+    description: 'Inclusive evidence/<path>#L<start>-L<end> reference.',
+  },
+  {
+    name: 'captured',
+    value: 'timestamp',
+    group: 'tool-output',
+    description: 'Whole-second UTC evidence capture time.',
+  },
+  {
+    name: 'basis',
+    value: 'text',
+    group: 'inference',
+    description: 'Non-empty reasoning basis; not external proof.',
+  },
+  {
+    name: 'confidence',
+    value: 'number',
+    group: 'optional',
+    description: 'Schema-valid confidence; inference cannot use 1.',
+  },
+  {
+    name: 'id',
+    value: 'claim-id',
+    group: 'optional',
+    description: 'Unique claim ID; generated when omitted.',
+  },
+  {
+    name: 'created',
+    value: 'timestamp',
+    group: 'optional',
+    description: 'Whole-second UTC time; current UTC when omitted.',
+  },
+  {
+    name: 'supersedes',
+    value: 'claim-id',
+    group: 'optional',
+    description: 'Existing active claim corrected by this claim.',
+  },
+];
+
+const CLAIM_FLAGS = new Set(CLAIM_OPTION_DEFINITIONS.map((option) => option.name));
 const RUN_FLAGS = new Set<string>([
   'id', 'started', 'tool', 'task', 'evidence', 'claims-written', 'ended', 'verdict',
 ]);
+
+function helpOptions(group: ClaimOptionGroup): readonly CommandHelpOption[] {
+  return CLAIM_OPTION_DEFINITIONS.filter((option) => option.group === group);
+}
+
+export const APPEND_HELP_TOPIC: CommandHelpTopic = {
+  path: ['append'],
+  summary: 'Create a run or append one grounded claim through a safe writer.',
+  usage: [
+    'graphkeeper append claim [options]',
+    'graphkeeper append run [options]',
+  ],
+  details: [
+    'claim  Append a claim. Detailed help: graphkeeper append claim --help',
+    'run    Create a run. See the append command reference for its complete grammar.',
+  ],
+  optionGroups: [],
+  examples: [],
+};
+
+export const APPEND_CLAIM_HELP_TOPIC: CommandHelpTopic = {
+  path: ['append', 'claim'],
+  summary: [
+    'Append one flat claim and link it to an existing open producing run.',
+    'Recorded --command text is inert data; GraphKeeper never executes it.',
+  ].join(' '),
+  usage: [
+    'graphkeeper append claim --subject <entity-id> --predicate <value> '
+      + '--object <value> --produced-by <run-id> [source options] [optional options]',
+  ],
+  details: [],
+  optionGroups: [
+    { heading: 'Common required', options: helpOptions('common') },
+    { heading: 'Source selection', options: helpOptions('source') },
+    { heading: 'Tool-output required', options: helpOptions('tool-output') },
+    { heading: 'Inference required', options: helpOptions('inference') },
+    { heading: 'Optional', options: helpOptions('optional') },
+  ],
+  examples: [
+    {
+      label: 'Tool output',
+      command: [
+        'graphkeeper append claim \\',
+        '  --subject test_payments_flaky --predicate has_status \\',
+        '  --object passing_with_utc_default --kind tool_output \\',
+        '  --command "TZ=UTC npm test -- payments" --exit-code 0 \\',
+        '  --ref evidence/utc-rerun.log#L1-L3 \\',
+        '  --captured 2026-09-05T09:04:00Z \\',
+        '  --produced-by run_2026-09-05-investigation_a1',
+      ].join('\n'),
+    },
+    {
+      label: 'Inference',
+      command: [
+        'graphkeeper append claim \\',
+        '  --subject test_payments_flaky --predicate may_depend_on \\',
+        '  --object timezone_configuration --kind inference \\',
+        '  --basis "The observed result changes when TZ changes." \\',
+        '  --produced-by run_2026-09-05-investigation_a1',
+      ].join('\n'),
+    },
+  ],
+};
+
+export const APPEND_HELP_TOPICS: readonly CommandHelpTopic[] = [
+  APPEND_HELP_TOPIC,
+  APPEND_CLAIM_HELP_TOPIC,
+];
 
 function splitFlags(args: readonly string[]): Map<string, string> {
   const map = new Map<string, string>();

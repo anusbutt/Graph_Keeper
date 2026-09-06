@@ -47,6 +47,16 @@ test('append command reference documents the explicit create-claim-close lifecyc
   assert.doesNotMatch(reference, /transition directly in\s+`graph\/runs\.json`/is);
 });
 
+test('public documentation identifies installed contextual claim help as authoritative', async () => {
+  const readme = await readFile(join(projectRoot, 'README.md'), 'utf8');
+  const reference = await readFile(join(projectRoot, 'docs', 'append-commands.md'), 'utf8');
+
+  assert.match(readme, /graphkeeper append claim --help/);
+  assert.match(reference, /graphkeeper append --help/);
+  assert.match(reference, /graphkeeper append claim --help/);
+  assert.match(reference, /installed.*authoritative.*syntax/is);
+});
+
 test('npm metadata points to the canonical public repository and support channels', async () => {
   const manifest = JSON.parse(await readFile(join(projectRoot, 'package.json'), 'utf8')) as {
     name?: string;

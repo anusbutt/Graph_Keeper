@@ -206,7 +206,7 @@ An agent writes to `graph/` and `evidence/`, and `graphkeeper check` (and the in
 | `graphkeeper check` | Run the same fast schema, append-only history, and committed-evidence checks used by the Git hook. |
 | `graphkeeper query <subject>` | Resolve an exact ID or unique alias and print active claims with provenance. It does not read evidence contents. |
 | `graphkeeper doctor` | Run fast validation plus file existence, containment, line-range, dangling-reference, and unused-entity checks. |
-| `graphkeeper append claim ...` | Concurrency-serially append a validating claim and link it into its producing run. See the [append command reference](docs/append-commands.md) for flags and lifecycle constraints. |
+| `graphkeeper append claim ...` | Concurrency-serially append a validating claim and link it into its producing run. Run `graphkeeper append claim --help` for installed syntax; see the [append command reference](docs/append-commands.md) for lifecycle constraints. |
 | `graphkeeper append run ...` | Concurrency-serially create a validating run record. It remains create-only; see the [append command reference](docs/append-commands.md). |
 | `graphkeeper close run --id <id> --ended <timestamp> --verdict <value>` | Concurrency-serially close one existing open run without replacing its accumulated provenance. |
 | `graphkeeper update` | Check npm's stable `latest` release and globally install one exact newer version. Repository files are never changed. |

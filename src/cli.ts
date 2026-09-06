@@ -16,7 +16,11 @@ import {
   prepareAgentRemoval,
   type IntegrationAction,
 } from './commands/integrate.js';
-import { parseAppendArguments, runAppend } from './commands/append.js';
+import {
+  APPEND_HELP_TOPICS,
+  parseAppendArguments,
+  runAppend,
+} from './commands/append.js';
 import { parseCloseArguments, runClose } from './commands/close.js';
 import { query } from './commands/query.js';
 import { updateGraphKeeper } from './commands/update.js';
@@ -30,6 +34,10 @@ import {
   GraphKeeperError,
   diagnostic,
 } from './lib/errors.js';
+import {
+  renderCommandHelp,
+  resolveContextualHelp,
+} from './lib/command-help.js';
 
 export const EXIT_SUCCESS = EXIT_CODES.success;
 export const EXIT_VALIDATION = EXIT_CODES.validation;
@@ -239,6 +247,12 @@ export async function run(
 
   if (command === '--version' || command === '-v') {
     io.stdout(VERSION);
+    return EXIT_SUCCESS;
+  }
+
+  const contextualHelp = resolveContextualHelp(argv, APPEND_HELP_TOPICS);
+  if (contextualHelp !== undefined) {
+    io.stdout(renderCommandHelp(contextualHelp));
     return EXIT_SUCCESS;
   }
 
