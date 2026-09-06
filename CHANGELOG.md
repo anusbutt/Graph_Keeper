@@ -9,6 +9,9 @@ versioning; while the package is below 1.0, minor releases may change public beh
 
 - `graphkeeper close run`, which atomically closes one existing open run with an end
   timestamp and verdict while preserving its accumulated provenance.
+- Contextual `graphkeeper append --help` and `graphkeeper append claim --help` output,
+  including complete claim flags, source-specific requirements, and copyable examples
+  without repository access or mutation.
 
 ### Changed
 

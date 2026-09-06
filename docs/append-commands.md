@@ -5,6 +5,19 @@ and closing runs. Use these commands whenever an agent changes `graph/runs.json`
 `graph/claims.json`; they serialize writers, validate the candidate state, and avoid
 the lost-update race caused by two sessions reading and replacing the same JSON file.
 
+Use the installed CLI as the authoritative source for current command syntax:
+
+```sh
+graphkeeper append --help
+graphkeeper append claim --help
+```
+
+The append overview identifies supported record types. Contextual claim help lists
+every accepted claim flag, separates tool-output requirements from inference
+requirements, and includes copyable examples. Help is read-only and works without an
+initialized repository; agents do not need to inspect GraphKeeper's internal package
+source to discover flags.
+
 ## Safe recording sequence
 
 1. Resolve or add the subject entity in `graph/entities.json`. Entity IDs are stable

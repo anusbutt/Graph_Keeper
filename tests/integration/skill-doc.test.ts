@@ -31,6 +31,13 @@ test('teaches honest tool-output and inference sourcing', async () => {
   assert.match(skill, /never.*invent.*evidence/is);
 });
 
+test('uses installed contextual help as the claim syntax source of truth', async () => {
+  const skill = await readFile(skillUrl, 'utf8');
+  assert.match(skill, /`graphkeeper append claim --help`/);
+  assert.match(skill, /installed.*syntax.*source of truth/is);
+  assert.match(skill, /do not.*inspect.*internal.*source/is);
+});
+
 test('teaches atomic claims, exact grounding, and bounded certainty', async () => {
   const skill = await readFile(skillUrl, 'utf8');
   assert.match(skill, /one independently changeable fact per claim/is);
