@@ -74,6 +74,9 @@ behavioral responsibility that software cannot infer reliably.
   `graphkeeper close run`; do not edit graph/claims.json or graph/runs.json by hand.
   The commands serialize concurrent writers so separate sessions never overwrite each
   other's records.
+- [GUIDANCE] Use `graphkeeper append claim --help` from the installed CLI for current
+  claim syntax; that installed syntax is the source of truth. Do not inspect internal
+  package source to discover command flags.
 - [HOOK] A tool_output source records kind, command, exit_code, captured, and ref
   exactly; ref identifies the supporting inclusive evidence lines.
 - [HOOK] An inference source records kind and a short non-empty basis. It contains no

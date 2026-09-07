@@ -119,6 +119,13 @@ test('a tarball installs in a clean directory and runs init, check, query, and d
   const help = await runCli(['--help']);
   assert.equal(help.exitCode, 0, help.stderr);
   assert.match(help.stdout, /graphkeeper update/);
+  const claimHelp = await runCli(['append', 'claim', '--help']);
+  assert.equal(claimHelp.exitCode, 0, claimHelp.stderr);
+  assert.equal(claimHelp.stderr, '');
+  assert.match(claimHelp.stdout, /Common required/i);
+  assert.match(claimHelp.stdout, /--produced-by/);
+  assert.match(claimHelp.stdout, /--supersedes/);
+  assert.match(claimHelp.stdout, /GraphKeeper never executes/i);
   const version = await runCli(['--version']);
   assert.equal(version.exitCode, 0, version.stderr);
   assert.equal(version.stdout, '0.5.0\n');

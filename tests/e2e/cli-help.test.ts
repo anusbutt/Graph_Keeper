@@ -50,6 +50,113 @@ test('prints help successfully when no command is provided', async () => {
   assert.match(capture.stdout.join('\n'), new RegExp(`integrate remove <${grammar}>`));
 });
 
+test('prints contextual append overview for both help tokens without repository access', async () => {
+  for (const helpToken of ['--help', '-h']) {
+    const capture = captureIO();
+    const exitCode = await run(
+      ['append', helpToken],
+      capture.io,
+      '/path/that/does/not/exist',
+    );
+
+    assert.equal(exitCode, EXIT_SUCCESS);
+    assert.equal(capture.stderr.length, 0);
+    const output = capture.stdout.join('\n');
+    assert.match(output, /Usage:/);
+    assert.match(output, /graphkeeper append claim/);
+    assert.match(output, /graphkeeper append run/);
+    assert.match(output, /graphkeeper append claim --help/);
+  }
+});
+
+test('prints complete contextual claim help for tool output and inference', async () => {
+  const expectedFlags = [
+    '--subject', '--predicate', '--object', '--produced-by', '--kind',
+    '--command', '--exit-code', '--ref', '--captured', '--basis',
+    '--confidence', '--id', '--created', '--supersedes',
+  ];
+
+  for (const helpToken of ['--help', '-h']) {
+    const capture = captureIO();
+    const exitCode = await run(
+      ['append', 'claim', helpToken],
+      capture.io,
+      '/path/that/does/not/exist',
+    );
+
+    assert.equal(exitCode, EXIT_SUCCESS);
+    assert.equal(capture.stderr.length, 0);
+    const output = capture.stdout.join('\n');
+    for (const flag of expectedFlags) assert.match(output, new RegExp(flag));
+    assert.match(output, /Common required/i);
+    assert.match(output, /Tool-output required/i);
+    assert.match(output, /Inference required/i);
+    assert.match(output, /tool_output.*default/is);
+    assert.match(output, /GraphKeeper never executes/i);
+    assert.ok(
+      (output.match(/graphkeeper append claim/g) ?? []).length >= 2,
+      'help must contain copyable examples for both source kinds',
+    );
+  }
+});
+
+test('recognized claim help takes precedence over incomplete and invalid options', async () => {
+  for (const args of [
+    ['append', 'claim', '--subject', '--help'],
+    ['append', 'claim', '--unknown', 'value', '--help'],
+    ['append', 'claim', '--kind', 'invalid', '-h'],
+  ]) {
+    const capture = captureIO();
+    const exitCode = await run(args, capture.io, '/path/that/does/not/exist');
+
+    assert.equal(exitCode, EXIT_SUCCESS, args.join(' '));
+    assert.equal(capture.stderr.length, 0);
+    assert.match(capture.stdout.join('\n'), /graphkeeper append claim/);
+  }
+});
+
+test('contextual claim help leaves initialized graph data byte-for-byte unchanged', async () => {
+  const fixture = await createValidatorFixture('graphkeeper-claim-help-');
+  try {
+    await fixture.writeGraph([], [], []);
+    const paths = ['entities.json', 'claims.json', 'runs.json'];
+    const before = await Promise.all(paths.map((path) => (
+      readFile(join(fixture.root, 'graph', path), 'utf8')
+    )));
+    const capture = captureIO();
+
+    const exitCode = await run(
+      ['append', 'claim', '--help'],
+      capture.io,
+      fixture.root,
+    );
+
+    assert.equal(exitCode, EXIT_SUCCESS);
+    assert.equal(capture.stderr.length, 0);
+    const after = await Promise.all(paths.map((path) => (
+      readFile(join(fixture.root, 'graph', path), 'utf8')
+    )));
+    assert.deepEqual(after, before);
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+test('unsupported help paths and normal malformed appends remain usage errors', async () => {
+  for (const args of [
+    ['append', 'unknown', '--help'],
+    ['append', 'run', '--help'],
+    ['append', 'claim', '--unknown', 'value'],
+  ]) {
+    const capture = captureIO();
+    const exitCode = await run(args, capture.io, '/path/that/does/not/exist');
+
+    assert.equal(exitCode, EXIT_USAGE, args.join(' '));
+    assert.match(capture.stderr.join('\n'), /GK002/);
+    assert.equal(capture.stdout.length, 0);
+  }
+});
+
 test('parses the documented multi-adapter init option grammar deterministically', () => {
   assert.deepEqual(
     parseInitArguments([]),
