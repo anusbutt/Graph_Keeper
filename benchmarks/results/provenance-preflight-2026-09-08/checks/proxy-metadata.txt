@@ -1,0 +1,8 @@
+HTTP_PROXY {"protocol":"http:","hostname":"127.0.0.1","port":"38451","credentials_present":false}
+HTTPS_PROXY {"protocol":"http:","hostname":"127.0.0.1","port":"38451","credentials_present":false}
+ALL_PROXY {"protocol":"socks5h:","hostname":"127.0.0.1","port":"40419","credentials_present":false}
+network_namespace net:[4026532563]
+NODE_OPTIONS_present false
+NODE_USE_ENV_PROXY 1
+(node:2) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)

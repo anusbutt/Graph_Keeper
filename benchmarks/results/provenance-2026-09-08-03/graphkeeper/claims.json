@@ -1,0 +1,82 @@
+[
+  {
+    "id": "claim_fc81ad22",
+    "subject": "request_handler",
+    "predicate": "routes_input",
+    "object": "handleRequest passes request.body to validateInput and passes its returned value to processInput.",
+    "source": {
+      "kind": "tool_output",
+      "command": "awk 'FNR == 1 { print \"FILE \" FILENAME } { printf \"%4d %s\\n\", FNR, $0 }' src/handler.js src/validation.js src/processor.js",
+      "exit_code": 0,
+      "ref": "evidence/request-flow-source.txt#L1-L8",
+      "captured": "2026-09-08T04:10:14Z"
+    },
+    "produced_by": "run_2026-09-08-request_flow",
+    "created": "2026-09-08T04:10:43Z",
+    "confidence": 1
+  },
+  {
+    "id": "claim_94498f6e",
+    "subject": "input_validation",
+    "predicate": "rejects_body",
+    "object": "validateInput throws TypeError for null, non-object, or array bodies.",
+    "source": {
+      "kind": "tool_output",
+      "command": "awk 'FNR == 1 { print \"FILE \" FILENAME } { printf \"%4d %s\\n\", FNR, $0 }' src/handler.js src/validation.js src/processor.js",
+      "exit_code": 0,
+      "ref": "evidence/request-flow-source.txt#L10-L13",
+      "captured": "2026-09-08T04:10:14Z"
+    },
+    "produced_by": "run_2026-09-08-request_flow",
+    "created": "2026-09-08T04:10:44Z",
+    "confidence": 1
+  },
+  {
+    "id": "claim_8ce451c7",
+    "subject": "input_validation",
+    "predicate": "rejects_message",
+    "object": "validateInput throws TypeError when body.message is not a string or is empty after trimming.",
+    "source": {
+      "kind": "tool_output",
+      "command": "awk 'FNR == 1 { print \"FILE \" FILENAME } { printf \"%4d %s\\n\", FNR, $0 }' src/handler.js src/validation.js src/processor.js",
+      "exit_code": 0,
+      "ref": "evidence/request-flow-source.txt#L14-L16",
+      "captured": "2026-09-08T04:10:14Z"
+    },
+    "produced_by": "run_2026-09-08-request_flow",
+    "created": "2026-09-08T04:10:44Z",
+    "confidence": 1
+  },
+  {
+    "id": "claim_c134202e",
+    "subject": "input_validation",
+    "predicate": "normalizes_input",
+    "object": "validateInput returns a new object containing only the trimmed message.",
+    "source": {
+      "kind": "tool_output",
+      "command": "awk 'FNR == 1 { print \"FILE \" FILENAME } { printf \"%4d %s\\n\", FNR, $0 }' src/handler.js src/validation.js src/processor.js",
+      "exit_code": 0,
+      "ref": "evidence/request-flow-source.txt#L17-L18",
+      "captured": "2026-09-08T04:10:14Z"
+    },
+    "produced_by": "run_2026-09-08-request_flow",
+    "created": "2026-09-08T04:10:44Z",
+    "confidence": 1
+  },
+  {
+    "id": "claim_c9b5b87d",
+    "subject": "input_processor",
+    "predicate": "returns_result",
+    "object": "processInput returns status accepted and input.message without performing validation.",
+    "source": {
+      "kind": "tool_output",
+      "command": "awk 'FNR == 1 { print \"FILE \" FILENAME } { printf \"%4d %s\\n\", FNR, $0 }' src/handler.js src/validation.js src/processor.js",
+      "exit_code": 0,
+      "ref": "evidence/request-flow-source.txt#L19-L22",
+      "captured": "2026-09-08T04:10:14Z"
+    },
+    "produced_by": "run_2026-09-08-request_flow",
+    "created": "2026-09-08T04:10:44Z",
+    "confidence": 1
+  }
+]

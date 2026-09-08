@@ -1,0 +1,25 @@
+Entity: request_handler
+Matched by: canonical ID
+Active claims: 2
+
+Claim: claim_85b5617c
+  Predicate: validates
+  Object: "handleRequest passes request.body to validateInput."
+  Source: tool_output
+  Command: "git rev-parse HEAD; nl -ba src/handler.js; nl -ba src/validation.js; nl -ba src/processor.js"
+  Exit code: 0
+  Evidence: evidence/request-flow-source.txt#L5-L6
+  Captured: 2026-09-08T11:44:48Z
+  Producer: run_2026-09-08-request_flow
+  Created: 2026-09-08T11:45:13Z
+
+Claim: claim_c4a5f82f
+  Predicate: passes_to_processing
+  Object: "handleRequest passes the return value of validateInput to processInput."
+  Source: tool_output
+  Command: "git rev-parse HEAD; nl -ba src/handler.js; nl -ba src/validation.js; nl -ba src/processor.js"
+  Exit code: 0
+  Evidence: evidence/request-flow-source.txt#L5-L7
+  Captured: 2026-09-08T11:44:48Z
+  Producer: run_2026-09-08-request_flow
+  Created: 2026-09-08T11:45:13Z

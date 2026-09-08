@@ -1,0 +1,5 @@
+PASS: saved evidence bytes exactly match capture item_7 output, excluding printed capture timestamp.
+PASS: five reciprocal claim/run/evidence links and one closed run. Does not establish atomicity or metadata authenticity.
+PASS: source/guidance unchanged; only graph/evidence staged; no memory commit; complete setup history.
+PASS: bundle+index patch restores identical staged diff, status and graph/evidence bytes. No operator commit performed.
+Known failure: claim_fc81ad22 combines delegation and forwarding; eligible atomic target set is empty.

@@ -1,0 +1,38 @@
+Candidate: 9bec33efb11dfa4c4664f39d467bd2d02b66690d (detached clean source copy).
+Verification performed on 2026-09-07. No product source changes.
+
+PASS npm ci --no-audit --no-fund: exact lockfile installation in isolated source.
+PASS npm run typecheck.
+PASS npm run validator:check (also required by candidate prepack).
+PASS candidate npm pack and local tarball install; package identity in environment.md.
+PASS fixture sanity: one valid input accepted; six invalid inputs rejected.
+PASS focused existing provenance/query/worked-example tests outside parent sandbox: 17/17.
+PASS TMPDIR=/var/tmp/graphkeeper-bench-c-tests.SoSwdL npm test: exit 0.
+  regular unit/integration/e2e/security group: 378 passed, 0 failed.
+  sequential package group: 2 passed, 0 failed.
+  isolated onboarding group: 1 passed, 0 failed.
+  sequential performance group: 6 passed, 0 failed.
+  total across groups: 387 passed, 0 failed; no skipped tests reported.
+PASS npm run package:smoke after full suite/performance completed: 85 runtime files.
+PASS npm ls --all: platform-specific esbuild optional packages omitted as expected;
+  installed Linux x64 binary present, no invalid required dependencies.
+PASS sh -n scripts/validate.sh; node --check templates/pre-commit; git diff --check.
+
+Environmental failures preserved, not reclassified as successful original runs:
+- focused-tests.txt: parent sandbox blocked test/validator subprocesses.
+- full-suite.txt: 375/378 regular checks passed; three failures caused by read-only
+  /tmp/.git being detected by non-Git-fixture cases. Candidate code was not changed.
+- full-suite-clean-scratch.txt: complete unchanged rerun uses dedicated /var/tmp
+  scratch, outside the parent subprocess restrictions; all groups passed.
+- snapshot-consistency.txt: evidence byte checks passed before nested Git EPERM;
+  snapshot-consistency-outside-parent-sandbox.txt completes the same inspection.
+
+Performance evidence is from the suite's fixed-budget tests. Only aggregate journey
+measurements are printed on success; the large-fixture p95 values are asserted but
+not printed, so do not fabricate their numerical values from test durations.
+Reported aggregate journey: init 298.8 ms; check 147.5 ms; query 150.2 ms;
+doctor 388.8 ms; sampled peak RSS 57.75 MB. These are not the 10,000-claim p95 numbers.
+
+Original interrupted fixture and restored copy both pass public check and doctor
+with zero errors/warnings and return the same query. Their graph/evidence/skill
+snapshots are byte-identical. These checks do not substitute for absent audit sessions.

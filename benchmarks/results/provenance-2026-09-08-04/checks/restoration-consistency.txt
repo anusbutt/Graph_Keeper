@@ -1,0 +1,3 @@
+PASS complete bundle restores exact graph, evidence, source and installed guidance.
+PASS capture, all three audits and independent restoration share identical full commit and tracked object tree; clean worktrees.
+PASS introducing memory commit 292fc3620f7b197a15ff6a47e4fd0be016262a2e; no staged patch or operator repair required.

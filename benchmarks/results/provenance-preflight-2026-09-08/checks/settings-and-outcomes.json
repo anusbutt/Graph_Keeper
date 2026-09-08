@@ -1,0 +1,41 @@
+{
+  "temporary_root": "/tmp/graphkeeper-c-preflight-20260908.yrUIMN",
+  "candidate": "9bec33efb11dfa4c4664f39d467bd2d02b66690d",
+  "node": "v22.21.0",
+  "comparison_node": "v24.16.0",
+  "codex": "0.153.4",
+  "baseline_filesystem": "permissions.bench.filesystem={\":minimal\"=\"read\",\"/usr/local\"=\"read\",\"/home/anus_butt/.codex/packages/standalone/releases/0.153.4-x86_64-unknown-linux-musl/bin\"=\"read\",\"/tmp/graphkeeper-c-preflight-20260908.yrUIMN/fixture\"=\"write\",\"/tmp/graphkeeper-c-preflight-20260908.yrUIMN/fixture/.git\"=\"write\",\"/tmp/graphkeeper-bench-c-20260907.aJM0YZ/tooling/install\"=\"read\"}",
+  "baseline_network": "permissions.bench.network.enabled=false",
+  "selected_overrides": [
+    "features.network_proxy=true",
+    "permissions.bench.network.enabled=true",
+    "permissions.bench.network.domains={}",
+    "permissions.bench.network.allow_upstream_proxy=false",
+    "permissions.bench.network.allow_local_binding=false",
+    "permissions.bench.network.dangerously_allow_all_unix_sockets=false"
+  ],
+  "spawn_probe_code": "const cp=require('node:child_process');for(const [bin,args] of [['git',['rev-parse','--show-toplevel']],['/usr/bin/git',['rev-parse','--show-toplevel']],['/bin/true',[]],['/usr/local/bin/node',['--version']]]){const r=cp.spawnSync(bin,args,{encoding:'utf8'});console.log(JSON.stringify({bin,status:r.status,error:r.error?.code,stdout:r.stdout,stderr:r.stderr}));}",
+  "file_manifest_code": "const fs=require('fs'),p=require('path'),h=require('crypto');function walk(d){return fs.readdirSync(d,{withFileTypes:true}).flatMap(e=>{const f=p.join(d,e.name),s=fs.lstatSync(f);return [{path:p.relative(process.cwd(),f),mode:s.mode,mtimeMs:s.mtimeMs,size:s.size,hash:e.isFile()?h.createHash('sha256').update(fs.readFileSync(f)).digest('hex'):null},...(e.isDirectory()?walk(f):[])];});}console.log(JSON.stringify(walk(process.cwd()).sort((a,b)=>a.path.localeCompare(b.path)),null,2));",
+  "preflight": {
+    "thread_id": "01a080d0-cc90-7491-8817-d7cd0e15a9a2",
+    "started_at_utc": "2026-09-08 11:39:14 UTC",
+    "completion_observed_at_utc": "2026-09-08 11:41:01 UTC",
+    "exit_code": 0
+  },
+  "native_probe_exit_codes": {
+    "baseline-spawn": 0,
+    "system-node-spawn": 0,
+    "stdio-spawn": 0,
+    "network-policy-comparison": 0,
+    "unix-ipc-comparison": 0,
+    "deny-all-proxy-spawn": 0,
+    "deny-all-proxy-network": 0,
+    "proxy-metadata": 0,
+    "proxy-denial": 0,
+    "baseline-valid-commit": 1,
+    "proxy-valid-commit": 0,
+    "proxy-invalid-commit": 1,
+    "audit-isolation": 0
+  },
+  "notes": "A diagnostic process exit 0 is not itself gate success; inspect per-operation outputs. Baseline spawn probe printed EPERM despite child status0. Initial proxy400 not accepted; final explicit policy403 required."
+}

@@ -1,0 +1,5 @@
+PASS: 38 local links, 20 JSON files, 134 JSONL events parsed.
+PASS: public result protocol equals provenance-v0.2; session IDs/status ledger align.
+PASS: no symlinks, builds, dependencies, tarballs, env files, or credential-pattern matches.
+Manual review: raw logs contain fixture/source/graph/history/tool output and documented proxy/account messages only; no redactions required.
+Manual review: scorecard reports failures and unevaluable isolation without dropping a slot or claiming a pass.

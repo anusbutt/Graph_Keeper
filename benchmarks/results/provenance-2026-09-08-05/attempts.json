@@ -1,0 +1,22 @@
+{
+  "experiment": "provenance-2026-09-08-05",
+  "protocol_revision": 3,
+  "status": "pass",
+  "capture": {
+    "thread": "01a080f8-44fe-7eb0-b842-3cba67fa73bd",
+    "exit_code": 0,
+    "eligible": true,
+    "commit": "d03d0bedeae77868f39edfa1b383c5e8795b6090",
+    "prestart_relaunch": "one local shell quoting failure occurred before Codex started; the recorded capture is the permitted relaunch"
+  },
+  "audits": [
+    { "slot": 1, "thread": "01a080fb-5bac-7763-a7dc-de567714030d", "exit_code": 0, "status": "passed", "unchanged_manifest": true },
+    { "slot": 2, "thread": "01a080fc-c577-7831-a968-1429094d74f8", "exit_code": 0, "status": "passed", "unchanged_manifest": true },
+    { "slot": 3, "thread": "01a080fe-91aa-7d42-9f57-090d641e6d02", "exit_code": 0, "status": "passed", "unchanged_manifest": true }
+  ],
+  "preflight": {
+    "thread": "01a080f6-3739-7b93-8044-5afa2b34fbb9",
+    "status": "passed",
+    "note": "Two launcher failures occurred before an agent began; the completed fresh-agent preflight is retained."
+  }
+}

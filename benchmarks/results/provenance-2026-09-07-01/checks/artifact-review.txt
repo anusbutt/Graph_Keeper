@@ -1,0 +1,17 @@
+Final artifact review, 2026-09-07:
+- Local Markdown links checked for existence; no broken links.
+- Launch ledger contains one externally interrupted capture and zero audit launches.
+- All 25 capture event records parse; final record is turn.failed with usage-limit error.
+- Protocol snapshot is byte-identical to the public protocol frozen before capture.
+- Graph snapshot JSON parses; restored graph/evidence/skill match bytes exactly.
+- No product dist/, node_modules/, tarball, auth.json or private config.toml in results.
+- Credential-pattern review of text artifacts found no matches; no redactions needed.
+- Inspected both commits in the fixture bundle: only the documented application/setup
+  tree, no credentials, logs, operator answers, or generated product build directory.
+- Package smoke explicitly includes runtime assets only and excludes benchmarks/specs.
+- Product source, schema, canonical guidance, package metadata and dependencies unchanged.
+- Working-tree changes are new benchmark fixture/protocol/result files plus the index.
+- Ignored SDD tasks record unrun audits explicitly; no product-repository commit made.
+
+SHA256SUMS is generated after this review and verified independently. It covers every
+result file except itself. Hashes establish artifact consistency, not truthful capture.

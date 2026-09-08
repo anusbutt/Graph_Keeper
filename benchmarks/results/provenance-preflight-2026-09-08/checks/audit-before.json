@@ -1,0 +1,450 @@
+[
+  {
+    "path": ".agents",
+    "mode": 16877,
+    "mtimeMs": 1788867612246.8235,
+    "size": 4096,
+    "hash": null
+  },
+  {
+    "path": ".agents/skills",
+    "mode": 16877,
+    "mtimeMs": 1788867612254.16,
+    "size": 4096,
+    "hash": null
+  },
+  {
+    "path": ".agents/skills/graphkeeper",
+    "mode": 16877,
+    "mtimeMs": 1788867612257.8281,
+    "size": 4096,
+    "hash": null
+  },
+  {
+    "path": ".agents/skills/graphkeeper/SKILL.md",
+    "mode": 33188,
+    "mtimeMs": 1788867612257.8281,
+    "size": 10746,
+    "hash": "ae9466a607f91a75bc07bec80a3e969702fb1821ed3755ea9e65be31e995df37"
+  },
+  {
+    "path": ".git",
+    "mode": 16877,
+    "mtimeMs": 1788867612294.5107,
+    "size": 4096,
+    "hash": null
+  },
+  {
+    "path": ".git/branches",
+    "mode": 16877,
+    "mtimeMs": 1788867612045.069,
+    "size": 4096,
+    "hash": null
+  },
+  {
+    "path": ".git/config",
+    "mode": 33188,
+    "mtimeMs": 1788867612228.4822,
+    "size": 317,
+    "hash": "0b5f5ead9a3290f2b64a1bc8127559c86bd40450856d8998d04c11b80433827a"
+  },
+  {
+    "path": ".git/description",
+    "mode": 33188,
+    "mtimeMs": 1788867612041.401,
+    "size": 73,
+    "hash": "85ab6c163d43a17ea9cf7788308bca1466f1b0a8d1cc92e26e9bf63da4062aee"
+  },
+  {
+    "path": ".git/HEAD",
+    "mode": 33188,
+    "mtimeMs": 1788867612210.1409,
+    "size": 21,
+    "hash": "28d25bf82af4c0e2b72f50959b2beb859e3e60b9630a5e8c603dad4ddb2b6e80"
+  },
+  {
+    "path": ".git/hooks",
+    "mode": 16877,
+    "mtimeMs": 1788867612041.401,
+    "size": 4096,
+    "hash": null
+  },
+  {
+    "path": ".git/hooks/applypatch-msg.sample",
+    "mode": 33261,
+    "mtimeMs": 1788867612008.3865,
+    "size": 478,
+    "hash": "0223497a0b8b033aa58a3a521b8629869386cf7ab0e2f101963d328aa62193f7"
+  },
+  {
+    "path": ".git/hooks/commit-msg.sample",
+    "mode": 33261,
+    "mtimeMs": 1788867611993.7134,
+    "size": 896,
+    "hash": "1f74d5e9292979b573ebd59741d46cb93ff391acdd083d340b94370753d92437"
+  },
+  {
+    "path": ".git/hooks/fsmonitor-watchman.sample",
+    "mode": 33261,
+    "mtimeMs": 1788867611924.0164,
+    "size": 4726,
+    "hash": "e0549964e93897b519bd8e333c037e51fff0f88ba13e086a331592bf801fa1d0"
+  },
+  {
+    "path": ".git/hooks/post-update.sample",
+    "mode": 33261,
+    "mtimeMs": 1788867611924.0164,
+    "size": 189,
+    "hash": "81765af2daef323061dcbc5e61fc16481cb74b3bac9ad8a174b186523586f6c5"
+  },
+  {
+    "path": ".git/hooks/pre-applypatch.sample",
+    "mode": 33261,
+    "mtimeMs": 1788867612041.401,
+    "size": 424,
+    "hash": "e15c5b469ea3e0a695bea6f2c82bcf8e62821074939ddd85b77e0007ff165475"
+  },
+  {
+    "path": ".git/hooks/pre-commit.sample",
+    "mode": 33261,
+    "mtimeMs": 1788867611975.372,
+    "size": 1643,
+    "hash": "f9af7d95eb1231ecf2eba9770fedfa8d4797a12b02d7240e98d568201251244a"
+  },
+  {
+    "path": ".git/hooks/pre-merge-commit.sample",
+    "mode": 33261,
+    "mtimeMs": 1788867611960.699,
+    "size": 416,
+    "hash": "d3825a70337940ebbd0a5c072984e13245920cdf8898bd225c8d27a6dfc9cb53"
+  },
+  {
+    "path": ".git/hooks/pre-push.sample",
+    "mode": 33261,
+    "mtimeMs": 1788867611913.0117,
+    "size": 1374,
+    "hash": "ecce9c7e04d3f5dd9d8ada81753dd1d549a9634b26770042b58dda00217d086a"
+  },
+  {
+    "path": ".git/hooks/pre-rebase.sample",
+    "mode": 33261,
+    "mtimeMs": 1788867612030.396,
+    "size": 4898,
+    "hash": "4febce867790052338076f4e66cc47efb14879d18097d1d61c8261859eaaa7b3"
+  },
+  {
+    "path": ".git/hooks/pre-receive.sample",
+    "mode": 33261,
+    "mtimeMs": 1788867612001.0498,
+    "size": 544,
+    "hash": "a4c3d2b9c7bb3fd8d1441c31bd4ee71a595d66b44fcf49ddb310252320169989"
+  },
+  {
+    "path": ".git/hooks/prepare-commit-msg.sample",
+    "mode": 33261,
+    "mtimeMs": 1788867611942.3577,
+    "size": 1492,
+    "hash": "e9ddcaa4189fddd25ed97fc8c789eca7b6ca16390b2392ae3276f0c8e1aa4619"
+  },
+  {
+    "path": ".git/hooks/push-to-checkout.sample",
+    "mode": 33261,
+    "mtimeMs": 1788867611935.0212,
+    "size": 2783,
+    "hash": "a53d0741798b287c6dd7afa64aee473f305e65d3f49463bb9d7408ec3b12bf5f"
+  },
+  {
+    "path": ".git/hooks/sendemail-validate.sample",
+    "mode": 33261,
+    "mtimeMs": 1788867612034.0642,
+    "size": 2308,
+    "hash": "44ebfc923dc5466bc009602f0ecf067b9c65459abfe8868ddc49b78e6ced7a92"
+  },
+  {
+    "path": ".git/hooks/update.sample",
+    "mode": 33261,
+    "mtimeMs": 1788867612030.396,
+    "size": 3650,
+    "hash": "8d5f2fa83e103cf08b57eaa67521df9194f45cbdbcb37da52ad586097a14d106"
+  },
+  {
+    "path": ".git/index",
+    "mode": 33188,
+    "mtimeMs": 1788867612294.5107,
+    "size": 1327,
+    "hash": "712803fd1f4e7771f49919e8421cc891eb9b0ce9d8f0f6fd565abe0c4f781e11"
+  },
+  {
+    "path": ".git/info",
+    "mode": 16877,
+    "mtimeMs": 1788867611876.329,
+    "size": 4096,
+    "hash": null
+  },
+  {
+    "path": ".git/info/exclude",
+    "mode": 33188,
+    "mtimeMs": 1788867611876.329,
+    "size": 240,
+    "hash": "6671fe83b7a07c8932ee89164d1f2793b2318058eb8b98dc5c06ee0a5a3b0ec1"
+  },
+  {
+    "path": ".git/logs",
+    "mode": 16877,
+    "mtimeMs": 1788867612221.1455,
+    "size": 4096,
+    "hash": null
+  },
+  {
+    "path": ".git/logs/HEAD",
+    "mode": 33188,
+    "mtimeMs": 1788867612221.1455,
+    "size": 239,
+    "hash": "e51f168b2543b5aa5a40ff6000f5ad8d32b4c6b53a716af6e4064656c2ab5432"
+  },
+  {
+    "path": ".git/logs/refs",
+    "mode": 16877,
+    "mtimeMs": 1788867612224.814,
+    "size": 4096,
+    "hash": null
+  },
+  {
+    "path": ".git/logs/refs/heads",
+    "mode": 16877,
+    "mtimeMs": 1788867612228.4822,
+    "size": 4096,
+    "hash": null
+  },
+  {
+    "path": ".git/logs/refs/heads/main",
+    "mode": 33188,
+    "mtimeMs": 1788867612228.4822,
+    "size": 239,
+    "hash": "e51f168b2543b5aa5a40ff6000f5ad8d32b4c6b53a716af6e4064656c2ab5432"
+  },
+  {
+    "path": ".git/logs/refs/remotes",
+    "mode": 16877,
+    "mtimeMs": 1788867612202.8042,
+    "size": 4096,
+    "hash": null
+  },
+  {
+    "path": ".git/logs/refs/remotes/origin",
+    "mode": 16877,
+    "mtimeMs": 1788867612206.4727,
+    "size": 4096,
+    "hash": null
+  },
+  {
+    "path": ".git/logs/refs/remotes/origin/HEAD",
+    "mode": 33188,
+    "mtimeMs": 1788867612206.4727,
+    "size": 239,
+    "hash": "e51f168b2543b5aa5a40ff6000f5ad8d32b4c6b53a716af6e4064656c2ab5432"
+  },
+  {
+    "path": ".git/objects",
+    "mode": 16877,
+    "mtimeMs": 1788867612089.0881,
+    "size": 4096,
+    "hash": null
+  },
+  {
+    "path": ".git/objects/info",
+    "mode": 16877,
+    "mtimeMs": 1788867612089.0881,
+    "size": 4096,
+    "hash": null
+  },
+  {
+    "path": ".git/objects/pack",
+    "mode": 16877,
+    "mtimeMs": 1788867612155.117,
+    "size": 4096,
+    "hash": null
+  },
+  {
+    "path": ".git/objects/pack/pack-029ba80341bde1b8bc3958c0318e13be0e22bff2.idx",
+    "mode": 33060,
+    "mtimeMs": 1788867612125.7708,
+    "size": 1660,
+    "hash": "b3f100ff73e405b4f162b9be92d2fc2cb651ec479ce8e2c6fbbc86f6dbe46cf7"
+  },
+  {
+    "path": ".git/objects/pack/pack-029ba80341bde1b8bc3958c0318e13be0e22bff2.pack",
+    "mode": 33060,
+    "mtimeMs": 1788867612118.4343,
+    "size": 22492,
+    "hash": "aa34d6178296989d68a2a54a3af8710b6b15138f6acd8ad9de1cc3a3071a4e03"
+  },
+  {
+    "path": ".git/objects/pack/pack-029ba80341bde1b8bc3958c0318e13be0e22bff2.rev",
+    "mode": 33060,
+    "mtimeMs": 1788867612136.7756,
+    "size": 136,
+    "hash": "2554879a41fbb316a4ed8c7e2ef58881ce3e9aacda05c9252da7984bc6ebbe2b"
+  },
+  {
+    "path": ".git/packed-refs",
+    "mode": 33188,
+    "mtimeMs": 1788867612169.79,
+    "size": 112,
+    "hash": "26e32252c696a1c2f49dea1184e297406b3703a582fdd9de56cf0f651d92c63d"
+  },
+  {
+    "path": ".git/refs",
+    "mode": 16877,
+    "mtimeMs": 1788867612169.79,
+    "size": 4096,
+    "hash": null
+  },
+  {
+    "path": ".git/refs/heads",
+    "mode": 16877,
+    "mtimeMs": 1788867612228.4822,
+    "size": 4096,
+    "hash": null
+  },
+  {
+    "path": ".git/refs/heads/main",
+    "mode": 33188,
+    "mtimeMs": 1788867612217.4773,
+    "size": 41,
+    "hash": "9fe45ac6fa54df3b34cc6e0aa3dc3626ea659b822ebd5a9ca8467f350ee423a4"
+  },
+  {
+    "path": ".git/refs/remotes",
+    "mode": 16877,
+    "mtimeMs": 1788867612173.4583,
+    "size": 4096,
+    "hash": null
+  },
+  {
+    "path": ".git/refs/remotes/origin",
+    "mode": 16877,
+    "mtimeMs": 1788867612206.4727,
+    "size": 4096,
+    "hash": null
+  },
+  {
+    "path": ".git/refs/remotes/origin/HEAD",
+    "mode": 33188,
+    "mtimeMs": 1788867612206.4727,
+    "size": 30,
+    "hash": "2bb6a24aa0fc6c484100f5d51a29bbad841cd2c755f5d93faa204e5dbb4eb2b4"
+  },
+  {
+    "path": ".git/refs/tags",
+    "mode": 16877,
+    "mtimeMs": 1788867612056.0737,
+    "size": 4096,
+    "hash": null
+  },
+  {
+    "path": "AGENTS.md",
+    "mode": 33188,
+    "mtimeMs": 1788867612257.8281,
+    "size": 253,
+    "hash": "cdf65d885fb3feeab6e7f95e25db975337e38a4d45ab1fc6ec3189dc71ab1109"
+  },
+  {
+    "path": "graph",
+    "mode": 16877,
+    "mtimeMs": 1788867612265.1648,
+    "size": 4096,
+    "hash": null
+  },
+  {
+    "path": "graph/claims.json",
+    "mode": 33188,
+    "mtimeMs": 1788867612265.1648,
+    "size": 3,
+    "hash": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+  },
+  {
+    "path": "graph/entities.json",
+    "mode": 33188,
+    "mtimeMs": 1788867612265.1648,
+    "size": 3,
+    "hash": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+  },
+  {
+    "path": "graph/runs.json",
+    "mode": 33188,
+    "mtimeMs": 1788867612265.1648,
+    "size": 3,
+    "hash": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+  },
+  {
+    "path": "graph/SCHEMA.md",
+    "mode": 33188,
+    "mtimeMs": 1788867612265.1648,
+    "size": 10693,
+    "hash": "0d2eb998f8babac0bc7afa0de577574c6b65909f82ca716a4691b20be70dd58a"
+  },
+  {
+    "path": "package.json",
+    "mode": 33188,
+    "mtimeMs": 1788867612279.838,
+    "size": 141,
+    "hash": "72eb84dceee419e5cc7e9236f659e4b28f567ac64524d744a982839ce3e811ec"
+  },
+  {
+    "path": "README.md",
+    "mode": 33188,
+    "mtimeMs": 1788867612261.4966,
+    "size": 629,
+    "hash": "605e4363195bb29f2bc0959c446106c8e283c10456cbb15b0fe616bbff0adb74"
+  },
+  {
+    "path": "scripts",
+    "mode": 16877,
+    "mtimeMs": 1788867612287.1743,
+    "size": 4096,
+    "hash": null
+  },
+  {
+    "path": "scripts/validate.mjs",
+    "mode": 33188,
+    "mtimeMs": 1788867612287.1743,
+    "size": 31576,
+    "hash": "a666a843b56ee7277c10edc93e2c8d53314b922051853b194d88ac30739c06b3"
+  },
+  {
+    "path": "scripts/validate.sh",
+    "mode": 33261,
+    "mtimeMs": 1788867612287.1743,
+    "size": 20689,
+    "hash": "8dd67e428997b4ef0496ccb3365c926d81754c8c875ddcaeab791a8cf39c4cf8"
+  },
+  {
+    "path": "src",
+    "mode": 16877,
+    "mtimeMs": 1788867612294.5107,
+    "size": 4096,
+    "hash": null
+  },
+  {
+    "path": "src/handler.js",
+    "mode": 33188,
+    "mtimeMs": 1788867612294.5107,
+    "size": 215,
+    "hash": "debb5d0e508ea65a6f94e4270344ef9771dd94ad890df44810fc500bb79999fb"
+  },
+  {
+    "path": "src/processor.js",
+    "mode": 33188,
+    "mtimeMs": 1788867612294.5107,
+    "size": 97,
+    "hash": "39d6f3dcf3fb75b1677d2481e705482f67f2840fe96da4bb0f23f023493dd861"
+  },
+  {
+    "path": "src/validation.js",
+    "mode": 33188,
+    "mtimeMs": 1788867612294.5107,
+    "size": 364,
+    "hash": "c7ec0e4aaf90088e7618e6932a54cfa96734f5e8387c688fe565277b84c6b7af"
+  }
+]

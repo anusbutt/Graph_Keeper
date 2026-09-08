@@ -1,0 +1,24 @@
+beb383cf729b0863912bae23abcbb4abaf34bcca
+A  evidence/request-flow-source.txt
+M  graph/claims.json
+M  graph/entities.json
+M  graph/runs.json
+GraphKeeper: validation passed
+GraphKeeper doctor
+Warnings (0):
+Summary: 0 error(s), 0 warning(s)
+GraphKeeper: doctor healthy
+Entity: request_handler
+Matched by: canonical ID
+Active claims: 1
+
+Claim: claim_fc81ad22
+  Predicate: routes_input
+  Object: "handleRequest passes request.body to validateInput and passes its returned value to processInput."
+  Source: tool_output
+  Command: "awk 'FNR == 1 { print \"FILE \" FILENAME } { printf \"%4d %s\\n\", FNR, $0 }' src/handler.js src/validation.js src/processor.js"
+  Exit code: 0
+  Evidence: evidence/request-flow-source.txt#L1-L8
+  Captured: 2026-09-08T04:10:14Z
+  Producer: run_2026-09-08-request_flow
+  Created: 2026-09-08T04:10:43Z

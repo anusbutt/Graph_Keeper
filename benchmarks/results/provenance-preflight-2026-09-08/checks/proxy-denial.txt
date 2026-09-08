@@ -1,0 +1,2 @@
+status 403
+{"status":"blocked","host":"example.com","reason":"not_allowed","decision":"deny","source":"baseline_policy","protocol":"http","port":80,"message":"Domain not in allowlist."}

@@ -1,0 +1,20 @@
+[
+  {
+    "id": "run_2026-09-08-request_flow",
+    "started": "2026-09-08T04:10:43Z",
+    "tool": "codex",
+    "evidence": [
+      "evidence/request-flow-source.txt"
+    ],
+    "claims_written": [
+      "claim_fc81ad22",
+      "claim_94498f6e",
+      "claim_8ce451c7",
+      "claim_c134202e",
+      "claim_c9b5b87d"
+    ],
+    "task": "Trace request data and validation boundaries from source",
+    "ended": "2026-09-08T04:10:44Z",
+    "verdict": "passed"
+  }
+]

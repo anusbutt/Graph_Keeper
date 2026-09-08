@@ -1,0 +1,6 @@
+Frozen before capture on 2026-09-07T13:22:26Z.
+Protocol SHA-256: 8492277ff8cec88528fd5706bb370a141708120401db15fff8ba89b72b32b685
+Prompts document SHA-256: 062ca8ad8b0f2cfd25e188620e485c8f8ba3ff5cc13174c3a46969e96227d3c7
+Invocation arguments SHA-256: deb92ad8e6b87a92533864a57b7cc2571a6c46bd23bc7158772119453aa7ea96
+Empty-memory fixture commit: af35db3a9a1e9f7d322cb06ab62a254a52d1158c
+Operator verified fixture git status --short was empty immediately before launch.

@@ -1,0 +1,1 @@
+PASS: write permissions; source readable, evaluator hidden

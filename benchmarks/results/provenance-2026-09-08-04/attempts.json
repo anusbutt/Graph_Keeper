@@ -1,0 +1,53 @@
+{
+  "experiment": "provenance-2026-09-08-04",
+  "protocol_revision": 2,
+  "status": "inconclusive",
+  "capture": {
+    "launch": 1,
+    "status": "completed",
+    "started_at_utc": "2026-09-08 11:43:36 UTC",
+    "timeout_seconds": 1200,
+    "exit_code": 0,
+    "completion_observed_at_utc": "2026-09-08 11:47:02 UTC",
+    "thread_id": "01a080d4-f4e7-73a3-b5e4-de106eda2c73",
+    "commit": "292fc3620f7b197a15ff6a47e4fd0be016262a2e",
+    "eligibility": "eligible"
+  },
+  "audits": [
+    {
+      "slot": 1,
+      "launch": 1,
+      "status": "completed",
+      "started_at_utc": "2026-09-08 11:48:03 UTC",
+      "timeout_seconds": 600,
+      "exit_code": 0,
+      "thread_id": "01a080d9-20de-72f3-8cc1-d5058a575a4b",
+      "completion_observed_at_utc": "2026-09-08 11:51:13 UTC",
+      "unchanged_manifest": true
+    },
+    {
+      "slot": 2,
+      "launch": 1,
+      "status": "completed",
+      "started_at_utc": "2026-09-08 11:51:13 UTC",
+      "timeout_seconds": 600,
+      "exit_code": 0,
+      "thread_id": "01a080db-eca3-70d2-80e3-29719e3e471c",
+      "completion_observed_at_utc": "2026-09-08 11:53:40 UTC",
+      "unchanged_manifest": true
+    },
+    {
+      "slot": 3,
+      "launch": 1,
+      "status": "unevaluable_isolation_breach",
+      "started_at_utc": "2026-09-08 11:53:40 UTC",
+      "timeout_seconds": 600,
+      "exit_code": 0,
+      "thread_id": "01a080de-3200-7082-82af-132a63261808",
+      "completion_observed_at_utc": "2026-09-08 11:56:58 UTC",
+      "unchanged_content_and_refs": true,
+      "metadata_change": ".git and .git/index mtime changed; index bytes, worktree, reflogs and refs unchanged",
+      "reason": "Read-only containment cannot be verified after Git index metadata mutation during audit activity. No agent attempted write, commit or correction is observed."
+    }
+  ]
+}

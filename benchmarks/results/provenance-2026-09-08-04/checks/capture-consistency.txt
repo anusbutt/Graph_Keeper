@@ -1,0 +1,6 @@
+PASS: stored source artifact bytes reproduce numbered capture output in item_12; metadata matches records.
+PASS: 12 claims / 2 closed runs with reciprocal claim/evidence links; 11 active claims.
+PASS: target claim_85b5617c is atomic; canonical L5-L6 shows call, same cited artifact L2 shows import.
+PASS: original application/guidance unchanged; only graph/evidence changed; clean committed fixture.
+PASS: independently resolved target-claim and source-evidence introducing commit both 292fc3620f7b197a15ff6a47e4fd0be016262a2e
+Note: L2 is supporting context outside the canonical L5-L6 reference. Do not silently widen the reference.

@@ -1,0 +1,5 @@
+PASS: 53 local links; 12 JSON files and all JSONL lines parsed.
+PASS: unchanged protocol, common runtime arguments, prompts and limits.
+PASS: no symlinks, generated product builds, dependencies, tarballs or credential-pattern matches in attempts 02/03.
+Manual review: session content is fixture guidance/source/graph, public CLI outputs and account-limit messages; no redactions required.
+Manual review: fixture.bundle history is setup only, memory patch is never treated as a memory commit.

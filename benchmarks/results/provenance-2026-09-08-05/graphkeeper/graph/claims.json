@@ -1,0 +1,211 @@
+[
+  {
+    "id": "claim_beec17b2",
+    "subject": "request_handler",
+    "predicate": "validates",
+    "object": "handleRequest passes request.body to validateInput.",
+    "source": {
+      "kind": "tool_output",
+      "command": "cat src/handler.js",
+      "exit_code": 0,
+      "ref": "evidence/request_flow_handler.txt#L4-L5",
+      "captured": "2026-09-08T12:23:40Z"
+    },
+    "produced_by": "run_2026-09-08-request_flow",
+    "created": "2026-09-08T12:23:41Z",
+    "confidence": 1
+  },
+  {
+    "id": "claim_0bd0eb7b",
+    "subject": "request_handler",
+    "predicate": "delegates_processing",
+    "object": "handleRequest passes the value returned by validateInput to processInput.",
+    "source": {
+      "kind": "tool_output",
+      "command": "cat src/handler.js",
+      "exit_code": 0,
+      "ref": "evidence/request_flow_handler.txt#L4-L6",
+      "captured": "2026-09-08T12:23:40Z"
+    },
+    "produced_by": "run_2026-09-08-request_flow",
+    "created": "2026-09-08T12:23:41Z",
+    "confidence": 1
+  },
+  {
+    "id": "claim_b934314a",
+    "subject": "request_handler",
+    "predicate": "returns",
+    "object": "handleRequest returns the result of processInput.",
+    "source": {
+      "kind": "tool_output",
+      "command": "cat src/handler.js",
+      "exit_code": 0,
+      "ref": "evidence/request_flow_handler.txt#L6-L6",
+      "captured": "2026-09-08T12:23:40Z"
+    },
+    "produced_by": "run_2026-09-08-request_flow",
+    "created": "2026-09-08T12:23:41Z",
+    "confidence": 1
+  },
+  {
+    "id": "claim_058e348b",
+    "subject": "input_validator",
+    "predicate": "requires_body_type",
+    "object": "validateInput throws TypeError unless the body is a non-null, non-array object.",
+    "source": {
+      "kind": "tool_output",
+      "command": "cat src/validation.js",
+      "exit_code": 0,
+      "ref": "evidence/request_flow_validation.txt#L2-L4",
+      "captured": "2026-09-08T12:23:40Z"
+    },
+    "produced_by": "run_2026-09-08-request_flow",
+    "created": "2026-09-08T12:23:41Z",
+    "confidence": 1
+  },
+  {
+    "id": "claim_e419b5e8",
+    "subject": "input_validator",
+    "predicate": "requires_message_type",
+    "object": "validateInput throws TypeError when body.message is not a string.",
+    "source": {
+      "kind": "tool_output",
+      "command": "cat src/validation.js",
+      "exit_code": 0,
+      "ref": "evidence/request_flow_validation.txt#L5-L7",
+      "captured": "2026-09-08T12:23:40Z"
+    },
+    "produced_by": "run_2026-09-08-request_flow",
+    "created": "2026-09-08T12:23:41Z",
+    "confidence": 1
+  },
+  {
+    "id": "claim_dbc9478e",
+    "subject": "input_validator",
+    "predicate": "rejects_blank_message",
+    "object": "validateInput throws TypeError when the string message is empty after trimming.",
+    "source": {
+      "kind": "tool_output",
+      "command": "cat src/validation.js",
+      "exit_code": 0,
+      "ref": "evidence/request_flow_validation.txt#L5-L7",
+      "captured": "2026-09-08T12:23:40Z"
+    },
+    "produced_by": "run_2026-09-08-request_flow",
+    "created": "2026-09-08T12:23:41Z",
+    "confidence": 1
+  },
+  {
+    "id": "claim_31998f52",
+    "subject": "input_validator",
+    "predicate": "returns_fields",
+    "object": "validateInput returns an object containing only the message property.",
+    "source": {
+      "kind": "tool_output",
+      "command": "cat src/validation.js",
+      "exit_code": 0,
+      "ref": "evidence/request_flow_validation.txt#L8-L8",
+      "captured": "2026-09-08T12:23:40Z"
+    },
+    "produced_by": "run_2026-09-08-request_flow",
+    "created": "2026-09-08T12:23:41Z",
+    "confidence": 1
+  },
+  {
+    "id": "claim_f3ff1ddb",
+    "subject": "input_validator",
+    "predicate": "normalizes_message",
+    "object": "validateInput trims surrounding whitespace from the returned message.",
+    "source": {
+      "kind": "tool_output",
+      "command": "cat src/validation.js",
+      "exit_code": 0,
+      "ref": "evidence/request_flow_validation.txt#L8-L8",
+      "captured": "2026-09-08T12:23:40Z"
+    },
+    "produced_by": "run_2026-09-08-request_flow",
+    "created": "2026-09-08T12:23:41Z",
+    "confidence": 1
+  },
+  {
+    "id": "claim_5daf469b",
+    "subject": "input_processor",
+    "predicate": "sets_status",
+    "object": "processInput returns status accepted.",
+    "source": {
+      "kind": "tool_output",
+      "command": "cat src/processor.js",
+      "exit_code": 0,
+      "ref": "evidence/request_flow_processor.txt#L1-L3",
+      "captured": "2026-09-08T12:23:40Z"
+    },
+    "produced_by": "run_2026-09-08-request_flow",
+    "created": "2026-09-08T12:23:41Z",
+    "confidence": 1
+  },
+  {
+    "id": "claim_fe126282",
+    "subject": "input_processor",
+    "predicate": "copies_message",
+    "object": "processInput copies input.message to the response message.",
+    "source": {
+      "kind": "tool_output",
+      "command": "cat src/processor.js",
+      "exit_code": 0,
+      "ref": "evidence/request_flow_processor.txt#L1-L3",
+      "captured": "2026-09-08T12:23:40Z"
+    },
+    "produced_by": "run_2026-09-08-request_flow",
+    "created": "2026-09-08T12:23:41Z",
+    "confidence": 1
+  },
+  {
+    "id": "claim_3dc6b357",
+    "subject": "input_validator",
+    "predicate": "rejects_null_body",
+    "object": "validateInput throws TypeError for a null body.",
+    "source": {
+      "kind": "tool_output",
+      "command": "cat src/validation.js",
+      "exit_code": 0,
+      "ref": "evidence/request_flow_validation.txt#L2-L4",
+      "captured": "2026-09-08T12:23:40Z"
+    },
+    "produced_by": "run_2026-09-08-body_claim_split",
+    "created": "2026-09-08T12:24:01Z",
+    "confidence": 1,
+    "supersedes": "claim_058e348b"
+  },
+  {
+    "id": "claim_64dc9b6a",
+    "subject": "input_validator",
+    "predicate": "rejects_non_object_body",
+    "object": "validateInput throws TypeError when typeof body is not object.",
+    "source": {
+      "kind": "tool_output",
+      "command": "cat src/validation.js",
+      "exit_code": 0,
+      "ref": "evidence/request_flow_validation.txt#L2-L4",
+      "captured": "2026-09-08T12:23:40Z"
+    },
+    "produced_by": "run_2026-09-08-body_claim_split",
+    "created": "2026-09-08T12:24:01Z",
+    "confidence": 1
+  },
+  {
+    "id": "claim_ceb21bda",
+    "subject": "input_validator",
+    "predicate": "rejects_array_body",
+    "object": "validateInput throws TypeError for an array body.",
+    "source": {
+      "kind": "tool_output",
+      "command": "cat src/validation.js",
+      "exit_code": 0,
+      "ref": "evidence/request_flow_validation.txt#L2-L4",
+      "captured": "2026-09-08T12:23:40Z"
+    },
+    "produced_by": "run_2026-09-08-body_claim_split",
+    "created": "2026-09-08T12:24:01Z",
+    "confidence": 1
+  }
+]

@@ -1,0 +1,48 @@
+commit d03d0bedeae77868f39edfa1b383c5e8795b6090
+Author:     GraphKeeper Benchmark <benchmark@example.invalid>
+AuthorDate: Tue Sep 8 17:24:01 2026 +0500
+Commit:     GraphKeeper Benchmark <benchmark@example.invalid>
+CommitDate: Tue Sep 8 17:24:01 2026 +0500
+
+    Record atomic request flow and validation findings
+
+ evidence/request_flow_handler.txt    |   7 ++
+ evidence/request_flow_processor.txt  |   3 +
+ evidence/request_flow_validation.txt |   9 ++
+ graph/claims.json                    | 212 ++++++++++++++++++++++++++++++++++-
+ graph/entities.json                  |  27 ++++-
+ graph/runs.json                      |  44 +++++++-
+ 6 files changed, 299 insertions(+), 3 deletions(-)
+
+commit 280c1f3f187d37689444f3498cf8f73575160216
+Author:     GraphKeeper Benchmark <benchmark@example.invalid>
+AuthorDate: Tue Sep 8 17:21:39 2026 +0500
+Commit:     GraphKeeper Benchmark <benchmark@example.invalid>
+CommitDate: Tue Sep 8 17:21:39 2026 +0500
+
+    Initialize empty GraphKeeper memory and Codex guidance
+
+ .agents/skills/graphkeeper/SKILL.md | 185 +++++++++
+ AGENTS.md                           |   7 +
+ graph/SCHEMA.md                     | 247 ++++++++++++
+ graph/claims.json                   |   1 +
+ graph/entities.json                 |   1 +
+ graph/runs.json                     |   1 +
+ scripts/validate.mjs                | 770 ++++++++++++++++++++++++++++++++++++
+ scripts/validate.sh                 | 563 ++++++++++++++++++++++++++
+ 8 files changed, 1775 insertions(+)
+
+commit 65291ee0c4335bfb8991ef99294ed655ebec2ae3
+Author:     GraphKeeper Benchmark <benchmark@example.invalid>
+AuthorDate: Tue Sep 8 17:21:39 2026 +0500
+Commit:     GraphKeeper Benchmark <benchmark@example.invalid>
+CommitDate: Tue Sep 8 17:21:39 2026 +0500
+
+    Add minimal request processing fixture
+
+ README.md         | 14 ++++++++++++++
+ package.json      |  7 +++++++
+ src/handler.js    |  7 +++++++
+ src/processor.js  |  3 +++
+ src/validation.js |  9 +++++++++
+ 5 files changed, 40 insertions(+)

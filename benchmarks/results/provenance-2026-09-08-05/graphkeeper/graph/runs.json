@@ -1,0 +1,43 @@
+[
+  {
+    "id": "run_2026-09-08-request_flow",
+    "started": "2026-09-08T12:23:40Z",
+    "tool": "coding_agent",
+    "evidence": [
+      "evidence/request_flow_handler.txt",
+      "evidence/request_flow_validation.txt",
+      "evidence/request_flow_processor.txt"
+    ],
+    "claims_written": [
+      "claim_beec17b2",
+      "claim_0bd0eb7b",
+      "claim_b934314a",
+      "claim_058e348b",
+      "claim_e419b5e8",
+      "claim_dbc9478e",
+      "claim_31998f52",
+      "claim_f3ff1ddb",
+      "claim_5daf469b",
+      "claim_fe126282"
+    ],
+    "task": "Investigate request data flow and validation; preserve atomic source-backed findings",
+    "ended": "2026-09-08T12:23:42Z",
+    "verdict": "passed"
+  },
+  {
+    "id": "run_2026-09-08-body_claim_split",
+    "started": "2026-09-08T12:24:00Z",
+    "tool": "coding_agent",
+    "evidence": [
+      "evidence/request_flow_validation.txt"
+    ],
+    "claims_written": [
+      "claim_3dc6b357",
+      "claim_64dc9b6a",
+      "claim_ceb21bda"
+    ],
+    "task": "Split body validation finding into independently changeable rejection conditions",
+    "ended": "2026-09-08T12:24:01Z",
+    "verdict": "passed"
+  }
+]

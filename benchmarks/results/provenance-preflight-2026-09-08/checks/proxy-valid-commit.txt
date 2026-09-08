@@ -1,0 +1,4 @@
+GraphKeeper: validation passed
+[main 193b14b] Synthetic preflight valid evidence
+ 1 file changed, 1 insertion(+)
+ create mode 100644 evidence/preflight-only.txt
