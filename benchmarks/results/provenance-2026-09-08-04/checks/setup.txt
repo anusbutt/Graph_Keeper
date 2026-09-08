@@ -1,0 +1,8 @@
+GraphKeeper: validation passed
+
+GraphKeeper doctor
+Warnings (0):
+Summary: 0 error(s), 0 warning(s)
+GraphKeeper: doctor healthy
+
+PASS empty clean capture, evaluator hidden, public CLI healthy

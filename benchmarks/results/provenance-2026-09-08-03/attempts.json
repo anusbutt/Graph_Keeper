@@ -1,0 +1,19 @@
+{
+  "experiment": "provenance-2026-09-08-03",
+  "status": "inconclusive",
+  "capture": {"launch":1,"started_at_utc":"2026-09-08 04:09:26 UTC","status":"completed_ineligible","timeout_seconds":1200,"exit_code":0,"thread_id":"01a07f34-fa8d-75f0-ac7a-936e196374c5","completion_observed_at_utc":"2026-09-08 04:11:45 UTC","reason":"Session completed; compound handler claim and no memory commit. Hook Git subprocess denied inside sandbox. Setup commit capability invalid, aggregate inconclusive with known claim-granularity failure."},
+  "audits": [
+    {
+      "slot": 1,
+      "status": "not_run"
+    },
+    {
+      "slot": 2,
+      "status": "not_run"
+    },
+    {
+      "slot": 3,
+      "status": "not_run"
+    }
+  ]
+}

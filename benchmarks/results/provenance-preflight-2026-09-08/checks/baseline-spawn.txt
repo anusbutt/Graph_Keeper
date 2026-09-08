@@ -1,0 +1,4 @@
+{"bin":"git","status":0,"error":"EPERM","stdout":"/tmp/graphkeeper-c-preflight-20260908.yrUIMN/fixture\n","stderr":""}
+{"bin":"/usr/bin/git","status":0,"error":"EPERM","stdout":"/tmp/graphkeeper-c-preflight-20260908.yrUIMN/fixture\n","stderr":""}
+{"bin":"/bin/true","status":0,"error":"EPERM","stdout":"","stderr":""}
+{"bin":"/usr/local/bin/node","status":0,"error":"EPERM","stdout":"v22.21.0\n","stderr":""}

@@ -1,0 +1,1 @@
+PASS: no audit command event attempted a fixture write, commit, correction, or stored-command execution.

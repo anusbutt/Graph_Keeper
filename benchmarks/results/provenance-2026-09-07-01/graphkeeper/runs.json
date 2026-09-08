@@ -1,0 +1,23 @@
+[
+  {
+    "id": "run_2026-09-07-request_flow",
+    "started": "2026-09-07T13:23:56Z",
+    "tool": "coding_agent",
+    "evidence": [
+      "evidence/request-handler.txt",
+      "evidence/request-validation.txt",
+      "evidence/request-processor.txt"
+    ],
+    "claims_written": [
+      "claim_804ea1fb",
+      "claim_4eecc570",
+      "claim_28e463d6",
+      "claim_e0186857",
+      "claim_9707d727",
+      "claim_0b635bac"
+    ],
+    "task": "Trace request data and validation using current source; preserve grounded findings",
+    "ended": "2026-09-07T13:23:59Z",
+    "verdict": "passed"
+  }
+]

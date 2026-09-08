@@ -1,0 +1,7 @@
+PASS denied write .denied-probe EROFS
+PASS denied write .git/denied-probe EROFS
+PASS hidden operator path ENOENT
+PASS hidden operator path ENOENT
+PASS git read rev-parse HEAD beb383cf729b0863912bae23abcbb4abaf34bcca
+PASS git read status --porcelain 
+PASS read-only audit access

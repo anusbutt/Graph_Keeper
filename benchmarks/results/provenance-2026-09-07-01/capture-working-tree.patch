@@ -1,0 +1,165 @@
+diff --git a/graph/claims.json b/graph/claims.json
+index fe51488..e0ebe75 100644
+--- a/graph/claims.json
++++ b/graph/claims.json
+@@ -1 +1,98 @@
+-[]
++[
++  {
++    "id": "claim_804ea1fb",
++    "subject": "request_handler",
++    "predicate": "routes_input",
++    "object": "handleRequest passes request.body to validateInput and passes its return value to processInput.",
++    "source": {
++      "kind": "tool_output",
++      "command": "nl -ba src/handler.js",
++      "exit_code": 0,
++      "ref": "evidence/request-handler.txt#L1-L7",
++      "captured": "2026-09-07T13:23:33Z"
++    },
++    "produced_by": "run_2026-09-07-request_flow",
++    "created": "2026-09-07T13:23:57Z",
++    "confidence": 1
++  },
++  {
++    "id": "claim_4eecc570",
++    "subject": "request_handler",
++    "predicate": "propagates_errors",
++    "object": "handleRequest has no catch or request-envelope guard; it directly accesses request.body before validation.",
++    "source": {
++      "kind": "tool_output",
++      "command": "nl -ba src/handler.js",
++      "exit_code": 0,
++      "ref": "evidence/request-handler.txt#L4-L7",
++      "captured": "2026-09-07T13:23:33Z"
++    },
++    "produced_by": "run_2026-09-07-request_flow",
++    "created": "2026-09-07T13:23:57Z",
++    "confidence": 1
++  },
++  {
++    "id": "claim_28e463d6",
++    "subject": "input_validation",
++    "predicate": "rejects_body",
++    "object": "validateInput throws TypeError for null, non-object, or array bodies.",
++    "source": {
++      "kind": "tool_output",
++      "command": "nl -ba src/validation.js",
++      "exit_code": 0,
++      "ref": "evidence/request-validation.txt#L1-L4",
++      "captured": "2026-09-07T13:23:33Z"
++    },
++    "produced_by": "run_2026-09-07-request_flow",
++    "created": "2026-09-07T13:23:58Z",
++    "confidence": 1
++  },
++  {
++    "id": "claim_e0186857",
++    "subject": "input_validation",
++    "predicate": "rejects_message",
++    "object": "validateInput throws TypeError when body.message is not a string or is empty after trimming.",
++    "source": {
++      "kind": "tool_output",
++      "command": "nl -ba src/validation.js",
++      "exit_code": 0,
++      "ref": "evidence/request-validation.txt#L5-L7",
++      "captured": "2026-09-07T13:23:33Z"
++    },
++    "produced_by": "run_2026-09-07-request_flow",
++    "created": "2026-09-07T13:23:58Z",
++    "confidence": 1
++  },
++  {
++    "id": "claim_9707d727",
++    "subject": "input_validation",
++    "predicate": "normalizes_input",
++    "object": "validateInput returns a new object containing only message with leading and trailing whitespace trimmed.",
++    "source": {
++      "kind": "tool_output",
++      "command": "nl -ba src/validation.js",
++      "exit_code": 0,
++      "ref": "evidence/request-validation.txt#L8-L8",
++      "captured": "2026-09-07T13:23:33Z"
++    },
++    "produced_by": "run_2026-09-07-request_flow",
++    "created": "2026-09-07T13:23:58Z",
++    "confidence": 1
++  },
++  {
++    "id": "claim_0b635bac",
++    "subject": "input_processor",
++    "predicate": "returns_result",
++    "object": "processInput returns status accepted and input.message without performing validation.",
++    "source": {
++      "kind": "tool_output",
++      "command": "nl -ba src/processor.js",
++      "exit_code": 0,
++      "ref": "evidence/request-processor.txt#L1-L3",
++      "captured": "2026-09-07T13:23:33Z"
++    },
++    "produced_by": "run_2026-09-07-request_flow",
++    "created": "2026-09-07T13:23:59Z",
++    "confidence": 1
++  }
++]
+diff --git a/graph/entities.json b/graph/entities.json
+index fe51488..558f1da 100644
+--- a/graph/entities.json
++++ b/graph/entities.json
+@@ -1 +1,26 @@
+-[]
++[
++  {
++    "id": "request_handler",
++    "type": "function",
++    "aliases": [
++      "handleRequest"
++    ],
++    "first_seen": "2026-09-07T13:23:57Z"
++  },
++  {
++    "id": "input_validation",
++    "type": "function",
++    "aliases": [
++      "validateInput"
++    ],
++    "first_seen": "2026-09-07T13:23:57Z"
++  },
++  {
++    "id": "input_processor",
++    "type": "function",
++    "aliases": [
++      "processInput"
++    ],
++    "first_seen": "2026-09-07T13:23:57Z"
++  }
++]
+diff --git a/graph/runs.json b/graph/runs.json
+index fe51488..5720f8a 100644
+--- a/graph/runs.json
++++ b/graph/runs.json
+@@ -1 +1,23 @@
+-[]
++[
++  {
++    "id": "run_2026-09-07-request_flow",
++    "started": "2026-09-07T13:23:56Z",
++    "tool": "coding_agent",
++    "evidence": [
++      "evidence/request-handler.txt",
++      "evidence/request-validation.txt",
++      "evidence/request-processor.txt"
++    ],
++    "claims_written": [
++      "claim_804ea1fb",
++      "claim_4eecc570",
++      "claim_28e463d6",
++      "claim_e0186857",
++      "claim_9707d727",
++      "claim_0b635bac"
++    ],
++    "task": "Trace request data and validation using current source; preserve grounded findings",
++    "ended": "2026-09-07T13:23:59Z",
++    "verdict": "passed"
++  }
++]

@@ -1,0 +1,2 @@
+PASS parsed 13 JSON/JSONL artifacts
+bfab6a021cb2fd5b1c439cac1e2aba1b9b8c64c3ca4d68d8b8aee4cc04b84435  /tmp/graphkeeper-bench-c-05-20260908.8wIQDW/fixture.bundle

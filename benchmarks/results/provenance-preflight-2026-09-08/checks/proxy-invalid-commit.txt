@@ -1,0 +1,3 @@
+GK120 [graph/claims.json:root] claim schema or ID uniqueness violation (records=root); fix: correct the named records and source shape
+GK151 [unknown] committed claim changed or was removed; fix: restore it and append a superseding claim
+GraphKeeper: 2 violation(s)

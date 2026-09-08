@@ -1,0 +1,29 @@
+[
+  {
+    "id": "request_handler",
+    "type": "function",
+    "aliases": [
+      "handleRequest",
+      "src/handler.js"
+    ],
+    "first_seen": "2026-09-08T04:10:43Z"
+  },
+  {
+    "id": "input_validation",
+    "type": "function",
+    "aliases": [
+      "validateInput",
+      "src/validation.js"
+    ],
+    "first_seen": "2026-09-08T04:10:43Z"
+  },
+  {
+    "id": "input_processor",
+    "type": "function",
+    "aliases": [
+      "processInput",
+      "src/processor.js"
+    ],
+    "first_seen": "2026-09-08T04:10:43Z"
+  }
+]

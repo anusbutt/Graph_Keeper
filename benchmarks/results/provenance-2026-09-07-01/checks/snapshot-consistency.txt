@@ -1,0 +1,3 @@
+Exact evidence bytes agree with capture event item_10 and snapshot: request-handler.txt
+Exact evidence bytes agree with capture event item_10 and snapshot: request-processor.txt
+Exact evidence bytes agree with capture event item_10 and snapshot: request-validation.txt

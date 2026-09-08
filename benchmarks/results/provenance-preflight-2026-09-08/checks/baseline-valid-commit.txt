@@ -1,0 +1,1 @@
+GK004 unable to resolve repository root: spawnSync git EPERM

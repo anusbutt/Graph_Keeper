@@ -1,0 +1,9 @@
+     1	export function validateInput(body) {
+     2	  if (body === null || typeof body !== 'object' || Array.isArray(body)) {
+     3	    throw new TypeError('Request body must be an object');
+     4	  }
+     5	  if (typeof body.message !== 'string' || body.message.trim().length === 0) {
+     6	    throw new TypeError('message must be a nonempty string');
+     7	  }
+     8	  return { message: body.message.trim() };
+     9	}

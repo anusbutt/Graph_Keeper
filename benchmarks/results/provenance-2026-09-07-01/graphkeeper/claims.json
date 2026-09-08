@@ -1,0 +1,98 @@
+[
+  {
+    "id": "claim_804ea1fb",
+    "subject": "request_handler",
+    "predicate": "routes_input",
+    "object": "handleRequest passes request.body to validateInput and passes its return value to processInput.",
+    "source": {
+      "kind": "tool_output",
+      "command": "nl -ba src/handler.js",
+      "exit_code": 0,
+      "ref": "evidence/request-handler.txt#L1-L7",
+      "captured": "2026-09-07T13:23:33Z"
+    },
+    "produced_by": "run_2026-09-07-request_flow",
+    "created": "2026-09-07T13:23:57Z",
+    "confidence": 1
+  },
+  {
+    "id": "claim_4eecc570",
+    "subject": "request_handler",
+    "predicate": "propagates_errors",
+    "object": "handleRequest has no catch or request-envelope guard; it directly accesses request.body before validation.",
+    "source": {
+      "kind": "tool_output",
+      "command": "nl -ba src/handler.js",
+      "exit_code": 0,
+      "ref": "evidence/request-handler.txt#L4-L7",
+      "captured": "2026-09-07T13:23:33Z"
+    },
+    "produced_by": "run_2026-09-07-request_flow",
+    "created": "2026-09-07T13:23:57Z",
+    "confidence": 1
+  },
+  {
+    "id": "claim_28e463d6",
+    "subject": "input_validation",
+    "predicate": "rejects_body",
+    "object": "validateInput throws TypeError for null, non-object, or array bodies.",
+    "source": {
+      "kind": "tool_output",
+      "command": "nl -ba src/validation.js",
+      "exit_code": 0,
+      "ref": "evidence/request-validation.txt#L1-L4",
+      "captured": "2026-09-07T13:23:33Z"
+    },
+    "produced_by": "run_2026-09-07-request_flow",
+    "created": "2026-09-07T13:23:58Z",
+    "confidence": 1
+  },
+  {
+    "id": "claim_e0186857",
+    "subject": "input_validation",
+    "predicate": "rejects_message",
+    "object": "validateInput throws TypeError when body.message is not a string or is empty after trimming.",
+    "source": {
+      "kind": "tool_output",
+      "command": "nl -ba src/validation.js",
+      "exit_code": 0,
+      "ref": "evidence/request-validation.txt#L5-L7",
+      "captured": "2026-09-07T13:23:33Z"
+    },
+    "produced_by": "run_2026-09-07-request_flow",
+    "created": "2026-09-07T13:23:58Z",
+    "confidence": 1
+  },
+  {
+    "id": "claim_9707d727",
+    "subject": "input_validation",
+    "predicate": "normalizes_input",
+    "object": "validateInput returns a new object containing only message with leading and trailing whitespace trimmed.",
+    "source": {
+      "kind": "tool_output",
+      "command": "nl -ba src/validation.js",
+      "exit_code": 0,
+      "ref": "evidence/request-validation.txt#L8-L8",
+      "captured": "2026-09-07T13:23:33Z"
+    },
+    "produced_by": "run_2026-09-07-request_flow",
+    "created": "2026-09-07T13:23:58Z",
+    "confidence": 1
+  },
+  {
+    "id": "claim_0b635bac",
+    "subject": "input_processor",
+    "predicate": "returns_result",
+    "object": "processInput returns status accepted and input.message without performing validation.",
+    "source": {
+      "kind": "tool_output",
+      "command": "nl -ba src/processor.js",
+      "exit_code": 0,
+      "ref": "evidence/request-processor.txt#L1-L3",
+      "captured": "2026-09-07T13:23:33Z"
+    },
+    "produced_by": "run_2026-09-07-request_flow",
+    "created": "2026-09-07T13:23:59Z",
+    "confidence": 1
+  }
+]

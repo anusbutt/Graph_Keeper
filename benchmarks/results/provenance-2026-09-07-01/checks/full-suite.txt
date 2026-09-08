@@ -1,0 +1,2340 @@
+
+> graphkeeper@0.5.0 test
+> npm run build && node scripts/run-tests.mjs
+
+
+> graphkeeper@0.5.0 build
+> tsc -p tsconfig.json
+
+TAP version 13
+# Subtest: guidance fixtures cover all eight required agent decisions
+ok 1 - guidance fixtures cover all eight required agent decisions
+  ---
+  duration_ms: 64.86116
+  type: 'test'
+  ...
+# Subtest: compound findings become independently changeable claims
+ok 2 - compound findings become independently changeable claims
+  ---
+  duration_ms: 27.758706
+  type: 'test'
+  ...
+# Subtest: direct observation and interpretation use separate source kinds
+ok 3 - direct observation and interpretation use separate source kinds
+  ---
+  duration_ms: 18.173967
+  type: 'test'
+  ...
+# Subtest: every expected claim is linked bidirectionally to its producing run
+ok 4 - every expected claim is linked bidirectionally to its producing run
+  ---
+  duration_ms: 30.754688
+  type: 'test'
+  ...
+# Subtest: expected graph reuses an exact alias and creates only the genuinely new entity
+ok 5 - expected graph reuses an exact alias and creates only the genuinely new entity
+  ---
+  duration_ms: 30.220893
+  type: 'test'
+  ...
+# Subtest: expected claims distinguish tool output from inference exactly
+ok 6 - expected claims distinguish tool output from inference exactly
+  ---
+  duration_ms: 7.529799
+  type: 'test'
+  ...
+# Subtest: structured diagnostics remain in evidence while claim objects stay flat
+ok 7 - structured diagnostics remain in evidence while claim objects stay flat
+  ---
+  duration_ms: 14.692241
+  type: 'test'
+  ...
+# Subtest: session chatter remains outside expected durable graph and evidence
+ok 8 - session chatter remains outside expected durable graph and evidence
+  ---
+  duration_ms: 11.795022
+  type: 'test'
+  ...
+# Subtest: complete expected output passes record parsers and the canonical validator
+ok 9 - complete expected output passes record parsers and the canonical validator
+  ---
+  duration_ms: 1270.110712
+  type: 'test'
+  ...
+# Subtest: graphkeeper check and pre-commit accept the same valid snapshot
+ok 10 - graphkeeper check and pre-commit accept the same valid snapshot
+  ---
+  duration_ms: 2368.396257
+  type: 'test'
+  ...
+# Subtest: graphkeeper check and pre-commit reject the same invalid snapshot with the same rule code
+ok 11 - graphkeeper check and pre-commit reject the same invalid snapshot with the same rule code
+  ---
+  duration_ms: 1614.54253
+  type: 'test'
+  ...
+# Subtest: check rejects arguments without invoking validation
+ok 12 - check rejects arguments without invoking validation
+  ---
+  duration_ms: 250.986362
+  type: 'test'
+  ...
+# Subtest: public check uses the repository Node validator for acceptance and rejection
+ok 13 - public check uses the repository Node validator for acceptance and rejection
+  ---
+  duration_ms: 2046.023435
+  type: 'test'
+  ...
+# Subtest: prints help successfully when no command is provided
+ok 14 - prints help successfully when no command is provided
+  ---
+  duration_ms: 12.97192
+  type: 'test'
+  ...
+# Subtest: prints contextual append overview for both help tokens without repository access
+ok 15 - prints contextual append overview for both help tokens without repository access
+  ---
+  duration_ms: 3.897041
+  type: 'test'
+  ...
+# Subtest: prints complete contextual claim help for tool output and inference
+ok 16 - prints complete contextual claim help for tool output and inference
+  ---
+  duration_ms: 6.397468
+  type: 'test'
+  ...
+# Subtest: recognized claim help takes precedence over incomplete and invalid options
+ok 17 - recognized claim help takes precedence over incomplete and invalid options
+  ---
+  duration_ms: 2.946279
+  type: 'test'
+  ...
+# Subtest: contextual claim help leaves initialized graph data byte-for-byte unchanged
+ok 18 - contextual claim help leaves initialized graph data byte-for-byte unchanged
+  ---
+  duration_ms: 712.440749
+  type: 'test'
+  ...
+# Subtest: unsupported help paths and normal malformed appends remain usage errors
+ok 19 - unsupported help paths and normal malformed appends remain usage errors
+  ---
+  duration_ms: 4.584895
+  type: 'test'
+  ...
+# Subtest: parses the documented multi-adapter init option grammar deterministically
+ok 20 - parses the documented multi-adapter init option grammar deterministically
+  ---
+  duration_ms: 2.333163
+  type: 'test'
+  ...
+# Subtest: parses only the documented conservative removal grammar
+ok 21 - parses only the documented conservative removal grammar
+  ---
+  duration_ms: 7.867628
+  type: 'test'
+  ...
+# Subtest: confirmation is injectable, defaults safely, and dry-run never prompts
+ok 22 - confirmation is injectable, defaults safely, and dry-run never prompts
+  ---
+  duration_ms: 2.330962
+  type: 'test'
+  ...
+# Subtest: prints the package version successfully
+ok 23 - prints the package version successfully
+  ---
+  duration_ms: 2.799374
+  type: 'test'
+  ...
+# Subtest: rejects an unknown command as a usage error
+ok 24 - rejects an unknown command as a usage error
+  ---
+  duration_ms: 0.937741
+  type: 'test'
+  ...
+# Subtest: close rejects malformed grammar with GK002 before repository access
+ok 25 - close rejects malformed grammar with GK002 before repository access
+  ---
+  duration_ms: 3.377277
+  type: 'test'
+  ...
+# Subtest: close run dispatches against the supplied repository root
+ok 26 - close run dispatches against the supplied repository root
+  ---
+  duration_ms: 604.622908
+  type: 'test'
+  ...
+# Subtest: update rejects every argument with GK002 before external work
+ok 27 - update rejects every argument with GK002 before external work
+  ---
+  duration_ms: 2.407992
+  type: 'test'
+  ...
+# Subtest: compiled CLI entrypoint returns success for --help
+ok 28 - compiled CLI entrypoint returns success for --help
+  ---
+  duration_ms: 259.434002
+  type: 'test'
+  ...
+# Subtest: compiled CLI entrypoint runs through an npm-style symlink
+ok 29 - compiled CLI entrypoint runs through an npm-style symlink
+  ---
+  duration_ms: 198.372955
+  type: 'test'
+  ...
+# Subtest: command-capable and file-editing harness styles read one unchanged graph identically
+ok 30 - command-capable and file-editing harness styles read one unchanged graph identically
+  ---
+  duration_ms: 1992.533269
+  type: 'test'
+  ...
+# Subtest: a first correction preserves the old claim and becomes the only active chain member
+ok 31 - a first correction preserves the old claim and becomes the only active chain member
+  ---
+  duration_ms: 2898.649652
+  type: 'test'
+  ...
+# Subtest: a correction chain extends from its active tip without changing earlier generations
+ok 32 - a correction chain extends from its active tip without changing earlier generations
+  ---
+  duration_ms: 1204.845424
+  type: 'test'
+  ...
+# Subtest: a second direct correction is rejected as a fork and names the target and both successors
+ok 33 - a second direct correction is rejected as a fork and names the target and both successors
+  ---
+  duration_ms: 1422.987036
+  type: 'test'
+  ...
+# Subtest: a self-cycle is rejected and identifies its cycle member
+ok 34 - a self-cycle is rejected and identifies its cycle member
+  ---
+  duration_ms: 848.727159
+  type: 'test'
+  ...
+# Subtest: a multi-node cycle is rejected and identifies every cycle member
+ok 35 - a multi-node cycle is rejected and identifies every cycle member
+  ---
+  duration_ms: 880.930823
+  type: 'test'
+  ...
+# Subtest: changing an old claim is rejected even when a valid successor is appended
+ok 36 - changing an old claim is rejected even when a valid successor is appended
+  ---
+  duration_ms: 1501.719249
+  type: 'test'
+  ...
+# Subtest: canonical correction repositories distinguish a valid chain from fork and cycle failures
+    # Subtest: valid-chain
+    ok 1 - valid-chain
+      ---
+      duration_ms: 488.101304
+      type: 'test'
+      ...
+    # Subtest: invalid-fork
+    ok 2 - invalid-fork
+      ---
+      duration_ms: 495.675027
+      type: 'test'
+      ...
+    # Subtest: invalid-cycle
+    ok 3 - invalid-cycle
+      ---
+      duration_ms: 397.046509
+      type: 'test'
+      ...
+    1..3
+ok 37 - canonical correction repositories distinguish a valid chain from fork and cycle failures
+  ---
+  duration_ms: 1384.982239
+  type: 'test'
+  ...
+# Subtest: doctor CLI acceptance matrix includes healthy and warning-only outcomes
+ok 38 - doctor CLI acceptance matrix includes healthy and warning-only outcomes
+  ---
+  duration_ms: 2364.877301
+  type: 'test'
+  ...
+# Subtest: doctor CLI reports missing, binary, zero-line, reversed, zero-based, and out-of-bounds evidence
+ok 39 - doctor CLI reports missing, binary, zero-line, reversed, zero-based, and out-of-bounds evidence
+  ---
+  duration_ms: 688.162026
+  type: 'test'
+  ...
+# Subtest: doctor detects duplicate raw keys even when normal JSON parsing keeps a valid last value
+ok 40 - doctor detects duplicate raw keys even when normal JSON parsing keeps a valid last value
+  ---
+  duration_ms: 510.595423
+  type: 'test'
+  ...
+# Subtest: doctor CLI rejects arguments as a usage error
+ok 41 - doctor CLI rejects arguments as a usage error
+  ---
+  duration_ms: 281.77177
+  type: 'test'
+  ...
+# Subtest: initializes both unborn and clean committed Git repositories
+ok 42 - initializes both unborn and clean committed Git repositories
+  ---
+  duration_ms: 1267.132979
+  type: 'test'
+  ...
+# Subtest: explicit Codex integration creates the managed AGENTS.md block through the CLI
+ok 43 - explicit Codex integration creates the managed AGENTS.md block through the CLI
+  ---
+  duration_ms: 352.905226
+  type: 'test'
+  ...
+# Subtest: explicit Cursor integration creates the managed AGENTS.md block through the CLI
+ok 44 - explicit Cursor integration creates the managed AGENTS.md block through the CLI
+  ---
+  duration_ms: 400.226535
+  type: 'test'
+  ...
+# Subtest: explicit OpenCode integration creates the managed AGENTS.md block through the CLI
+ok 45 - explicit OpenCode integration creates the managed AGENTS.md block through the CLI
+  ---
+  duration_ms: 378.840263
+  type: 'test'
+  ...
+# Subtest: explicit Kilo integration creates the managed rules block and skill through the CLI
+ok 46 - explicit Kilo integration creates the managed rules block and skill through the CLI
+  ---
+  duration_ms: 452.491843
+  type: 'test'
+  ...
+# Subtest: explicit Windsurf integration creates the managed rules block and skill through the CLI
+ok 47 - explicit Windsurf integration creates the managed rules block and skill through the CLI
+  ---
+  duration_ms: 704.937819
+  type: 'test'
+  ...
+# Subtest: explicit Gemini CLI integration creates the managed GEMINI.md block and skill through the CLI
+ok 48 - explicit Gemini CLI integration creates the managed GEMINI.md block and skill through the CLI
+  ---
+  duration_ms: 769.40292
+  type: 'test'
+  ...
+# Subtest: explicit Kiro integration creates the managed steering block and skill through the CLI
+ok 49 - explicit Kiro integration creates the managed steering block and skill through the CLI
+  ---
+  duration_ms: 703.323871
+  type: 'test'
+  ...
+# Subtest: explicit Antigravity integration creates the managed rules block and reuses the shared skill
+ok 50 - explicit Antigravity integration creates the managed rules block and reuses the shared skill
+  ---
+  duration_ms: 620.109927
+  type: 'test'
+  ...
+# Subtest: non-interactive integration requires --yes and refuses before mutation
+ok 51 - non-interactive integration requires --yes and refuses before mutation
+  ---
+  duration_ms: 566.998672
+  type: 'test'
+  ...
+# Subtest: --dry-run preflights all adapters without prompting or writing
+ok 52 - --dry-run preflights all adapters without prompting or writing
+  ---
+  duration_ms: 529.036516
+  type: 'test'
+  ...
+# Subtest: --yes never bypasses marker validation or writes a partial scaffold
+ok 53 - --yes never bypasses marker validation or writes a partial scaffold
+  ---
+  duration_ms: 503.774843
+  type: 'test'
+  ...
+# Subtest: all adapters install and conservative removal works through the CLI
+ok 54 - all adapters install and conservative removal works through the CLI
+  ---
+  duration_ms: 2191.242035
+  type: 'test'
+  ...
+# Subtest: repeat and forced runs preserve graph data, evidence, and validators
+ok 55 - repeat and forced runs preserve graph data, evidence, and validators
+  ---
+  duration_ms: 1438.831141
+  type: 'test'
+  ...
+# Subtest: scaffolds a non-Git directory with a prominent enforcement warning
+not ok 56 - scaffolds a non-Git directory with a prominent enforcement warning
+  ---
+  duration_ms: 428.543062
+  type: 'test'
+  location: '/tmp/graphkeeper-bench-c-20260907.aJM0YZ/source/dist/tests/e2e/init.test.js:305:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    GK004 unable to resolve Git hook directory: fatal: not a git repository (or any of the parent directories): .git
+    
+    
+    4 !== 0
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  actual: 4
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///tmp/graphkeeper-bench-c-20260907.aJM0YZ/source/dist/tests/e2e/init.test.js:309:16)
+    process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: respects custom hooksPath and preserves a third-party hook
+ok 57 - respects custom hooksPath and preserves a third-party hook
+  ---
+  duration_ms: 653.858579
+  type: 'test'
+  ...
+# Subtest: missing prerequisites fail before any files are changed
+ok 58 - missing prerequisites fail before any files are changed
+  ---
+  duration_ms: 478.215324
+  type: 'test'
+  ...
+# Subtest: invalid init arguments are usage errors without mutation
+ok 59 - invalid init arguments are usage errors without mutation
+  ---
+  duration_ms: 417.834061
+  type: 'test'
+  ...
+# Subtest: destination conflicts fail recoverably without replacing the conflict
+ok 60 - destination conflicts fail recoverably without replacing the conflict
+  ---
+  duration_ms: 608.543425
+  type: 'test'
+  ...
+# Subtest: discoverable skill destination conflicts fail without replacing the conflict
+ok 61 - discoverable skill destination conflicts fail without replacing the conflict
+  ---
+  duration_ms: 652.373839
+  type: 'test'
+  ...
+# Subtest: invalid init integration grammar returns GK002 without repository mutation
+ok 62 - invalid init integration grammar returns GK002 without repository mutation
+  ---
+  duration_ms: 3706.584195
+  type: 'test'
+  ...
+# Subtest: pre-commit accepts a valid first commit in a CommonJS package scope
+ok 63 - pre-commit accepts a valid first commit in a CommonJS package scope
+  ---
+  duration_ms: 770.585044
+  type: 'test'
+  ...
+# Subtest: Node hook fails closed when the repository validator is missing
+ok 64 - Node hook fails closed when the repository validator is missing
+  ---
+  duration_ms: 232.913359
+  type: 'test'
+  ...
+# Subtest: native Windows Git invokes the Node hook without sh or jq on PATH
+ok 65 - native Windows Git invokes the Node hook without sh or jq on PATH
+  ---
+  duration_ms: 0.947735
+  type: 'test'
+  ...
+# Subtest: Git invokes the Node hook through a custom hooksPath
+ok 66 - Git invokes the Node hook through a custom hooksPath
+  ---
+  duration_ms: 541.4762
+  type: 'test'
+  ...
+# Subtest: pre-commit accepts later commits when the graph remains valid
+ok 67 - pre-commit accepts later commits when the graph remains valid
+  ---
+  duration_ms: 1250.563973
+  type: 'test'
+  ...
+# Subtest: pre-commit blocks malformed staged graph JSON and leaves HEAD unchanged
+ok 68 - pre-commit blocks malformed staged graph JSON and leaves HEAD unchanged
+  ---
+  duration_ms: 1633.813064
+  type: 'test'
+  ...
+# Subtest: pre-commit blocks mutation of an already committed claim
+ok 69 - pre-commit blocks mutation of an already committed claim
+  ---
+  duration_ms: 1540.816396
+  type: 'test'
+  ...
+# Subtest: query acceptance matrix covers canonical ID, exact alias, corrections, and mixed sources
+ok 70 - query acceptance matrix covers canonical ID, exact alias, corrections, and mixed sources
+  ---
+  duration_ms: 1140.346486
+  type: 'test'
+  ...
+# Subtest: query acceptance matrix distinguishes ambiguity, unknown subjects, and known empty entities
+ok 71 - query acceptance matrix distinguishes ambiguity, unknown subjects, and known empty entities
+  ---
+  duration_ms: 1608.67042
+  type: 'test'
+  ...
+# Subtest: query CLI rejects missing, empty, and multiple subjects as usage errors
+ok 72 - query CLI rejects missing, empty, and multiple subjects as usage errors
+  ---
+  duration_ms: 1088.863575
+  type: 'test'
+  ...
+# Subtest: canonical long-lived, concurrent, and overlapping-reference repositories are healthy
+    # Subtest: long-lived-open
+    ok 1 - long-lived-open
+      ---
+      duration_ms: 683.267546
+      type: 'test'
+      ...
+    # Subtest: concurrent-appends
+    ok 2 - concurrent-appends
+      ---
+      duration_ms: 491.125254
+      type: 'test'
+      ...
+    # Subtest: overlapping-references
+    ok 3 - overlapping-references
+      ---
+      duration_ms: 507.081235
+      type: 'test'
+      ...
+    1..3
+ok 73 - canonical long-lived, concurrent, and overlapping-reference repositories are healthy
+  ---
+  duration_ms: 1695.884479
+  type: 'test'
+  ...
+# Subtest: a complete run can open, capture evidence and a claim, close, and remain traceable
+ok 74 - a complete run can open, capture evidence and a claim, close, and remain traceable
+  ---
+  duration_ms: 3855.742937
+  type: 'test'
+  ...
+# Subtest: claim-to-run and tool-output-to-evidence provenance mismatches are rejected
+ok 75 - claim-to-run and tool-output-to-evidence provenance mismatches are rejected
+  ---
+  duration_ms: 665.054791
+  type: 'test'
+  ...
+# Subtest: worked example passes check and doctor, then queries only active claims
+ok 76 - worked example passes check and doctor, then queries only active claims
+  ---
+  duration_ms: 1226.480116
+  type: 'test'
+  ...
+# Subtest: every worked-example claim traces bidirectionally to its run and exact evidence
+ok 77 - every worked-example claim traces bidirectionally to its run and exact evidence
+  ---
+  duration_ms: 21.404521
+  type: 'test'
+  ...
+# Subtest: reviewer fixtures approve only active tool-output support and revise every other case
+ok 78 - reviewer fixtures approve only active tool-output support and revise every other case
+  ---
+  duration_ms: 33.932605
+  type: 'test'
+  ...
+# Subtest: worked-example walkthrough covers setup, query, evidence, correction, and review
+ok 79 - worked-example walkthrough covers setup, query, evidence, correction, and review
+  ---
+  duration_ms: 9.166856
+  type: 'test'
+  ...
+# Subtest: Claude integration installs the canonical skill and one independent guidance block
+ok 80 - Claude integration installs the canonical skill and one independent guidance block
+  ---
+  duration_ms: 353.632877
+  type: 'test'
+  ...
+# Subtest: Cursor integration installs the canonical skill and one independent guidance block
+ok 81 - Cursor integration installs the canonical skill and one independent guidance block
+  ---
+  duration_ms: 479.303089
+  type: 'test'
+  ...
+# Subtest: Cursor removal deletes only canonical Cursor-owned material and leaves others intact
+ok 82 - Cursor removal deletes only canonical Cursor-owned material and leaves others intact
+  ---
+  duration_ms: 640.230443
+  type: 'test'
+  ...
+# Subtest: OpenCode shares AGENTS.md with Codex and removal preserves the sibling block
+ok 83 - OpenCode shares AGENTS.md with Codex and removal preserves the sibling block
+  ---
+  duration_ms: 404.518718
+  type: 'test'
+  ...
+# Subtest: Kilo integration installs the canonical skill and one independent guidance block
+ok 84 - Kilo integration installs the canonical skill and one independent guidance block
+  ---
+  duration_ms: 407.057109
+  type: 'test'
+  ...
+# Subtest: Windsurf integration installs the canonical skill and one independent guidance block
+ok 85 - Windsurf integration installs the canonical skill and one independent guidance block
+  ---
+  duration_ms: 370.865161
+  type: 'test'
+  ...
+# Subtest: Gemini CLI integration installs the canonical skill and one independent GEMINI.md block
+ok 86 - Gemini CLI integration installs the canonical skill and one independent GEMINI.md block
+  ---
+  duration_ms: 377.233284
+  type: 'test'
+  ...
+# Subtest: Kilo, Windsurf, and Gemini CLI removal deletes only canonical owned material and leaves others intact
+ok 87 - Kilo, Windsurf, and Gemini CLI removal deletes only canonical owned material and leaves others intact
+  ---
+  duration_ms: 777.523185
+  type: 'test'
+  ...
+# Subtest: multi-adapter installation is deterministic, idempotent, and isolated
+ok 88 - multi-adapter installation is deterministic, idempotent, and isolated
+  ---
+  duration_ms: 471.975033
+  type: 'test'
+  ...
+# Subtest: planning is read-only and applying uses the exact planned snapshots
+ok 89 - planning is read-only and applying uses the exact planned snapshots
+  ---
+  duration_ms: 278.059599
+  type: 'test'
+  ...
+# Subtest: a selected skill change after approval stops every planned write
+ok 90 - a selected skill change after approval stops every planned write
+  ---
+  duration_ms: 183.688966
+  type: 'test'
+  ...
+# Subtest: malformed markers in either selected adapter stop a multi-adapter init before writes
+ok 91 - malformed markers in either selected adapter stop a multi-adapter init before writes
+  ---
+  duration_ms: 175.423996
+  type: 'test'
+  ...
+# Subtest: concurrent integration edits are preserved and prior integration writes roll back
+ok 92 - concurrent integration edits are preserved and prior integration writes roll back
+  ---
+  duration_ms: 374.429234
+  type: 'test'
+  ...
+# Subtest: removal deletes only canonical Claude-owned material and leaves Codex intact
+ok 93 - removal deletes only canonical Claude-owned material and leaves Codex intact
+  ---
+  duration_ms: 495.375439
+  type: 'test'
+  ...
+# Subtest: Codex removal is adapter-isolated and leaves Claude intact
+ok 94 - Codex removal is adapter-isolated and leaves Claude intact
+  ---
+  duration_ms: 435.289637
+  type: 'test'
+  ...
+# Subtest: removal preserves modified skills and directories with unexpected files
+ok 95 - removal preserves modified skills and directories with unexpected files
+  ---
+  duration_ms: 761.0092
+  type: 'test'
+  ...
+# Subtest: wrong-type integration guidance is rejected before any writes
+ok 96 - wrong-type integration guidance is rejected before any writes
+  ---
+  duration_ms: 128.767064
+  type: 'test'
+  ...
+# Subtest: Kiro integration installs the canonical skill and one independent steering block
+ok 97 - Kiro integration installs the canonical skill and one independent steering block
+  ---
+  duration_ms: 353.655986
+  type: 'test'
+  ...
+# Subtest: Antigravity integration installs its rules block and reuses the shared Codex skill
+ok 98 - Antigravity integration installs its rules block and reuses the shared Codex skill
+  ---
+  duration_ms: 344.463913
+  type: 'test'
+  ...
+# Subtest: Codex removal still removes the shared skill when Antigravity is installed
+ok 99 - Codex removal still removes the shared skill when Antigravity is installed
+  ---
+  duration_ms: 527.692355
+  type: 'test'
+  ...
+# Subtest: removing Antigravity preserves the Codex-owned shared skill while removing its rules block
+ok 100 - removing Antigravity preserves the Codex-owned shared skill while removing its rules block
+  ---
+  duration_ms: 394.963507
+  type: 'test'
+  ...
+# Subtest: append claim appends a claim and updates the producing run; graph is doctor-clean
+ok 101 - append claim appends a claim and updates the producing run; graph is doctor-clean
+  ---
+  duration_ms: 1342.919647
+  type: 'test'
+  ...
+# Subtest: two concurrent append claim calls both survive (race regression via command)
+ok 102 - two concurrent append claim calls both survive (race regression via command)
+  ---
+  duration_ms: 651.594835
+  type: 'test'
+  ...
+# Subtest: append claim rejects an unknown subject and a nonexistent producing run
+ok 103 - append claim rejects an unknown subject and a nonexistent producing run
+  ---
+  duration_ms: 429.131969
+  type: 'test'
+  ...
+# Subtest: append run appends a run and is doctor-clean
+ok 104 - append run appends a run and is doctor-clean
+  ---
+  duration_ms: 734.366961
+  type: 'test'
+  ...
+# Subtest: append run rejects a duplicate run id
+ok 105 - append run rejects a duplicate run id
+  ---
+  duration_ms: 253.905406
+  type: 'test'
+  ...
+# Subtest: append claim cannot orphan a claim when its run is closed mid-flight
+ok 106 - append claim cannot orphan a claim when its run is closed mid-flight
+  ---
+  duration_ms: 475.728837
+  type: 'test'
+  ...
+# Subtest: a run closed just before append-claim is rejected without writing a claim
+ok 107 - a run closed just before append-claim is rejected without writing a claim
+  ---
+  duration_ms: 294.742957
+  type: 'test'
+  ...
+# Subtest: check prefers the repository Node validator and invokes worktree mode
+ok 108 - check prefers the repository Node validator and invokes worktree mode
+  ---
+  duration_ms: 225.047749
+  type: 'test'
+  ...
+# Subtest: check retains the shell validator for an unmigrated repository
+ok 109 - check retains the shell validator for an unmigrated repository
+  ---
+  duration_ms: 182.247143
+  type: 'test'
+  ...
+# Subtest: check forwards validator output and maps public validator exit codes
+ok 110 - check forwards validator output and maps public validator exit codes
+  ---
+  duration_ms: 233.286309
+  type: 'test'
+  ...
+# Subtest: check reports a stable operational diagnostic when validation times out
+ok 111 - check reports a stable operational diagnostic when validation times out
+  ---
+  duration_ms: 137.231028
+  type: 'test'
+  ...
+# Subtest: check reports missing Node on the Node validator path as a prerequisite failure
+ok 112 - check reports missing Node on the Node validator path as a prerequisite failure
+  ---
+  duration_ms: 164.528842
+  type: 'test'
+  ...
+# Subtest: check reports missing sh for an unmigrated shell validator
+ok 113 - check reports missing sh for an unmigrated shell validator
+  ---
+  duration_ms: 144.862707
+  type: 'test'
+  ...
+# Subtest: check fails safely when the repository validator is missing
+ok 114 - check fails safely when the repository validator is missing
+  ---
+  duration_ms: 135.508138
+  type: 'test'
+  ...
+# Subtest: close run adds one valid immutable closure and preserves accumulated provenance
+ok 115 - close run adds one valid immutable closure and preserves accumulated provenance
+  ---
+  duration_ms: 1130.563304
+  type: 'test'
+  ...
+# Subtest: close run accepts each verdict and an end time equal to the start time
+ok 116 - close run accepts each verdict and an end time equal to the start time
+  ---
+  duration_ms: 802.701776
+  type: 'test'
+  ...
+# Subtest: close run rejects unknown, closed, and invalid lifecycle requests without changing bytes
+ok 117 - close run rejects unknown, closed, and invalid lifecycle requests without changing bytes
+  ---
+  duration_ms: 697.662492
+  type: 'test'
+  ...
+# Subtest: close run rejects malformed existing run data without rewriting it
+ok 118 - close run rejects malformed existing run data without rewriting it
+  ---
+  duration_ms: 164.508759
+  type: 'test'
+  ...
+# Subtest: a close that wins the run lock makes a blocked claim fail without an orphan
+ok 119 - a close that wins the run lock makes a blocked claim fail without an orphan
+  ---
+  duration_ms: 353.15447
+  type: 'test'
+  ...
+# Subtest: claim provenance written before close is preserved by closure
+ok 120 - claim provenance written before close is preserved by closure
+  ---
+  duration_ms: 318.479908
+  type: 'test'
+  ...
+# Subtest: two simultaneous closers produce one closure and one non-mutating rejection
+ok 121 - two simultaneous closers produce one closure and one non-mutating rejection
+  ---
+  duration_ms: 520.0825
+  type: 'test'
+  ...
+# Subtest: agent instructions have one shared source and a Claude-specific entry point
+ok 122 - agent instructions have one shared source and a Claude-specific entry point
+  ---
+  duration_ms: 57.80344
+  type: 'test'
+  ...
+# Subtest: contribution guide states every prerequisite and supported platform boundary
+ok 123 - contribution guide states every prerequisite and supported platform boundary
+  ---
+  duration_ms: 19.338027
+  type: 'test'
+  ...
+# Subtest: contribution guide defines v1 scope and concrete extension points
+ok 124 - contribution guide defines v1 scope and concrete extension points
+  ---
+  duration_ms: 10.065164
+  type: 'test'
+  ...
+# Subtest: contribution guide explains the complete runtime flow and ownership boundaries
+ok 125 - contribution guide explains the complete runtime flow and ownership boundaries
+  ---
+  duration_ms: 19.829547
+  type: 'test'
+  ...
+# Subtest: contribution guide fixes the supported platform and agent-adapter contract
+ok 126 - contribution guide fixes the supported platform and agent-adapter contract
+  ---
+  duration_ms: 13.424284
+  type: 'test'
+  ...
+# Subtest: contribution guide specifies test-first workflow and complete quality gates
+ok 127 - contribution guide specifies test-first workflow and complete quality gates
+  ---
+  duration_ms: 8.765294
+  type: 'test'
+  ...
+# Subtest: contribution guide documents recovery and known scale limits
+ok 128 - contribution guide documents recovery and known scale limits
+  ---
+  duration_ms: 13.339093
+  type: 'test'
+  ...
+# Subtest: diagnostic reference covers every public code and stable exit class
+ok 129 - diagnostic reference covers every public code and stable exit class
+  ---
+  duration_ms: 16.117375
+  type: 'test'
+  ...
+# Subtest: SQLite and PostgreSQL remain a future good-first-issue design exploration
+ok 130 - SQLite and PostgreSQL remain a future good-first-issue design exploration
+  ---
+  duration_ms: 10.432795
+  type: 'test'
+  ...
+# Subtest: issue and pull-request templates require actionable engineering context
+ok 131 - issue and pull-request templates require actionable engineering context
+  ---
+  duration_ms: 28.832532
+  type: 'test'
+  ...
+# Subtest: CI and repository settings cover all supported platforms and governance
+ok 132 - CI and repository settings cover all supported platforms and governance
+  ---
+  duration_ms: 20.706672
+  type: 'test'
+  ...
+# Subtest: doctor reports a healthy valid graph with separate zero counts
+ok 133 - doctor reports a healthy valid graph with separate zero counts
+  ---
+  duration_ms: 558.417331
+  type: 'test'
+  ...
+# Subtest: warning-only doctor result succeeds and identifies orphan entities
+ok 134 - warning-only doctor result succeeds and identifies orphan entities
+  ---
+  duration_ms: 515.863678
+  type: 'test'
+  ...
+# Subtest: doctor accumulates multiple evidence errors and warnings with separate counts
+ok 135 - doctor accumulates multiple evidence errors and warnings with separate counts
+  ---
+  duration_ms: 458.049233
+  type: 'test'
+  ...
+# Subtest: doctor retains canonical validator failures and still emits a summary
+ok 136 - doctor retains canonical validator failures and still emits a summary
+  ---
+  duration_ms: 417.518791
+  type: 'test'
+  ...
+# Subtest: doctor maps validator timeout to operational failure without deep reads
+ok 137 - doctor maps validator timeout to operational failure without deep reads
+  ---
+  duration_ms: 137.687518
+  type: 'test'
+  ...
+# Subtest: creates a complete scaffold with exact packaged content
+ok 138 - creates a complete scaffold with exact packaged content
+  ---
+  duration_ms: 386.913577
+  type: 'test'
+  ...
+# Subtest: adds the Node validator when the legacy validator is package-owned
+ok 139 - adds the Node validator when the legacy validator is package-owned
+  ---
+  duration_ms: 476.298212
+  type: 'test'
+  ...
+# Subtest: does not sideline a modified legacy validator during migration
+ok 140 - does not sideline a modified legacy validator during migration
+  ---
+  duration_ms: 421.672873
+  type: 'test'
+  ...
+# Subtest: repeat initialization preserves graph data and evidence byte-for-byte
+ok 141 - repeat initialization preserves graph data and evidence byte-for-byte
+  ---
+  duration_ms: 338.303769
+  type: 'test'
+  ...
+# Subtest: --force refreshes only generated documentation
+ok 142 - --force refreshes only generated documentation
+  ---
+  duration_ms: 436.142737
+  type: 'test'
+  ...
+# Subtest: an interrupted atomic refresh preserves the old file and a retry recovers
+ok 143 - an interrupted atomic refresh preserves the old file and a retry recovers
+  ---
+  duration_ms: 569.863704
+  type: 'test'
+  ...
+# Subtest: default and forced init preserve existing agent guidance and add the discoverable skill
+ok 144 - default and forced init preserve existing agent guidance and add the discoverable skill
+  ---
+  duration_ms: 391.078754
+  type: 'test'
+  ...
+# Subtest: Codex integration creates one managed block and is idempotent
+ok 145 - Codex integration creates one managed block and is idempotent
+  ---
+  duration_ms: 603.244725
+  type: 'test'
+  ...
+# Subtest: Codex integration appends with the existing CRLF convention and no lost bytes
+ok 146 - Codex integration appends with the existing CRLF convention and no lost bytes
+  ---
+  duration_ms: 363.522891
+  type: 'test'
+  ...
+# Subtest: Codex integration refreshes only its valid owned span
+ok 147 - Codex integration refreshes only its valid owned span
+  ---
+  duration_ms: 282.7461
+  type: 'test'
+  ...
+# Subtest: malformed Codex markers stop initialization before any repository writes
+ok 148 - malformed Codex markers stop initialization before any repository writes
+  ---
+  duration_ms: 848.142562
+  type: 'test'
+  ...
+# Subtest: a wrong-type AGENTS.md destination is preserved and rejected before writes
+ok 149 - a wrong-type AGENTS.md destination is preserved and rejected before writes
+  ---
+  duration_ms: 248.808358
+  type: 'test'
+  ...
+# Subtest: Codex integration rejects a concurrent AGENTS.md change without overwriting it
+ok 150 - Codex integration rejects a concurrent AGENTS.md change without overwriting it
+  ---
+  duration_ms: 353.885699
+  type: 'test'
+  ...
+# Subtest: installs the default hook atomically with its executable mode
+ok 151 - installs the default hook atomically with its executable mode
+  ---
+  duration_ms: 331.385069
+  type: 'test'
+  ...
+# Subtest: creates and respects relative and absolute custom hook directories
+ok 152 - creates and respects relative and absolute custom hook directories
+  ---
+  duration_ms: 674.341866
+  type: 'test'
+  ...
+# Subtest: reports an exact existing GraphKeeper hook as already installed
+ok 153 - reports an exact existing GraphKeeper hook as already installed
+  ---
+  duration_ms: 377.974325
+  type: 'test'
+  ...
+# Subtest: atomically migrates the exact package-owned legacy hook
+ok 154 - atomically migrates the exact package-owned legacy hook
+  ---
+  duration_ms: 304.096149
+  type: 'test'
+  ...
+# Subtest: legacy hook migration rejects a concurrent edit without overwriting it
+ok 155 - legacy hook migration rejects a concurrent edit without overwriting it
+  ---
+  duration_ms: 358.984306
+  type: 'test'
+  ...
+# Subtest: never overwrites a third-party hook and writes chaining fallback guidance
+ok 156 - never overwrites a third-party hook and writes chaining fallback guidance
+  ---
+  duration_ms: 370.686892
+  type: 'test'
+  ...
+# Subtest: refreshes an exact legacy fallback while preserving the third-party hook
+ok 157 - refreshes an exact legacy fallback while preserving the third-party hook
+  ---
+  duration_ms: 365.771505
+  type: 'test'
+  ...
+# Subtest: treats a modified marker-bearing hook as a collision
+ok 158 - treats a modified marker-bearing hook as a collision
+  ---
+  duration_ms: 321.444343
+  type: 'test'
+  ...
+# Subtest: does not attempt hook installation in a non-Git directory
+not ok 159 - does not attempt hook installation in a non-Git directory
+  ---
+  duration_ms: 111.8031
+  type: 'test'
+  location: '/tmp/graphkeeper-bench-c-20260907.aJM0YZ/source/dist/tests/integration/init-hooks.test.js:174:1'
+  failureType: 'testCodeFailure'
+  error: 'unable to resolve Git hook directory: fatal: not a git repository (or any of the parent directories): .git'
+  code: 'GK004'
+  name: 'GraphKeeperError'
+  stack: |-
+    gitFailure (file:///tmp/graphkeeper-bench-c-20260907.aJM0YZ/source/dist/src/lib/git.js:10:12)
+    resolveHooksPath (file:///tmp/graphkeeper-bench-c-20260907.aJM0YZ/source/dist/src/lib/git.js:45:15)
+    process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    async prepareHookPlan (file:///tmp/graphkeeper-bench-c-20260907.aJM0YZ/source/dist/src/commands/init.js:210:34)
+    async prepareInitialization (file:///tmp/graphkeeper-bench-c-20260907.aJM0YZ/source/dist/src/commands/init.js:502:40)
+    async initialize (file:///tmp/graphkeeper-bench-c-20260907.aJM0YZ/source/dist/src/commands/init.js:617:32)
+    async TestContext.<anonymous> (file:///tmp/graphkeeper-bench-c-20260907.aJM0YZ/source/dist/tests/integration/init-hooks.test.js:177:24)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: accepts Node 18+ and Git on native Windows without probing sh or jq
+ok 160 - accepts Node 18+ and Git on native Windows without probing sh or jq
+  ---
+  duration_ms: 39.751162
+  type: 'test'
+  ...
+# Subtest: rejects Node older than 18 with an install link
+ok 161 - rejects Node older than 18 with an install link
+  ---
+  duration_ms: 26.868742
+  type: 'test'
+  ...
+# Subtest: rejects missing Git before mutation
+ok 162 - rejects missing Git before mutation
+  ---
+  duration_ms: 21.364081
+  type: 'test'
+  ...
+# Subtest: query returns only active claims in created/id order with complete provenance
+ok 163 - query returns only active claims in created/id order with complete provenance
+  ---
+  duration_ms: 539.505534
+  type: 'test'
+  ...
+# Subtest: query uses claim ID as a stable secondary sort key
+ok 164 - query uses claim ID as a stable secondary sort key
+  ---
+  duration_ms: 444.158004
+  type: 'test'
+  ...
+# Subtest: query returns validator failures before attempting claim selection
+ok 165 - query returns validator failures before attempting claim selection
+  ---
+  duration_ms: 445.524999
+  type: 'test'
+  ...
+# Subtest: query performs no selector subprocess after validation
+ok 166 - query performs no selector subprocess after validation
+  ---
+  duration_ms: 212.044742
+  type: 'test'
+  ...
+# Subtest: query uses a fifteen-second default timeout for validation
+ok 167 - query uses a fifteen-second default timeout for validation
+  ---
+  duration_ms: 218.5683
+  type: 'test'
+  ...
+# Subtest: query applies its timeout to validation and never selects after validation timeout
+ok 168 - query applies its timeout to validation and never selects after validation timeout
+  ---
+  duration_ms: 169.934007
+  type: 'test'
+  ...
+# Subtest: query maps a post-validation claims parse race to GK004
+ok 169 - query maps a post-validation claims parse race to GK004
+  ---
+  duration_ms: 223.191801
+  type: 'test'
+  ...
+# Subtest: query returns only the tip of every correction chain plus unsuperseded claims
+ok 170 - query returns only the tip of every correction chain plus unsuperseded claims
+  ---
+  duration_ms: 548.83195
+  type: 'test'
+  ...
+# Subtest: alias queries derive the same active chain tips without an active-status field
+ok 171 - alias queries derive the same active chain tips without an active-status field
+  ---
+  duration_ms: 437.666268
+  type: 'test'
+  ...
+# Subtest: release README covers onboarding, operation, recovery, limits, and future storage
+ok 172 - release README covers onboarding, operation, recovery, limits, and future storage
+  ---
+  duration_ms: 51.191115
+  type: 'test'
+  ...
+# Subtest: append command reference documents the explicit create-claim-close lifecycle
+ok 173 - append command reference documents the explicit create-claim-close lifecycle
+  ---
+  duration_ms: 9.630682
+  type: 'test'
+  ...
+# Subtest: public documentation identifies installed contextual claim help as authoritative
+ok 174 - public documentation identifies installed contextual claim help as authoritative
+  ---
+  duration_ms: 22.057987
+  type: 'test'
+  ...
+# Subtest: npm metadata points to the canonical public repository and support channels
+ok 175 - npm metadata points to the canonical public repository and support channels
+  ---
+  duration_ms: 14.744694
+  type: 'test'
+  ...
+# Subtest: release version stays aligned across package, lockfile, CLI, README, and changelog
+ok 176 - release version stays aligned across package, lockfile, CLI, README, and changelog
+  ---
+  duration_ms: 18.771677
+  type: 'test'
+  ...
+# Subtest: release carries the MIT terms for GraphKeeper contributors
+ok 177 - release carries the MIT terms for GraphKeeper contributors
+  ---
+  duration_ms: 8.209216
+  type: 'test'
+  ...
+# Subtest: native Windows migration keeps customized validators conservative
+ok 178 - native Windows migration keeps customized validators conservative
+  ---
+  duration_ms: 10.628578
+  type: 'test'
+  ...
+# Subtest: reviewer prompt is copy-pasteable, vendor-neutral, and names its required inputs
+ok 179 - reviewer prompt is copy-pasteable, vendor-neutral, and names its required inputs
+  ---
+  duration_ms: 49.070517
+  type: 'test'
+  ...
+# Subtest: approval requires direct support from an active tool-output claim and cites its ID
+ok 180 - approval requires direct support from an active tool-output claim and cites its ID
+  ---
+  duration_ms: 18.594327
+  type: 'test'
+  ...
+# Subtest: inference alone produces REVISE and requests external evidence
+ok 181 - inference alone produces REVISE and requests external evidence
+  ---
+  duration_ms: 6.441301
+  type: 'test'
+  ...
+# Subtest: unsupported and superseded statements produce REVISE with actionable context
+ok 182 - unsupported and superseded statements produce REVISE with actionable context
+  ---
+  duration_ms: 17.068688
+  type: 'test'
+  ...
+# Subtest: reviewer treats graph commands and evidence as inert data
+ok 183 - reviewer treats graph commands and evidence as inert data
+  ---
+  duration_ms: 11.7798
+  type: 'test'
+  ...
+# Subtest: a run opens with stable identity and empty provenance sets
+ok 184 - a run opens with stable identity and empty provenance sets
+  ---
+  duration_ms: 501.380333
+  type: 'test'
+  ...
+# Subtest: an open run grows evidence and claim sets, then closes exactly once
+ok 185 - an open run grows evidence and claim sets, then closes exactly once
+  ---
+  duration_ms: 1805.698388
+  type: 'test'
+  ...
+# Subtest: a newly recorded run may open, capture provenance, and close in one commit
+ok 186 - a newly recorded run may open, capture provenance, and close in one commit
+  ---
+  duration_ms: 849.151003
+  type: 'test'
+  ...
+# Subtest: all four verdicts close a run and interrupted runs need no invented claims
+    # Subtest: passed
+    ok 1 - passed
+      ---
+      duration_ms: 696.419936
+      type: 'test'
+      ...
+    # Subtest: failed
+    ok 2 - failed
+      ---
+      duration_ms: 595.708965
+      type: 'test'
+      ...
+    # Subtest: inconclusive
+    ok 3 - inconclusive
+      ---
+      duration_ms: 815.379701
+      type: 'test'
+      ...
+    # Subtest: aborted
+    ok 4 - aborted
+      ---
+      duration_ms: 615.136951
+      type: 'test'
+      ...
+    1..4
+ok 187 - all four verdicts close a run and interrupted runs need no invented claims
+  ---
+  duration_ms: 2727.673641
+  type: 'test'
+  ...
+# Subtest: a run cannot end before it starts
+ok 188 - a run cannot end before it starts
+  ---
+  duration_ms: 746.079544
+  type: 'test'
+  ...
+# Subtest: open-run provenance sets cannot lose committed entries
+ok 189 - open-run provenance sets cannot lose committed entries
+  ---
+  duration_ms: 1214.032545
+  type: 'test'
+  ...
+# Subtest: an optional task can be added once while open but cannot later change
+ok 190 - an optional task can be added once while open but cannot later change
+  ---
+  duration_ms: 1110.10826
+  type: 'test'
+  ...
+# Subtest: a closed run cannot reopen or mutate any field or provenance set
+ok 191 - a closed run cannot reopen or mutate any field or provenance set
+  ---
+  duration_ms: 2306.198202
+  type: 'test'
+  ...
+# Subtest: documents every claim and entity field with type, requirement, and enforcement
+ok 192 - documents every claim and entity field with type, requirement, and enforcement
+  ---
+  duration_ms: 32.739385
+  type: 'test'
+  ...
+# Subtest: documents exact source variants, IDs, timestamps, flat objects, and evidence refs
+ok 193 - documents exact source variants, IDs, timestamps, flat objects, and evidence refs
+  ---
+  duration_ms: 22.237538
+  type: 'test'
+  ...
+# Subtest: distinguishes fast hook checks, deep doctor checks, and behavioral guidance
+ok 194 - distinguishes fast hook checks, deep doctor checks, and behavioral guidance
+  ---
+  duration_ms: 9.148423
+  type: 'test'
+  ...
+# Subtest: documents atomic claims, grounded source selection, and confidence boundaries
+ok 195 - documents atomic claims, grounded source selection, and confidence boundaries
+  ---
+  duration_ms: 18.173875
+  type: 'test'
+  ...
+# Subtest: includes coherent examples for entity, run, tool output, and inference
+ok 196 - includes coherent examples for entity, run, tool output, and inference
+  ---
+  duration_ms: 4.026616
+  type: 'test'
+  ...
+# Subtest: includes canonical open, closed, verdict, and evidence-provenance examples
+ok 197 - includes canonical open, closed, verdict, and evidence-provenance examples
+  ---
+  duration_ms: 13.351473
+  type: 'test'
+  ...
+# Subtest: canonical validator records are readable by the TypeScript parsers
+    # Subtest: tool-output claim with a closed run and optional fields
+    ok 1 - tool-output claim with a closed run and optional fields
+      ---
+      duration_ms: 455.388145
+      type: 'test'
+      ...
+    # Subtest: inference claim with an open run and minimal entity
+    ok 2 - inference claim with an open run and minimal entity
+      ---
+      duration_ms: 498.264588
+      type: 'test'
+      ...
+    1..2
+ok 198 - canonical validator records are readable by the TypeScript parsers
+  ---
+  duration_ms: 1153.575537
+  type: 'test'
+  ...
+# Subtest: canonical validator and TypeScript parsers reject the same record-shape boundaries
+    # Subtest: unknown entity field
+    ok 1 - unknown entity field
+      ---
+      duration_ms: 500.29972
+      type: 'test'
+      ...
+    # Subtest: mixed inference source fields
+    ok 2 - mixed inference source fields
+      ---
+      duration_ms: 577.981768
+      type: 'test'
+      ...
+    # Subtest: inference without a basis
+    ok 3 - inference without a basis
+      ---
+      duration_ms: 605.571744
+      type: 'test'
+      ...
+    # Subtest: inference with confidence 1
+    ok 4 - inference with confidence 1
+      ---
+      duration_ms: 666.43875
+      type: 'test'
+      ...
+    # Subtest: run ending without a verdict
+    ok 5 - run ending without a verdict
+      ---
+      duration_ms: 853.126909
+      type: 'test'
+      ...
+    1..5
+ok 199 - canonical validator and TypeScript parsers reject the same record-shape boundaries
+  ---
+  duration_ms: 3233.468578
+  type: 'test'
+  ...
+# Subtest: has Codex-discoverable frontmatter with retrieval and recording triggers
+ok 200 - has Codex-discoverable frontmatter with retrieval and recording triggers
+  ---
+  duration_ms: 55.244233
+  type: 'test'
+  ...
+# Subtest: defines the vendor-neutral write, correct, resolve-identity, and exclude workflow
+ok 201 - defines the vendor-neutral write, correct, resolve-identity, and exclude workflow
+  ---
+  duration_ms: 9.440218
+  type: 'test'
+  ...
+# Subtest: teaches honest tool-output and inference sourcing
+ok 202 - teaches honest tool-output and inference sourcing
+  ---
+  duration_ms: 17.329487
+  type: 'test'
+  ...
+# Subtest: uses installed contextual help as the claim syntax source of truth
+ok 203 - uses installed contextual help as the claim syntax source of truth
+  ---
+  duration_ms: 10.43628
+  type: 'test'
+  ...
+# Subtest: teaches atomic claims, exact grounding, and bounded certainty
+ok 204 - teaches atomic claims, exact grounding, and bounded certainty
+  ---
+  duration_ms: 11.344951
+  type: 'test'
+  ...
+# Subtest: teaches exact alias reuse, safe new identity, and append-only correction
+ok 205 - teaches exact alias reuse, safe new identity, and append-only correction
+  ---
+  duration_ms: 11.438303
+  type: 'test'
+  ...
+# Subtest: requires retrieval-first investigation, stale-claim correction, and no blind trust
+ok 206 - requires retrieval-first investigation, stale-claim correction, and no blind trust
+  ---
+  duration_ms: 18.893457
+  type: 'test'
+  ...
+# Subtest: keeps structured detail in evidence and excludes session chatter
+ok 207 - keeps structured detail in evidence and excludes session chatter
+  ---
+  duration_ms: 11.713499
+  type: 'test'
+  ...
+# Subtest: labels every normative bullet as HOOK, DOCTOR, or GUIDANCE
+ok 208 - labels every normative bullet as HOOK, DOCTOR, or GUIDANCE
+  ---
+  duration_ms: 6.248912
+  type: 'test'
+  ...
+# Subtest: teaches the complete run and evidence lifecycle including interruption and concurrency
+ok 209 - teaches the complete run and evidence lifecycle including interruption and concurrency
+  ---
+  duration_ms: 19.896213
+  type: 'test'
+  ...
+# Subtest: teaches portable evidence citations and precise run-verdict reporting
+ok 210 - teaches portable evidence citations and precise run-verdict reporting
+  ---
+  duration_ms: 12.270036
+  type: 'test'
+  ...
+# Subtest: committed standalone validator matches its canonical TypeScript source
+ok 211 - committed standalone validator matches its canonical TypeScript source
+  ---
+  duration_ms: 595.841107
+  type: 'test'
+  ...
+# Subtest: standalone validator preserves usage diagnostics and exits
+ok 212 - standalone validator preserves usage diagnostics and exits
+  ---
+  duration_ms: 452.323845
+  type: 'test'
+  ...
+# Subtest: standalone Node validator checks a real repository without invoking sh or jq
+ok 213 - standalone Node validator checks a real repository without invoking sh or jq
+  ---
+  duration_ms: 938.080156
+  type: 'test'
+  ...
+# Subtest: starter graph records are empty top-level arrays
+ok 214 - starter graph records are empty top-level arrays
+  ---
+  duration_ms: 100.208996
+  type: 'test'
+  ...
+# Subtest: starter graph records pass the canonical validator
+ok 215 - starter graph records pass the canonical validator
+  ---
+  duration_ms: 719.752666
+  type: 'test'
+  ...
+# Subtest: baseline schema and agent guidance are useful and placeholder-free
+ok 216 - baseline schema and agent guidance are useful and placeholder-free
+  ---
+  duration_ms: 17.564151
+  type: 'test'
+  ...
+# Subtest: pre-commit is a minimal rule-free Node launcher for staged validation
+ok 217 - pre-commit is a minimal rule-free Node launcher for staged validation
+  ---
+  duration_ms: 11.568519
+  type: 'test'
+  ...
+# Subtest: installs one exact newer stable version globally without repository mutation
+ok 218 - installs one exact newer stable version globally without repository mutation
+  ---
+  duration_ms: 253.460746
+  type: 'test'
+  ...
+# Subtest: current and ahead versions succeed without an install process
+ok 219 - current and ahead versions succeed without an install process
+  ---
+  duration_ms: 2.072822
+  type: 'test'
+  ...
+# Subtest: native PowerShell invokes the npm CLI through Node without shell lookup
+ok 220 - native PowerShell invokes the npm CLI through Node without shell lookup
+  ---
+  duration_ms: 2.309229
+  type: 'test'
+  ...
+# Subtest: missing npm remains a prerequisite failure before install
+ok 221 - missing npm remains a prerequisite failure before install
+  ---
+  duration_ms: 7.732092
+  type: 'test'
+  ...
+# Subtest: registry, malformed output, timeout, and install failures are operational
+ok 222 - registry, malformed output, timeout, and install failures are operational
+  ---
+  duration_ms: 2.503361
+  type: 'test'
+  ...
+# Subtest: hostile registry text is rejected as data and never reaches install arguments
+ok 223 - hostile registry text is rejected as data and never reaches install arguments
+  ---
+  duration_ms: 1.31821
+  type: 'test'
+  ...
+# Subtest: v1 runtime stays local, single-repository, and free of excluded product modules
+ok 224 - v1 runtime stays local, single-repository, and free of excluded product modules
+  ---
+  duration_ms: 150.789012
+  type: 'test'
+  ...
+# Subtest: validator diagnostics identify missing and malformed graph paths with corrective guidance
+ok 225 - validator diagnostics identify missing and malformed graph paths with corrective guidance
+  ---
+  duration_ms: 1033.640709
+  type: 'test'
+  ...
+# Subtest: schema diagnostics identify the graph path and affected record ID
+ok 226 - schema diagnostics identify the graph path and affected record ID
+  ---
+  duration_ms: 715.327607
+  type: 'test'
+  ...
+# Subtest: relation diagnostics identify the conflicting record and target IDs
+ok 227 - relation diagnostics identify the conflicting record and target IDs
+  ---
+  duration_ms: 638.978074
+  type: 'test'
+  ...
+# Subtest: history diagnostics identify changed claim and evidence paths
+ok 228 - history diagnostics identify changed claim and evidence paths
+  ---
+  duration_ms: 1113.443171
+  type: 'test'
+  ...
+# Subtest: TypeScript path matches shell success and schema diagnostic ordering
+ok 229 - TypeScript path matches shell success and schema diagnostic ordering
+  ---
+  duration_ms: 1267.917211
+  type: 'test'
+  ...
+# Subtest: TypeScript path matches shell relationship context and detail
+ok 230 - TypeScript path matches shell relationship context and detail
+  ---
+  duration_ms: 561.287223
+  type: 'test'
+  ...
+# Subtest: TypeScript path matches shell claim history and evidence protection
+ok 231 - TypeScript path matches shell claim history and evidence protection
+  ---
+  duration_ms: 1350.816619
+  type: 'test'
+  ...
+# Subtest: TypeScript staged path matches shell index selection before first commit
+ok 232 - TypeScript staged path matches shell index selection before first commit
+  ---
+  duration_ms: 758.241555
+  type: 'test'
+  ...
+# Subtest: freezes shell validator success output and exit code
+ok 233 - freezes shell validator success output and exit code
+  ---
+  duration_ms: 631.594264
+  type: 'test'
+  ...
+# Subtest: freezes ordered shell schema diagnostics, contexts, summary, and exit code
+ok 234 - freezes ordered shell schema diagnostics, contexts, summary, and exit code
+  ---
+  duration_ms: 553.943762
+  type: 'test'
+  ...
+# Subtest: allows a valid staged graph before the first commit
+ok 235 - allows a valid staged graph before the first commit
+  ---
+  duration_ms: 804.459695
+  type: 'test'
+  ...
+# Subtest: rejects semantic claim mutation or removal after commit
+ok 236 - rejects semantic claim mutation or removal after commit
+  ---
+  duration_ms: 1621.717628
+  type: 'test'
+  ...
+# Subtest: allows entity set growth but rejects identity edits and set removal
+ok 237 - allows entity set growth but rejects identity edits and set removal
+  ---
+  duration_ms: 2427.045461
+  type: 'test'
+  ...
+# Subtest: allows one-way open-run growth and close, then rejects closed-run mutation
+ok 238 - allows one-way open-run growth and close, then rejects closed-run mutation
+  ---
+  duration_ms: 1468.431582
+  type: 'test'
+  ...
+# Subtest: protects committed evidence from modification, deletion, and rename
+ok 239 - protects committed evidence from modification, deletion, and rename
+  ---
+  duration_ms: 844.379954
+  type: 'test'
+  ...
+# Subtest: staged and worktree modes make the same decision for equivalent selected data
+ok 240 - staged and worktree modes make the same decision for equivalent selected data
+  ---
+  duration_ms: 2559.57504
+  type: 'test'
+  ...
+# Subtest: accumulates independent failures with stable codes and a final count
+ok 241 - accumulates independent failures with stable codes and a final count
+  ---
+  duration_ms: 830.162543
+  type: 'test'
+  ...
+# Subtest: rejects unsupported modes as usage errors
+ok 242 - rejects unsupported modes as usage errors
+  ---
+  duration_ms: 561.226425
+  type: 'test'
+  ...
+# Subtest: reports malformed JSON without attempting relationship checks
+ok 243 - reports malformed JSON without attempting relationship checks
+  ---
+  duration_ms: 523.289395
+  type: 'test'
+  ...
+# Subtest: reports a missing jq prerequisite before reading repository data
+ok 244 - reports a missing jq prerequisite before reading repository data
+  ---
+  duration_ms: 138.708156
+  type: 'test'
+  ...
+# Subtest: rejects jq older than 1.6 as a prerequisite failure
+ok 245 - rejects jq older than 1.6 as a prerequisite failure
+  ---
+  duration_ms: 139.934022
+  type: 'test'
+  ...
+# Subtest: rejects dangling entity, run, claim, and provenance relationships
+ok 246 - rejects dangling entity, run, claim, and provenance relationships
+  ---
+  duration_ms: 3128.530441
+  type: 'test'
+  ...
+# Subtest: rejects supersession forks
+ok 247 - rejects supersession forks
+  ---
+  duration_ms: 392.157714
+  type: 'test'
+  ...
+# Subtest: rejects supersession cycles
+ok 248 - rejects supersession cycles
+  ---
+  duration_ms: 353.141541
+  type: 'test'
+  ...
+# Subtest: accepts a conforming graph in worktree mode
+ok 249 - accepts a conforming graph in worktree mode
+  ---
+  duration_ms: 785.798976
+  type: 'test'
+  ...
+# Subtest: rejects non-array roots and malformed entity records with GK110
+ok 250 - rejects non-array roots and malformed entity records with GK110
+  ---
+  duration_ms: 2437.896049
+  type: 'test'
+  ...
+# Subtest: rejects malformed claim fields and source variants with GK120
+ok 251 - rejects malformed claim fields and source variants with GK120
+  ---
+  duration_ms: 2998.58657
+  type: 'test'
+  ...
+# Subtest: rejects malformed run fields and lifecycle with GK130
+ok 252 - rejects malformed run fields and lifecycle with GK130
+  ---
+  duration_ms: 1764.850659
+  type: 'test'
+  ...
+# Subtest: agent integration never follows a guidance-file symlink
+ok 253 - agent integration never follows a guidance-file symlink
+  ---
+  duration_ms: 401.011042
+  type: 'test'
+  ...
+# Subtest: agent integration never follows a symlinked skill parent
+ok 254 - agent integration never follows a symlinked skill parent
+  ---
+  duration_ms: 256.237835
+  type: 'test'
+  ...
+# Subtest: doctor rejects traversal references without reading outside the repository
+ok 255 - doctor rejects traversal references without reading outside the repository
+  ---
+  duration_ms: 823.70712
+  type: 'test'
+  ...
+# Subtest: doctor rejects an evidence symlink whose real target leaves evidence
+ok 256 - doctor rejects an evidence symlink whose real target leaves evidence
+  ---
+  duration_ms: 525.574048
+  type: 'test'
+  ...
+# Subtest: doctor evidence handling maps an unreadable file without retrying or executing it
+ok 257 - doctor evidence handling maps an unreadable file without retrying or executing it
+  ---
+  duration_ms: 136.519423
+  type: 'test'
+  ...
+# Subtest: doctor treats malicious evidence content as inert text
+ok 258 - doctor treats malicious evidence content as inert text
+  ---
+  duration_ms: 423.468389
+  type: 'test'
+  ...
+# Subtest: query treats malicious aliases and stored commands as inert data
+ok 259 - query treats malicious aliases and stored commands as inert data
+  ---
+  duration_ms: 629.625798
+  type: 'test'
+  ...
+# Subtest: query reports provenance without dereferencing a missing evidence file
+ok 260 - query reports provenance without dereferencing a missing evidence file
+  ---
+  duration_ms: 428.809638
+  type: 'test'
+  ...
+# Subtest: query works from a repository path containing spaces
+ok 261 - query works from a repository path containing spaces
+  ---
+  duration_ms: 382.157842
+  type: 'test'
+  ...
+# Subtest: release security gate rejects traversal and evidence symlink escape
+ok 262 - release security gate rejects traversal and evidence symlink escape
+  ---
+  duration_ms: 877.787477
+  type: 'test'
+  ...
+# Subtest: release security gate keeps commands and malicious evidence inert in paths with spaces
+ok 263 - release security gate keeps commands and malicious evidence inert in paths with spaces
+  ---
+  duration_ms: 677.368476
+  type: 'test'
+  ...
+# Subtest: release diagnostics redact stored secrets while reporting invalid records
+ok 264 - release diagnostics redact stored secrets while reporting invalid records
+  ---
+  duration_ms: 713.33053
+  type: 'test'
+  ...
+# Subtest: validator never executes stored commands or evidence contents
+ok 265 - validator never executes stored commands or evidence contents
+  ---
+  duration_ms: 371.627384
+  type: 'test'
+  ...
+# Subtest: validator rejects traversal and whitespace in evidence references as data
+ok 266 - validator rejects traversal and whitespace in evidence references as data
+  ---
+  duration_ms: 1228.092321
+  type: 'test'
+  ...
+# Subtest: fast validation checks evidence reference shape without dereferencing the file
+ok 267 - fast validation checks evidence reference shape without dereferencing the file
+  ---
+  duration_ms: 358.367796
+  type: 'test'
+  ...
+# Subtest: validator handles a repository root containing spaces without changing execution semantics
+ok 268 - validator handles a repository root containing spaces without changing execution semantics
+  ---
+  duration_ms: 624.492803
+  type: 'test'
+  ...
+# Subtest: registers explicit adapters with independent destinations
+ok 269 - registers explicit adapters with independent destinations
+  ---
+  duration_ms: 7.977303
+  type: 'test'
+  ...
+# Subtest: plans Claude create, append, refresh, and skip without changing outside bytes
+ok 270 - plans Claude create, append, refresh, and skip without changing outside bytes
+  ---
+  duration_ms: 3.330051
+  type: 'test'
+  ...
+# Subtest: plans Kilo guidance create, append, refresh, and skip without changing outside bytes
+ok 271 - plans Kilo guidance create, append, refresh, and skip without changing outside bytes
+  ---
+  duration_ms: 0.728844
+  type: 'test'
+  ...
+# Subtest: plans Windsurf guidance create, append, refresh, and skip without changing outside bytes
+ok 272 - plans Windsurf guidance create, append, refresh, and skip without changing outside bytes
+  ---
+  duration_ms: 1.433845
+  type: 'test'
+  ...
+# Subtest: plans Gemini CLI guidance create into GEMINI.md with its own marked block
+ok 273 - plans Gemini CLI guidance create into GEMINI.md with its own marked block
+  ---
+  duration_ms: 1.141409
+  type: 'test'
+  ...
+# Subtest: plans Kiro guidance create, append, refresh, and skip without changing outside bytes
+ok 274 - plans Kiro guidance create, append, refresh, and skip without changing outside bytes
+  ---
+  duration_ms: 1.102894
+  type: 'test'
+  ...
+# Subtest: plans Antigravity guidance create, append, refresh, and skip without changing outside bytes
+ok 275 - plans Antigravity guidance create, append, refresh, and skip without changing outside bytes
+  ---
+  duration_ms: 0.727743
+  type: 'test'
+  ...
+# Subtest: rejects missing, repeated, reversed, mixed, and malformed adapter markers
+ok 276 - rejects missing, repeated, reversed, mixed, and malformed adapter markers
+  ---
+  duration_ms: 2.556915
+  type: 'test'
+  ...
+# Subtest: removal deletes only the exact owned marker span
+ok 277 - removal deletes only the exact owned marker span
+  ---
+  duration_ms: 1.675571
+  type: 'test'
+  ...
+# Subtest: planning allows a properly-paired registered sibling block in a shared guidance file
+ok 278 - planning allows a properly-paired registered sibling block in a shared guidance file
+  ---
+  duration_ms: 2.867324
+  type: 'test'
+  ...
+# Subtest: Cursor planning appends a third properly-paired block into a shared AGENTS.md
+ok 279 - Cursor planning appends a third properly-paired block into a shared AGENTS.md
+  ---
+  duration_ms: 0.958648
+  type: 'test'
+  ...
+# Subtest: removal in a shared guidance file preserves a properly-paired sibling block
+ok 280 - removal in a shared guidance file preserves a properly-paired sibling block
+  ---
+  duration_ms: 0.657225
+  type: 'test'
+  ...
+# Subtest: every registered adapter satisfies the contract with unique, ordered ids
+ok 281 - every registered adapter satisfies the contract with unique, ordered ids
+  ---
+  duration_ms: 1.654663
+  type: 'test'
+  ...
+# Subtest: cli derives the agent grammar from AGENT_IDS instead of a literal codex|claude string
+ok 282 - cli derives the agent grammar from AGENT_IDS instead of a literal codex|claude string
+  ---
+  duration_ms: 57.589959
+  type: 'test'
+  ...
+# Subtest: init derives its skill-scaffolding skip set from adapter data, not a hardcoded codex literal
+ok 283 - init derives its skill-scaffolding skip set from adapter data, not a hardcoded codex literal
+  ---
+  duration_ms: 3.327025
+  type: 'test'
+  ...
+# Subtest: parseAppendArguments parses a tool_output claim
+ok 284 - parseAppendArguments parses a tool_output claim
+  ---
+  duration_ms: 6.85726
+  type: 'test'
+  ...
+# Subtest: parseAppendArguments parses an inference claim with basis
+ok 285 - parseAppendArguments parses an inference claim with basis
+  ---
+  duration_ms: 0.867038
+  type: 'test'
+  ...
+# Subtest: parseAppendArguments rejects unknown claim flag
+ok 286 - parseAppendArguments rejects unknown claim flag
+  ---
+  duration_ms: 2.922804
+  type: 'test'
+  ...
+# Subtest: claim parser acceptance and contextual help derive from one complete option catalogue
+ok 287 - claim parser acceptance and contextual help derive from one complete option catalogue
+  ---
+  duration_ms: 2.19882
+  type: 'test'
+  ...
+# Subtest: parseAppendArguments rejects invalid kind and verdict
+ok 288 - parseAppendArguments rejects invalid kind and verdict
+  ---
+  duration_ms: 1.01211
+  type: 'test'
+  ...
+# Subtest: parseAppendArguments parses a run with evidence and claims-written lists
+ok 289 - parseAppendArguments parses a run with evidence and claims-written lists
+  ---
+  duration_ms: 1.128204
+  type: 'test'
+  ...
+# Subtest: buildClaim and buildRun produce records that round-trip
+ok 290 - buildClaim and buildRun produce records that round-trip
+  ---
+  duration_ms: 2.8444
+  type: 'test'
+  ...
+# Subtest: parseCloseArguments accepts the exact close-run contract in any flag order
+ok 291 - parseCloseArguments accepts the exact close-run contract in any flag order
+  ---
+  duration_ms: 6.856435
+  type: 'test'
+  ...
+# Subtest: parseCloseArguments accepts every supported verdict
+ok 292 - parseCloseArguments accepts every supported verdict
+  ---
+  duration_ms: 1.448427
+  type: 'test'
+  ...
+# Subtest: parseCloseArguments rejects unsupported record types and malformed flag grammar
+ok 293 - parseCloseArguments rejects unsupported record types and malformed flag grammar
+  ---
+  duration_ms: 2.545728
+  type: 'test'
+  ...
+# Subtest: resolveContextualHelp selects only an exact registered leading command path
+ok 294 - resolveContextualHelp selects only an exact registered leading command path
+  ---
+  duration_ms: 3.502083
+  type: 'test'
+  ...
+# Subtest: renderCommandHelp renders ordered usage, details, options, and examples
+ok 295 - renderCommandHelp renders ordered usage, details, options, and examples
+  ---
+  duration_ms: 1.357275
+  type: 'test'
+  ...
+# Subtest: renderCommandHelp is deterministic and does not mutate topic definitions
+ok 296 - renderCommandHelp is deterministic and does not mutate topic definitions
+  ---
+  duration_ms: 3.322165
+  type: 'test'
+  ...
+# Subtest: reports dangling entity, run, supersedes, and run-claim references
+ok 297 - reports dangling entity, run, supersedes, and run-claim references
+  ---
+  duration_ms: 8.072122
+  type: 'test'
+  ...
+# Subtest: reports a run listing a claim produced by a different run
+ok 298 - reports a run listing a claim produced by a different run
+  ---
+  duration_ms: 1.098951
+  type: 'test'
+  ...
+# Subtest: collects claim and entity source-document evidence ownership
+ok 299 - collects claim and entity source-document evidence ownership
+  ---
+  duration_ms: 0.998447
+  type: 'test'
+  ...
+# Subtest: turns a dangling source-doc inspection into a precise doctor error
+ok 300 - turns a dangling source-doc inspection into a precise doctor error
+  ---
+  duration_ms: 0.969561
+  type: 'test'
+  ...
+# Subtest: warns once for each entity that no claim uses
+ok 301 - warns once for each entity that no claim uses
+  ---
+  duration_ms: 0.933155
+  type: 'test'
+  ...
+# Subtest: maps stable error categories to the public exit codes
+ok 302 - maps stable error categories to the public exit codes
+  ---
+  duration_ms: 5.165916
+  type: 'test'
+  ...
+# Subtest: formats stable GK diagnostics without losing record context
+ok 303 - formats stable GK diagnostics without losing record context
+  ---
+  duration_ms: 1.727382
+  type: 'test'
+  ...
+# Subtest: keeps normal output on stdout and diagnostics on stderr
+ok 304 - keeps normal output on stdout and diagnostics on stderr
+  ---
+  duration_ms: 0.753145
+  type: 'test'
+  ...
+# Subtest: logical line counting treats LF and CRLF identically and ignores a trailing terminator
+ok 305 - logical line counting treats LF and CRLF identically and ignores a trailing terminator
+  ---
+  duration_ms: 5.119699
+  type: 'test'
+  ...
+# Subtest: accepts valid UTF-8 evidence and positive inclusive ranges
+ok 306 - accepts valid UTF-8 evidence and positive inclusive ranges
+  ---
+  duration_ms: 82.105548
+  type: 'test'
+  ...
+# Subtest: rejects invalid UTF-8 and binary control content
+ok 307 - rejects invalid UTF-8 and binary control content
+  ---
+  duration_ms: 37.788107
+  type: 'test'
+  ...
+# Subtest: reports zero-line, zero-based, reversed, and out-of-bounds ranges precisely
+ok 308 - reports zero-line, zero-based, reversed, and out-of-bounds ranges precisely
+  ---
+  duration_ms: 29.488839
+  type: 'test'
+  ...
+# Subtest: loads worktree graph, optional HEAD baseline, and worktree evidence changes
+ok 309 - loads worktree graph, optional HEAD baseline, and worktree evidence changes
+  ---
+  duration_ms: 466.319522
+  type: 'test'
+  ...
+# Subtest: staged mode reads index blobs instead of worktree files
+ok 310 - staged mode reads index blobs instead of worktree files
+  ---
+  duration_ms: 293.253448
+  type: 'test'
+  ...
+# Subtest: missing staged files become empty arrays with ordered GK101 snapshot issues
+ok 311 - missing staged files become empty arrays with ordered GK101 snapshot issues
+  ---
+  duration_ms: 169.816629
+  type: 'test'
+  ...
+# Subtest: detects an unborn repository and then an existing HEAD
+ok 312 - detects an unborn repository and then an existing HEAD
+  ---
+  duration_ms: 299.203688
+  type: 'test'
+  ...
+# Subtest: reads exactly the staged blob instead of worktree content
+ok 313 - reads exactly the staged blob instead of worktree content
+  ---
+  duration_ms: 135.081634
+  type: 'test'
+  ...
+# Subtest: resolves relative and absolute custom hooksPath values
+ok 314 - resolves relative and absolute custom hooksPath values
+  ---
+  duration_ms: 155.024616
+  type: 'test'
+  ...
+# Subtest: translates Git failures to stable operational errors
+ok 315 - translates Git failures to stable operational errors
+  ---
+  duration_ms: 23.277526
+  type: 'test'
+  ...
+# Subtest: plans a deterministic create action for every target in a new repository
+ok 316 - plans a deterministic create action for every target in a new repository
+  ---
+  duration_ms: 62.717819
+  type: 'test'
+  ...
+# Subtest: plans create and skip actions for a partial repository without mutation
+ok 317 - plans create and skip actions for a partial repository without mutation
+  ---
+  duration_ms: 24.727785
+  type: 'test'
+  ...
+# Subtest: plans only documentation refreshes under force for an existing scaffold
+ok 318 - plans only documentation refreshes under force for an existing scaffold
+  ---
+  duration_ms: 42.973463
+  type: 'test'
+  ...
+# Subtest: adds one prominent enforcement warning for a non-Git directory
+ok 319 - adds one prominent enforcement warning for a non-Git directory
+  ---
+  duration_ms: 11.443897
+  type: 'test'
+  ...
+# Subtest: plans create, append, refresh, and skip for the owned Codex block
+ok 320 - plans create, append, refresh, and skip for the owned Codex block
+  ---
+  duration_ms: 2.788553
+  type: 'test'
+  ...
+# Subtest: rejects malformed, repeated, and reversed Codex markers
+ok 321 - rejects malformed, repeated, and reversed Codex markers
+  ---
+  duration_ms: 1.974518
+  type: 'test'
+  ...
+# Subtest: detects adjacent duplicate keys in the same object
+ok 322 - detects adjacent duplicate keys in the same object
+  ---
+  duration_ms: 7.411046
+  type: 'test'
+  ...
+# Subtest: tracks duplicate scope across nested objects and arrays
+ok 323 - tracks duplicate scope across nested objects and arrays
+  ---
+  duration_ms: 1.17488
+  type: 'test'
+  ...
+# Subtest: does not confuse repeated scalar values or keys in different containers
+ok 324 - does not confuse repeated scalar values or keys in different containers
+  ---
+  duration_ms: 0.933063
+  type: 'test'
+  ...
+# Subtest: treats escaped and literal spellings of the same property name as duplicates
+ok 325 - treats escaped and literal spellings of the same property name as duplicates
+  ---
+  duration_ms: 3.975813
+  type: 'test'
+  ...
+# Subtest: reports every duplicate occurrence after the first
+ok 326 - reports every duplicate occurrence after the first
+  ---
+  duration_ms: 0.937832
+  type: 'test'
+  ...
+# Subtest: rejects malformed JSON without evaluating any content
+ok 327 - rejects malformed JSON without evaluating any content
+  ---
+  duration_ms: 2.370394
+  type: 'test'
+  ...
+# Subtest: parses npm 10 array pack output
+ok 328 - parses npm 10 array pack output
+  ---
+  duration_ms: 6.923651
+  type: 'test'
+  ...
+# Subtest: parses npm 12 keyed pack output
+ok 329 - parses npm 12 keyed pack output
+  ---
+  duration_ms: 0.693722
+  type: 'test'
+  ...
+# Subtest: rejects empty, multiple, and malformed pack manifests
+ok 330 - rejects empty, multiple, and malformed pack manifests
+  ---
+  duration_ms: 1.705924
+  type: 'test'
+  ...
+# Subtest: mutateJsonArrayFile reads, mutates, and atomically persists a JSON array
+ok 331 - mutateJsonArrayFile reads, mutates, and atomically persists a JSON array
+  ---
+  duration_ms: 59.183274
+  type: 'test'
+  ...
+# Subtest: two sequential appends both persist
+ok 332 - two sequential appends both persist
+  ---
+  duration_ms: 120.369402
+  type: 'test'
+  ...
+# Subtest: two concurrent appends to the same file lose no records (race regression)
+ok 333 - two concurrent appends to the same file lose no records (race regression)
+  ---
+  duration_ms: 142.538347
+  type: 'test'
+  ...
+# Subtest: retries and succeeds when the file changes concurrently between attempts
+ok 334 - retries and succeeds when the file changes concurrently between attempts
+  ---
+  duration_ms: 136.516489
+  type: 'test'
+  ...
+# Subtest: fails loudly when the file keeps changing beyond the max attempts
+ok 335 - fails loudly when the file keeps changing beyond the max attempts
+  ---
+  duration_ms: 112.962667
+  type: 'test'
+  ...
+# Subtest: discovers the nearest repository root from a nested directory
+ok 336 - discovers the nearest repository root from a nested directory
+  ---
+  duration_ms: 193.207315
+  type: 'test'
+  ...
+# Subtest: returns null when no repository marker exists
+not ok 337 - returns null when no repository marker exists
+  ---
+  duration_ms: 41.278819
+  type: 'test'
+  location: '/tmp/graphkeeper-bench-c-20260907.aJM0YZ/source/dist/tests/unit/paths.test.js:18:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    '/tmp' !== null
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: ~
+  actual: '/tmp'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///tmp/graphkeeper-bench-c-20260907.aJM0YZ/source/dist/tests/unit/paths.test.js:21:16)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: resolves contained paths and rejects absolute or traversal paths
+ok 338 - resolves contained paths and rejects absolute or traversal paths
+  ---
+  duration_ms: 30.973671
+  type: 'test'
+  ...
+# Subtest: rejects a symlink whose real target leaves the evidence directory
+ok 339 - rejects a symlink whose real target leaves the evidence directory
+  ---
+  duration_ms: 60.888923
+  type: 'test'
+  ...
+# Subtest: runs a fixed executable with an explicit argument array
+ok 340 - runs a fixed executable with an explicit argument array
+  ---
+  duration_ms: 333.479899
+  type: 'test'
+  ...
+# Subtest: reports timeout without throwing
+ok 341 - reports timeout without throwing
+  ---
+  duration_ms: 95.200348
+  type: 'test'
+  ...
+# Subtest: reports a missing executable and prerequisite probe failure
+ok 342 - reports a missing executable and prerequisite probe failure
+  ---
+  duration_ms: 465.351521
+  type: 'test'
+  ...
+# Subtest: never evaluates stored command text as shell syntax
+ok 343 - never evaluates stored command text as shell syntax
+  ---
+  duration_ms: 109.225553
+  type: 'test'
+  ...
+# Subtest: canonical entity ID resolves exactly and wins over an alias collision
+ok 344 - canonical entity ID resolves exactly and wins over an alias collision
+  ---
+  duration_ms: 3.865954
+  type: 'test'
+  ...
+# Subtest: an exact unique alias resolves to its canonical entity
+ok 345 - an exact unique alias resolves to its canonical entity
+  ---
+  duration_ms: 0.843746
+  type: 'test'
+  ...
+# Subtest: a shared exact alias is ambiguous with sorted candidate IDs
+ok 346 - a shared exact alias is ambiguous with sorted candidate IDs
+  ---
+  duration_ms: 4.384985
+  type: 'test'
+  ...
+# Subtest: unknown and inexact subjects are not guessed
+ok 347 - unknown and inexact subjects are not guessed
+  ---
+  duration_ms: 0.667771
+  type: 'test'
+  ...
+# Subtest: a known entity with no active claims has a distinct successful empty output
+ok 348 - a known entity with no active claims has a distinct successful empty output
+  ---
+  duration_ms: 2.386991
+  type: 'test'
+  ...
+# Subtest: active claim selection mirrors global supersession and stable ordinal ordering
+ok 349 - active claim selection mirrors global supersession and stable ordinal ordering
+  ---
+  duration_ms: 1.389095
+  type: 'test'
+  ...
+# Subtest: accepts conforming claim, entity, and closed run records
+ok 350 - accepts conforming claim, entity, and closed run records
+  ---
+  duration_ms: 43.010785
+  type: 'test'
+  ...
+# Subtest: accepts inference sources and open runs
+ok 351 - accepts inference sources and open runs
+  ---
+  duration_ms: 11.633444
+  type: 'test'
+  ...
+# Subtest: rejects invalid claim IDs, timestamps, confidence, and unknown fields
+ok 352 - rejects invalid claim IDs, timestamps, confidence, and unknown fields
+  ---
+  duration_ms: 27.030137
+  type: 'test'
+  ...
+# Subtest: enforces exact source variants and canonical evidence refs
+ok 353 - enforces exact source variants and canonical evidence refs
+  ---
+  duration_ms: 1.910327
+  type: 'test'
+  ...
+# Subtest: rejects duplicate IDs, malformed entities, and invalid run lifecycle
+ok 354 - rejects duplicate IDs, malformed entities, and invalid run lifecycle
+  ---
+  duration_ms: 13.209977
+  type: 'test'
+  ...
+# Subtest: requires top-level arrays
+ok 355 - requires top-level arrays
+  ---
+  duration_ms: 0.965618
+  type: 'test'
+  ...
+# Subtest: exposes structured record issues without changing fail-fast parser behavior
+ok 356 - exposes structured record issues without changing fail-fast parser behavior
+  ---
+  duration_ms: 1.670894
+  type: 'test'
+  ...
+# Subtest: resolves npm without a Windows command shim or shell
+ok 357 - resolves npm without a Windows command shim or shell
+  ---
+  duration_ms: 10.728716
+  type: 'test'
+  ...
+# Subtest: parses stable semantic versions into numeric components
+ok 358 - parses stable semantic versions into numeric components
+  ---
+  duration_ms: 2.311429
+  type: 'test'
+  ...
+# Subtest: rejects malformed, prerelease, build, padded, and hostile versions
+ok 359 - rejects malformed, prerelease, build, padded, and hostile versions
+  ---
+  duration_ms: 1.15168
+  type: 'test'
+  ...
+# Subtest: compares major, minor, and patch components numerically
+ok 360 - compares major, minor, and patch components numerically
+  ---
+  duration_ms: 1.71216
+  type: 'test'
+  ...
+# Subtest: comparison rejects an invalid running or registry version
+ok 361 - comparison rejects an invalid running or registry version
+  ---
+  duration_ms: 2.544535
+  type: 'test'
+  ...
+1..361
+# tests 378
+# suites 0
+# pass 375
+# fail 3
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 27059.942808

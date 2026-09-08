@@ -1,0 +1,6 @@
+Exact captured evidence and snapshot: request-handler.txt
+Exact captured evidence and snapshot: request-processor.txt
+Exact captured evidence and snapshot: request-validation.txt
+Six claims and one closed run have reciprocal links; application unchanged.
+HEAD remains setup commit: no introducing memory commit.
+Interrupted-state consistency verified; no audit success implied.

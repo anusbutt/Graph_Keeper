@@ -1,0 +1,14 @@
+Operator target existence: expected.md and product README both exist outside sandbox.
+Read profile probe exit 0:
+read blocked /home/anus_butt/projects/Graph_keeper/benchmarks/results/provenance-2026-09-07-01/expected.md ENOENT
+read blocked /tmp/graphkeeper-bench-c-20260907.aJM0YZ/source/specs/anything ENOENT
+read blocked /home/anus_butt/projects/Graph_keeper/README.md ENOENT
+write blocked EROFS
+READ-ONLY PREFLIGHT PASS
+
+Capture profile with explicit .git write probe exit 0:
+operator read blocked ENOENT
+CAPTURE WRITE-SCOPE PREFLIGHT PASS
+
+Real-agent preflight: checks/agent-preflight.jsonl (separate observation).
+All preflight operations used disposable preflight state or denied writes.

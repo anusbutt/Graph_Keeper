@@ -1,0 +1,5 @@
+{
+  "command": "git rev-parse HEAD; nl -ba src/handler.js; nl -ba src/validation.js; nl -ba src/processor.js",
+  "captured": "2026-09-08T11:44:48Z",
+  "exit_code": 0
+}

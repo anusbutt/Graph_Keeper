@@ -1,0 +1,5 @@
+{"status":0,"error":{"code":"EPERM","errno":-1,"syscall":"spawnSync /bin/true","message":"spawnSync /bin/true EPERM"},"stdout":"","stderr":""}
+{"stdio":"inherit","status":0,"stdout":null,"stderr":null}
+{"stdio":"ignore","status":0,"stdout":null,"stderr":null}
+{"stdio":["ignore","pipe","pipe"],"status":0,"stdout":"","stderr":""}
+{"stdio":["pipe","pipe","pipe"],"status":0,"error":{"code":"EPERM","errno":-1,"syscall":"spawnSync /bin/true","message":"spawnSync /bin/true EPERM"},"stdout":"","stderr":""}

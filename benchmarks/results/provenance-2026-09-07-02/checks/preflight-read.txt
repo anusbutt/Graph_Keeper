@@ -1,0 +1,1 @@
+PASS: read fixture permission, evaluator hidden, source readable

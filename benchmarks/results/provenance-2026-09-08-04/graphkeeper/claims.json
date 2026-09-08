@@ -1,0 +1,195 @@
+[
+  {
+    "id": "claim_85b5617c",
+    "subject": "request_handler",
+    "predicate": "validates",
+    "object": "handleRequest passes request.body to validateInput.",
+    "source": {
+      "kind": "tool_output",
+      "command": "git rev-parse HEAD; nl -ba src/handler.js; nl -ba src/validation.js; nl -ba src/processor.js",
+      "exit_code": 0,
+      "ref": "evidence/request-flow-source.txt#L5-L6",
+      "captured": "2026-09-08T11:44:48Z"
+    },
+    "produced_by": "run_2026-09-08-request_flow",
+    "created": "2026-09-08T11:45:13Z",
+    "confidence": 1
+  },
+  {
+    "id": "claim_c4a5f82f",
+    "subject": "request_handler",
+    "predicate": "passes_to_processing",
+    "object": "handleRequest passes the return value of validateInput to processInput.",
+    "source": {
+      "kind": "tool_output",
+      "command": "git rev-parse HEAD; nl -ba src/handler.js; nl -ba src/validation.js; nl -ba src/processor.js",
+      "exit_code": 0,
+      "ref": "evidence/request-flow-source.txt#L5-L7",
+      "captured": "2026-09-08T11:44:48Z"
+    },
+    "produced_by": "run_2026-09-08-request_flow",
+    "created": "2026-09-08T11:45:13Z",
+    "confidence": 1
+  },
+  {
+    "id": "claim_c648d4a7",
+    "subject": "input_validation",
+    "predicate": "requires_body_shape",
+    "object": "validateInput throws TypeError when body is null, a non-object, or an array.",
+    "source": {
+      "kind": "tool_output",
+      "command": "git rev-parse HEAD; nl -ba src/handler.js; nl -ba src/validation.js; nl -ba src/processor.js",
+      "exit_code": 0,
+      "ref": "evidence/request-flow-source.txt#L9-L12",
+      "captured": "2026-09-08T11:44:48Z"
+    },
+    "produced_by": "run_2026-09-08-request_flow",
+    "created": "2026-09-08T11:45:13Z",
+    "confidence": 1
+  },
+  {
+    "id": "claim_a1c3dbfc",
+    "subject": "input_validation",
+    "predicate": "requires_message_type",
+    "object": "validateInput throws TypeError when body.message is not a string.",
+    "source": {
+      "kind": "tool_output",
+      "command": "git rev-parse HEAD; nl -ba src/handler.js; nl -ba src/validation.js; nl -ba src/processor.js",
+      "exit_code": 0,
+      "ref": "evidence/request-flow-source.txt#L13-L15",
+      "captured": "2026-09-08T11:44:48Z"
+    },
+    "produced_by": "run_2026-09-08-request_flow",
+    "created": "2026-09-08T11:45:13Z",
+    "confidence": 1
+  },
+  {
+    "id": "claim_51bbbe0d",
+    "subject": "input_validation",
+    "predicate": "rejects_blank_message",
+    "object": "validateInput throws TypeError when the trimmed message is empty.",
+    "source": {
+      "kind": "tool_output",
+      "command": "git rev-parse HEAD; nl -ba src/handler.js; nl -ba src/validation.js; nl -ba src/processor.js",
+      "exit_code": 0,
+      "ref": "evidence/request-flow-source.txt#L13-L15",
+      "captured": "2026-09-08T11:44:48Z"
+    },
+    "produced_by": "run_2026-09-08-request_flow",
+    "created": "2026-09-08T11:45:13Z",
+    "confidence": 1
+  },
+  {
+    "id": "claim_2175017b",
+    "subject": "input_validation",
+    "predicate": "normalizes_message",
+    "object": "validateInput trims leading and trailing whitespace from the returned message.",
+    "source": {
+      "kind": "tool_output",
+      "command": "git rev-parse HEAD; nl -ba src/handler.js; nl -ba src/validation.js; nl -ba src/processor.js",
+      "exit_code": 0,
+      "ref": "evidence/request-flow-source.txt#L16-L16",
+      "captured": "2026-09-08T11:44:48Z"
+    },
+    "produced_by": "run_2026-09-08-request_flow",
+    "created": "2026-09-08T11:45:13Z",
+    "confidence": 1
+  },
+  {
+    "id": "claim_5a199b1f",
+    "subject": "input_validation",
+    "predicate": "projects_fields",
+    "object": "validateInput returns a new object containing only the message property.",
+    "source": {
+      "kind": "tool_output",
+      "command": "git rev-parse HEAD; nl -ba src/handler.js; nl -ba src/validation.js; nl -ba src/processor.js",
+      "exit_code": 0,
+      "ref": "evidence/request-flow-source.txt#L16-L16",
+      "captured": "2026-09-08T11:44:48Z"
+    },
+    "produced_by": "run_2026-09-08-request_flow",
+    "created": "2026-09-08T11:45:13Z",
+    "confidence": 1
+  },
+  {
+    "id": "claim_3a4c447f",
+    "subject": "input_processor",
+    "predicate": "sets_status",
+    "object": "processInput returns status accepted.",
+    "source": {
+      "kind": "tool_output",
+      "command": "git rev-parse HEAD; nl -ba src/handler.js; nl -ba src/validation.js; nl -ba src/processor.js",
+      "exit_code": 0,
+      "ref": "evidence/request-flow-source.txt#L18-L20",
+      "captured": "2026-09-08T11:44:48Z"
+    },
+    "produced_by": "run_2026-09-08-request_flow",
+    "created": "2026-09-08T11:45:14Z",
+    "confidence": 1
+  },
+  {
+    "id": "claim_31128ae0",
+    "subject": "input_processor",
+    "predicate": "copies_message",
+    "object": "processInput returns input.message as its message property.",
+    "source": {
+      "kind": "tool_output",
+      "command": "git rev-parse HEAD; nl -ba src/handler.js; nl -ba src/validation.js; nl -ba src/processor.js",
+      "exit_code": 0,
+      "ref": "evidence/request-flow-source.txt#L18-L20",
+      "captured": "2026-09-08T11:44:48Z"
+    },
+    "produced_by": "run_2026-09-08-request_flow",
+    "created": "2026-09-08T11:45:14Z",
+    "confidence": 1
+  },
+  {
+    "id": "claim_6eb08aeb",
+    "subject": "input_validation",
+    "predicate": "rejects_null_body",
+    "object": "validateInput throws TypeError when body is null.",
+    "source": {
+      "kind": "tool_output",
+      "command": "git rev-parse HEAD; nl -ba src/handler.js; nl -ba src/validation.js; nl -ba src/processor.js",
+      "exit_code": 0,
+      "ref": "evidence/request-flow-source.txt#L9-L12",
+      "captured": "2026-09-08T11:44:48Z"
+    },
+    "produced_by": "run_2026-09-08-atomic_review",
+    "created": "2026-09-08T11:45:34Z",
+    "confidence": 1,
+    "supersedes": "claim_c648d4a7"
+  },
+  {
+    "id": "claim_866055bc",
+    "subject": "input_validation",
+    "predicate": "rejects_non_object_body",
+    "object": "validateInput throws TypeError when typeof body is not object.",
+    "source": {
+      "kind": "tool_output",
+      "command": "git rev-parse HEAD; nl -ba src/handler.js; nl -ba src/validation.js; nl -ba src/processor.js",
+      "exit_code": 0,
+      "ref": "evidence/request-flow-source.txt#L9-L12",
+      "captured": "2026-09-08T11:44:48Z"
+    },
+    "produced_by": "run_2026-09-08-atomic_review",
+    "created": "2026-09-08T11:45:34Z",
+    "confidence": 1
+  },
+  {
+    "id": "claim_9bad2d7b",
+    "subject": "input_validation",
+    "predicate": "rejects_array_body",
+    "object": "validateInput throws TypeError when body is an array.",
+    "source": {
+      "kind": "tool_output",
+      "command": "git rev-parse HEAD; nl -ba src/handler.js; nl -ba src/validation.js; nl -ba src/processor.js",
+      "exit_code": 0,
+      "ref": "evidence/request-flow-source.txt#L9-L12",
+      "captured": "2026-09-08T11:44:48Z"
+    },
+    "produced_by": "run_2026-09-08-atomic_review",
+    "created": "2026-09-08T11:45:34Z",
+    "confidence": 1
+  }
+]

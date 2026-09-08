@@ -1,0 +1,15 @@
+commit beb383cf729b0863912bae23abcbb4abaf34bcca
+Author:     GraphKeeper Benchmark <benchmark@example.invalid>
+AuthorDate: Mon Sep 7 18:42:03 2026 +0500
+Commit:     GraphKeeper Benchmark <benchmark@example.invalid>
+CommitDate: Mon Sep 7 18:42:03 2026 +0500
+
+    Initialize empty GraphKeeper memory and Codex guidance
+
+commit 1e20ed909d4781ae1e2263b1d97d37f8b9d9bf84
+Author:     GraphKeeper Benchmark <benchmark@example.invalid>
+AuthorDate: Mon Sep 7 18:41:57 2026 +0500
+Commit:     GraphKeeper Benchmark <benchmark@example.invalid>
+CommitDate: Mon Sep 7 18:41:57 2026 +0500
+
+    Add minimal request processing fixture

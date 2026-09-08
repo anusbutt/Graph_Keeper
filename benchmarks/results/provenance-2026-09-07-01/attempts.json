@@ -1,0 +1,14 @@
+[
+  {
+    "slot": "capture",
+    "launch_index": 1,
+    "session_id": "01a07c09-03e7-7560-933a-4709fd65eda0",
+    "started": "2026-09-07T13:22:26Z",
+    "ended": "2026-09-07T13:27:23Z",
+    "status": "external_interruption",
+    "reason": "Codex account usage limit after task execution began; CLI exit 1. No memory commit or final answer; no behavioral retry permitted.",
+    "events_path": "sessions/capture.jsonl",
+    "stderr_path": "sessions/capture.stderr.log",
+    "replaces_launch_index": null
+  }
+]

@@ -1,0 +1,155 @@
+
+> graphkeeper@0.5.0 typecheck
+> tsc -p tsconfig.json --noEmit
+
+
+> graphkeeper@0.5.0 validator:check
+> node scripts/build-validator.mjs --check
+
+
+> graphkeeper@0.5.0 package:smoke
+> npm pack --dry-run
+
+
+> graphkeeper@0.5.0 prepack
+> npm run validator:check && npm run build
+
+
+> graphkeeper@0.5.0 validator:check
+> node scripts/build-validator.mjs --check
+
+
+> graphkeeper@0.5.0 build
+> tsc -p tsconfig.json
+
+npm notice
+npm notice 📦  graphkeeper@0.5.0
+npm notice Tarball Contents
+npm notice 11.1kB CHANGELOG.md
+npm notice 1.1kB LICENSE
+npm notice 19.7kB README.md
+npm notice 1.6kB dist/src/cli.d.ts
+npm notice 13.6kB dist/src/cli.js
+npm notice 13.3kB dist/src/cli.js.map
+npm notice 2.6kB dist/src/commands/append.d.ts
+npm notice 18.1kB dist/src/commands/append.js
+npm notice 16.3kB dist/src/commands/append.js.map
+npm notice 582B dist/src/commands/check.d.ts
+npm notice 4.0kB dist/src/commands/check.js
+npm notice 3.9kB dist/src/commands/check.js.map
+npm notice 718B dist/src/commands/close.d.ts
+npm notice 4.6kB dist/src/commands/close.js
+npm notice 4.6kB dist/src/commands/close.js.map
+npm notice 1.3kB dist/src/commands/doctor.d.ts
+npm notice 8.4kB dist/src/commands/doctor.js
+npm notice 9.2kB dist/src/commands/doctor.js.map
+npm notice 3.0kB dist/src/commands/init.d.ts
+npm notice 23.9kB dist/src/commands/init.js
+npm notice 20.4kB dist/src/commands/init.js.map
+npm notice 2.2kB dist/src/commands/integrate.d.ts
+npm notice 18.7kB dist/src/commands/integrate.js
+npm notice 16.1kB dist/src/commands/integrate.js.map
+npm notice 1.3kB dist/src/commands/query.d.ts
+npm notice 5.3kB dist/src/commands/query.js
+npm notice 6.1kB dist/src/commands/query.js.map
+npm notice 1.3kB dist/src/commands/update.d.ts
+npm notice 4.6kB dist/src/commands/update.js
+npm notice 4.5kB dist/src/commands/update.js.map
+npm notice 5.5kB dist/src/lib/agent-adapters.d.ts
+npm notice 9.6kB dist/src/lib/agent-adapters.js
+npm notice 7.5kB dist/src/lib/agent-adapters.js.map
+npm notice 1.2kB dist/src/lib/command-help.d.ts
+npm notice 2.0kB dist/src/lib/command-help.js
+npm notice 2.4kB dist/src/lib/command-help.js.map
+npm notice 944B dist/src/lib/errors.d.ts
+npm notice 994B dist/src/lib/errors.js
+npm notice 1.2kB dist/src/lib/errors.js.map
+npm notice 912B dist/src/lib/evidence.d.ts
+npm notice 4.8kB dist/src/lib/evidence.js
+npm notice 4.7kB dist/src/lib/evidence.js.map
+npm notice 1.5kB dist/src/lib/git-snapshot.d.ts
+npm notice 5.9kB dist/src/lib/git-snapshot.js
+npm notice 6.1kB dist/src/lib/git-snapshot.js.map
+npm notice 328B dist/src/lib/git.d.ts
+npm notice 2.3kB dist/src/lib/git.js
+npm notice 2.5kB dist/src/lib/git.js.map
+npm notice 304B dist/src/lib/json-duplicates.d.ts
+npm notice 4.4kB dist/src/lib/json-duplicates.js
+npm notice 4.9kB dist/src/lib/json-duplicates.js.map
+npm notice 2.1kB dist/src/lib/optimistic-write.d.ts
+npm notice 6.9kB dist/src/lib/optimistic-write.js
+npm notice 5.3kB dist/src/lib/optimistic-write.js.map
+npm notice 375B dist/src/lib/paths.d.ts
+npm notice 2.2kB dist/src/lib/paths.js
+npm notice 2.3kB dist/src/lib/paths.js.map
+npm notice 775B dist/src/lib/process.d.ts
+npm notice 2.2kB dist/src/lib/process.js
+npm notice 2.5kB dist/src/lib/process.js.map
+npm notice 2.0kB dist/src/lib/records.d.ts
+npm notice 9.3kB dist/src/lib/records.js
+npm notice 9.5kB dist/src/lib/records.js.map
+npm notice 322B dist/src/lib/validation.d.ts
+npm notice 14.9kB dist/src/lib/validation.js
+npm notice 16.3kB dist/src/lib/validation.js.map
+npm notice 310B dist/src/validator.d.ts
+npm notice 2.5kB dist/src/validator.js
+npm notice 2.8kB dist/src/validator.js.map
+npm notice 2.8kB examples/reviewer.md
+npm notice 102B examples/worked-example/evidence/initial-failure.log
+npm notice 87B examples/worked-example/evidence/utc-rerun.log
+npm notice 1.3kB examples/worked-example/graph/claims.json
+npm notice 272B examples/worked-example/graph/entities.json
+npm notice 654B examples/worked-example/graph/runs.json
+npm notice 3.7kB examples/worked-example/README.md
+npm notice 2.4kB package.json
+npm notice 31.6kB scripts/validate.mjs
+npm notice 20.7kB scripts/validate.sh
+npm notice 3B templates/graph/claims.json
+npm notice 3B templates/graph/entities.json
+npm notice 3B templates/graph/runs.json
+npm notice 10.7kB templates/graph/SCHEMA.md
+npm notice 1.4kB templates/pre-commit
+npm notice 10.7kB templates/SKILL.md
+npm notice Tarball Details
+npm notice name: graphkeeper
+npm notice version: 0.5.0
+npm notice filename: graphkeeper-0.5.0.tgz
+npm notice package size: 102.6 kB
+npm notice unpacked size: 481.4 kB
+npm notice shasum: 563cc867d016db7789b83017042c899b8d24a3a8
+npm notice integrity: sha512-UOkjN0ns5K192[...]ELQHzC4hCXfPg==
+npm notice total files: 85
+npm notice
+graphkeeper-0.5.0.tgz
+graphkeeper@0.5.0 /tmp/graphkeeper-bench-c-20260907.aJM0YZ/source
+├─┬ @types/node@18.19.130
+│ └── undici-types@5.26.5
+├─┬ esbuild@0.28.2
+│ ├── UNMET OPTIONAL DEPENDENCY @esbuild/aix-ppc64@0.28.2
+│ ├── UNMET OPTIONAL DEPENDENCY @esbuild/android-arm@0.28.2
+│ ├── UNMET OPTIONAL DEPENDENCY @esbuild/android-arm64@0.28.2
+│ ├── UNMET OPTIONAL DEPENDENCY @esbuild/android-x64@0.28.2
+│ ├── UNMET OPTIONAL DEPENDENCY @esbuild/darwin-arm64@0.28.2
+│ ├── UNMET OPTIONAL DEPENDENCY @esbuild/darwin-x64@0.28.2
+│ ├── UNMET OPTIONAL DEPENDENCY @esbuild/freebsd-arm64@0.28.2
+│ ├── UNMET OPTIONAL DEPENDENCY @esbuild/freebsd-x64@0.28.2
+│ ├── UNMET OPTIONAL DEPENDENCY @esbuild/linux-arm@0.28.2
+│ ├── UNMET OPTIONAL DEPENDENCY @esbuild/linux-arm64@0.28.2
+│ ├── UNMET OPTIONAL DEPENDENCY @esbuild/linux-ia32@0.28.2
+│ ├── UNMET OPTIONAL DEPENDENCY @esbuild/linux-loong64@0.28.2
+│ ├── UNMET OPTIONAL DEPENDENCY @esbuild/linux-mips64el@0.28.2
+│ ├── UNMET OPTIONAL DEPENDENCY @esbuild/linux-ppc64@0.28.2
+│ ├── UNMET OPTIONAL DEPENDENCY @esbuild/linux-riscv64@0.28.2
+│ ├── UNMET OPTIONAL DEPENDENCY @esbuild/linux-s390x@0.28.2
+│ ├── @esbuild/linux-x64@0.28.2
+│ ├── UNMET OPTIONAL DEPENDENCY @esbuild/netbsd-arm64@0.28.2
+│ ├── UNMET OPTIONAL DEPENDENCY @esbuild/netbsd-x64@0.28.2
+│ ├── UNMET OPTIONAL DEPENDENCY @esbuild/openbsd-arm64@0.28.2
+│ ├── UNMET OPTIONAL DEPENDENCY @esbuild/openbsd-x64@0.28.2
+│ ├── UNMET OPTIONAL DEPENDENCY @esbuild/openharmony-arm64@0.28.2
+│ ├── UNMET OPTIONAL DEPENDENCY @esbuild/sunos-x64@0.28.2
+│ ├── UNMET OPTIONAL DEPENDENCY @esbuild/win32-arm64@0.28.2
+│ ├── UNMET OPTIONAL DEPENDENCY @esbuild/win32-ia32@0.28.2
+│ └── UNMET OPTIONAL DEPENDENCY @esbuild/win32-x64@0.28.2
+└── typescript@5.9.3
+

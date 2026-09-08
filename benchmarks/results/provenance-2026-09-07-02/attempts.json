@@ -1,0 +1,19 @@
+{
+  "experiment": "provenance-2026-09-07-02",
+  "status": "inconclusive",
+  "capture": {"launch":1,"started_at_utc":"2026-09-07 13:43:49 UTC","status":"external_interruption","timeout_seconds":1200,"exit_code":1,"thread_id":"01a07c1c-b4fb-7cd2-995b-78c38ef9b291","completion_observed_at_utc":"2026-09-08 04:04:44 UTC","ended_at_utc":null,"reason":"Usage-limit error after task started; exact end time not recorded. No claims or evidence written."},
+  "audits": [
+    {
+      "slot": 1,
+      "status": "not_run"
+    },
+    {
+      "slot": 2,
+      "status": "not_run"
+    },
+    {
+      "slot": 3,
+      "status": "not_run"
+    }
+  ]
+}

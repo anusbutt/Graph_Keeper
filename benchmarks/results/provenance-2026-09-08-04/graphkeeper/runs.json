@@ -1,0 +1,40 @@
+[
+  {
+    "id": "run_2026-09-08-request_flow",
+    "started": "2026-09-08T11:44:48Z",
+    "tool": "coding_agent",
+    "evidence": [
+      "evidence/request-flow-source.txt"
+    ],
+    "claims_written": [
+      "claim_85b5617c",
+      "claim_c4a5f82f",
+      "claim_c648d4a7",
+      "claim_a1c3dbfc",
+      "claim_51bbbe0d",
+      "claim_2175017b",
+      "claim_5a199b1f",
+      "claim_3a4c447f",
+      "claim_31128ae0"
+    ],
+    "task": "Investigate request data flow and validation; preserve atomic source-backed findings",
+    "ended": "2026-09-08T11:45:14Z",
+    "verdict": "passed"
+  },
+  {
+    "id": "run_2026-09-08-atomic_review",
+    "started": "2026-09-08T11:45:33Z",
+    "tool": "coding_agent",
+    "evidence": [
+      "evidence/request-flow-source.txt"
+    ],
+    "claims_written": [
+      "claim_6eb08aeb",
+      "claim_866055bc",
+      "claim_9bad2d7b"
+    ],
+    "task": "Split body-shape finding into independently changeable rejection rules",
+    "ended": "2026-09-08T11:45:34Z",
+    "verdict": "passed"
+  }
+]

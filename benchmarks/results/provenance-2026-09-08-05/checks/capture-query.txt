@@ -1,0 +1,36 @@
+Entity: request_handler
+Matched by: canonical ID
+Active claims: 3
+
+Claim: claim_0bd0eb7b
+  Predicate: delegates_processing
+  Object: "handleRequest passes the value returned by validateInput to processInput."
+  Source: tool_output
+  Command: "cat src/handler.js"
+  Exit code: 0
+  Evidence: evidence/request_flow_handler.txt#L4-L6
+  Captured: 2026-09-08T12:23:40Z
+  Producer: run_2026-09-08-request_flow
+  Created: 2026-09-08T12:23:41Z
+
+Claim: claim_b934314a
+  Predicate: returns
+  Object: "handleRequest returns the result of processInput."
+  Source: tool_output
+  Command: "cat src/handler.js"
+  Exit code: 0
+  Evidence: evidence/request_flow_handler.txt#L6-L6
+  Captured: 2026-09-08T12:23:40Z
+  Producer: run_2026-09-08-request_flow
+  Created: 2026-09-08T12:23:41Z
+
+Claim: claim_beec17b2
+  Predicate: validates
+  Object: "handleRequest passes request.body to validateInput."
+  Source: tool_output
+  Command: "cat src/handler.js"
+  Exit code: 0
+  Evidence: evidence/request_flow_handler.txt#L4-L5
+  Captured: 2026-09-08T12:23:40Z
+  Producer: run_2026-09-08-request_flow
+  Created: 2026-09-08T12:23:41Z
