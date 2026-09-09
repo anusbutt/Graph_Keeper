@@ -23,6 +23,16 @@ GraphKeeper is **Git-native, evidence-backed memory for coding agents**. It is n
 
 Works with any of the major coding agents you already use.
 
+## Benchmark evidence
+
+The [GraphKeeper Memory Bench v0.1](benchmarks/graphkeeper-memory-bench-v0.1.md)
+has recorded manual executions for its four scenarios: repeated investigation, stale
+memory, provenance, and correction history. The recorded
+[Benchmark D PASS](benchmarks/results/correction-history-prospector-2026-09-10/result.md)
+is a real Prospector repository-history replay that demonstrated preservation and
+reconstruction of a multi-generation correction chain. These evidence records are
+scenario-specific; they are not a general reliability or comparative-performance claim.
+
 ## Works with your coding agent
 
 GraphKeeper ships first-class integrations for the coding agents below. If you use one of them, GraphKeeper works with it.
