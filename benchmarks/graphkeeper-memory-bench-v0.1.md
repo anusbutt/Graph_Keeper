@@ -2,12 +2,13 @@
 
 This document defines the first four scenarios for evaluating durable project memory in coding agents.
 
-The benchmark defines the scenarios. Tests A and B have completed manual executions.
-Test C has a protocol, starter fixture, three preserved inconclusive attempts, and a
-completed revision-2 audit result and a completed revision-3 clean rerun. Revision 3
-passes all three provenance audits after addressing the observed explanation and
-read-only containment defects. Cross-scenario scoring methodology, automated
-evaluation, and broader datasets remain future work.
+The benchmark defines the scenarios. Tests A, B, C, and D have recorded manual
+executions. Test C has a protocol, starter fixture, three preserved inconclusive
+attempts, and a completed revision-2 audit result and revision-3 clean rerun.
+Revision 3 passes all three provenance audits after addressing the observed
+explanation and read-only containment defects. Test D has a recorded PASS from a
+real Prospector repository-history replay. Cross-scenario scoring methodology,
+automated evaluation, and broader datasets remain future work.
 
 ## Test A — Repeated Investigation
 
@@ -81,6 +82,10 @@ A newer conclusion replaces it.
 
 **Can we see both the old conclusion and what superseded it?**
 
+The recorded [Test D PASS](results/correction-history-prospector-2026-09-10/result.md)
+is a real Prospector repository-history replay. It demonstrated preservation and
+reconstruction of a multi-generation correction chain in that repository.
+
 ---
 
 ## Current Scope
@@ -103,7 +108,9 @@ Test C's [latest result](results/provenance-2026-09-08-04/README.md) has a valid
 committed atomic capture and all three audit slots accounted for, but is
 inconclusive (two C3 failures and one isolation-unevaluable slot). The separate
 [revision-3 experiment passes](results/provenance-2026-09-08-05/README.md) with an
-eligible fresh capture and 3/3 passing audit slots. Test D
-remains unexecuted. These are manual evidence records, not an automated benchmark
-harness; cross-scenario scoring methodology, automated evaluation, and broader
-datasets remain future work.
+eligible fresh capture and 3/3 passing audit slots. Test D has a recorded
+[PASS](results/correction-history-prospector-2026-09-10/result.md): a real Prospector
+repository-history replay demonstrated preservation and reconstruction of a
+multi-generation correction chain. These are manual evidence records, not an
+automated benchmark harness; cross-scenario scoring methodology, automated
+evaluation, and broader datasets remain future work.
