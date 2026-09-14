@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { access, copyFile, cp, mkdtemp, rm } from 'node:fs/promises';
+import { access, copyFile, cp, mkdtemp, readFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -47,7 +47,7 @@ async function nativeEnvironment(): Promise<NodeJS.ProcessEnv> {
   return environment;
 }
 
-test('a tarball installs in a clean directory and runs init, check, query, and doctor', {
+test('a tarball installs in a clean directory and runs init, append/close, check, query, and doctor', {
   timeout: 120_000,
 }, async (t) => {
   const packingRoot = await mkdtemp(join(tmpdir(), 'graphkeeper-install-pack-'));
@@ -128,10 +128,36 @@ test('a tarball installs in a clean directory and runs init, check, query, and d
   assert.match(claimHelp.stdout, /GraphKeeper never executes/i);
   const version = await runCli(['--version']);
   assert.equal(version.exitCode, 0, version.stderr);
-  assert.equal(version.stdout, '0.5.0\n');
+  assert.equal(version.stdout, '0.6.0\n');
   const initialized = await runCli(['init']);
   assert.equal(initialized.exitCode, 0, initialized.stderr);
   assert.match(initialized.stdout, /CREATE graph\/entities\.json/);
+
+  const runId = 'run_2026-09-12-package_install';
+  const started = '2026-09-12T09:00:00Z';
+  const ended = '2026-09-12T09:01:00Z';
+  const appended = await runCli([
+    'append', 'run', '--id', runId, '--started', started, '--tool', 'package_install_e2e',
+  ]);
+  assert.equal(appended.exitCode, 0, appended.stderr);
+  assert.equal(appended.stdout, 'Appended run ' + runId + '\n');
+  const closed = await runCli([
+    'close', 'run', '--id', runId, '--ended', ended, '--verdict', 'passed',
+  ]);
+  assert.equal(closed.exitCode, 0, closed.stderr);
+  assert.equal(closed.stdout, 'Closed run ' + runId + '\n');
+  assert.deepEqual(
+    JSON.parse(await readFile(join(repository.root, 'graph', 'runs.json'), 'utf8')),
+    [{
+      id: runId,
+      started,
+      tool: 'package_install_e2e',
+      evidence: [],
+      claims_written: [],
+      ended,
+      verdict: 'passed',
+    }],
+  );
 
   await cp(join(installedPackage, 'examples', 'worked-example', 'graph'), join(repository.root, 'graph'), {
     recursive: true,

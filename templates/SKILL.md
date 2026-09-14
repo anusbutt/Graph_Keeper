@@ -72,8 +72,10 @@ behavioral responsibility that software cannot infer reliably.
 - [HOOK] Create runs through `graphkeeper append run`, append claims through
   `graphkeeper append claim`, and close existing open runs through
   `graphkeeper close run`; do not edit graph/claims.json or graph/runs.json by hand.
-  The commands serialize concurrent writers so separate sessions never overwrite each
-  other's records.
+  The commands prevent lost updates when concurrent writers share the same GraphKeeper
+  files in one worktree. Separate Git branches and worktrees use normal Git merge
+  semantics and may require manual reconciliation, especially for competing
+  supersessions; GraphKeeper rejects invalid supersession forks.
 - [GUIDANCE] Use `graphkeeper append claim --help` from the installed CLI for current
   claim syntax; that installed syntax is the source of truth. Do not inspect internal
   package source to discover command flags.
@@ -143,8 +145,10 @@ behavioral responsibility that software cannot infer reliably.
   append its path only to an open run.
 - [HOOK] Concurrent writers create with `graphkeeper append run`, append with
   `graphkeeper append claim`, and close with `graphkeeper close run`, using a unique
-  run ID and distinct evidence filenames. These commands serialize graph-file writes
-  so separate sessions never overwrite each other's records. Do not edit
+  run ID and distinct evidence filenames. These commands prevent lost updates for
+  sessions sharing the same GraphKeeper files in one worktree. GraphKeeper does not
+  merge separate Git branches or worktrees automatically; reconcile them through
+  normal Git merge semantics and reject invalid supersession forks. Do not edit
   graph/claims.json or graph/runs.json directly.
 
 ## Correct

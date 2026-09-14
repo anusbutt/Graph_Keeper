@@ -112,8 +112,9 @@ tool-output claim's evidence file also appears in the producing run's evidence a
 
 [HOOK] The reference shape is evidence/<path>#L<start>-L<end>. Line numbers contain
 digits and are inclusive and one-based by contract. The repository path starts with
-evidence/, contains no whitespace or #, and has no empty, . or .. segment. The hook
-checks only shape and safe path segments; it does not open the target.
+evidence/, uses forward slashes, contains no whitespace, #, backslash, Windows drive
+designator, or empty, . or .. segment. The hook checks only shape and safe path
+segments; it does not open the target.
 
 [DOCTOR] Doctor checks that the evidence file exists, stays physically contained below
 evidence/, is line-addressable text, and that the line range is positive, ordered, and

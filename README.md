@@ -1,5 +1,5 @@
 # GraphKeeper
-Version `0.5.0`
+Version `0.6.0`
 
 [![CI](https://github.com/anusbutt/Graph_Keeper/actions/workflows/ci.yml/badge.svg)](https://github.com/anusbutt/Graph_Keeper/actions/workflows/ci.yml)
 
@@ -21,21 +21,22 @@ Coding agents forget project knowledge between sessions. GraphKeeper gives them 
 
 GraphKeeper is **Git-native, evidence-backed memory for coding agents**. It is not a transcript store, a vector database, or a hosted memory service. It does not require a backend, a database, or a separate memory server. Node.js 18+, npm, and Git are all you need.
 
-Works with any of the major coding agents you already use.
+GraphKeeper has nine registered adapters for major coding agents.
 
 ## Benchmark evidence
 
-The [GraphKeeper Memory Bench v0.1](benchmarks/graphkeeper-memory-bench-v0.1.md)
+The [GraphKeeper Memory Bench v0.1](https://github.com/anusbutt/Graph_Keeper/blob/main/benchmarks/graphkeeper-memory-bench-v0.1.md)
 has recorded manual executions for its four scenarios: repeated investigation, stale
 memory, provenance, and correction history. The recorded
-[Benchmark D PASS](benchmarks/results/correction-history-prospector-2026-09-10/result.md)
+[Benchmark D PASS](https://github.com/anusbutt/Graph_Keeper/blob/main/benchmarks/results/correction-history-prospector-2026-09-10/result.md)
 is a real Prospector repository-history replay that demonstrated preservation and
 reconstruction of a multi-generation correction chain. These evidence records are
 scenario-specific; they are not a general reliability or comparative-performance claim.
 
 ## Works with your coding agent
 
-GraphKeeper ships first-class integrations for the coding agents below. If you use one of them, GraphKeeper works with it.
+Each registered adapter installs GraphKeeper's canonical skill and a guidance reminder
+at the documented integration locations below.
 
 | Coding agent | Integration flag | Skill | Guidance | Invocation |
 |---|---|---|---|---|
@@ -48,6 +49,19 @@ GraphKeeper ships first-class integrations for the coding agents below. If you u
 | Gemini CLI | `--integrate geminicli` | `.gemini/skills/graphkeeper/SKILL.md` | `GEMINI.md` | `@graphkeeper` |
 | Kiro | `--integrate kiro` | `.kiro/skills/graphkeeper/SKILL.md` | `.kiro/steering/graphkeeper.md` | `/graphkeeper` |
 | Antigravity | `--integrate antigravity` | `.agents/skills/graphkeeper/SKILL.md` | `.agents/rules/graphkeeper.md` | `graphkeeper` |
+
+Codex, Claude Code, and Cursor have been benchmarked in real products. Codex and
+Claude Code demonstrated sustained automatic invocation. In the recorded
+[Cursor Composer 2.5 benchmark](https://github.com/anusbutt/Graph_Keeper/blob/main/benchmarks/results/cursor-skill-invocation-2026-08-15.md),
+Cursor did not auto-invoke GraphKeeper in 2/2 runs, although explicit invocation
+worked. OpenCode, Kilo Code, Windsurf, Gemini CLI, Kiro, and Antigravity are registered
+and install the skill and guidance at the locations above, but their real-product
+invocation behavior has not yet been benchmarked. This does not establish whether
+those agents will or will not auto-invoke GraphKeeper.
+
+If you use one of those six adapters, please test GraphKeeper and report working or
+broken behavior in [GitHub Discussions](https://github.com/anusbutt/Graph_Keeper/discussions),
+including the agent and version details.
 
 Install any subset, or all of them at once:
 
@@ -124,7 +138,7 @@ Run this at the root of the repository whose memory you want to protect:
 
 Review the displayed plan and confirm it. `init` creates the JSON graph, `evidence/`, the canonical validator, a pre-commit hook, and the repository-scoped skill. `--integrate codex` also adds the Codex reminder to `AGENTS.md`.
 
-Now ask your agent to record a verified finding (with `$graphkeeper` in Codex, `/graphkeeper` in Claude Code, or your agent's invocation from the table above). The agent creates a run with `graphkeeper append run ...`, records claims with `graphkeeper append claim ...`, and finishes with `graphkeeper close run ...`. These commands serialize concurrent writers so parallel sessions never overwrite each other. After it writes the claim and evidence, validate and retrieve the result:
+Now ask your agent to record a verified finding (with `$graphkeeper` in Codex, `/graphkeeper` in Claude Code, or your agent's invocation from the table above). The agent creates a run with `graphkeeper append run ...`, records claims with `graphkeeper append claim ...`, and finishes with `graphkeeper close run ...`. These commands prevent lost updates when concurrent writers share the same GraphKeeper files in one worktree. Separate Git branches and worktrees use normal Git merge semantics and may require manual reconciliation, especially when competing corrections create a supersession fork; GraphKeeper rejects invalid supersession forks. After it writes the claim and evidence, validate and retrieve the result:
 
     npx graphkeeper check
     npx graphkeeper query test_payments_flaky
@@ -216,8 +230,8 @@ An agent writes to `graph/` and `evidence/`, and `graphkeeper check` (and the in
 | `graphkeeper check` | Run the same fast schema, append-only history, and committed-evidence checks used by the Git hook. |
 | `graphkeeper query <subject>` | Resolve an exact ID or unique alias and print active claims with provenance. It does not read evidence contents. |
 | `graphkeeper doctor` | Run fast validation plus file existence, containment, line-range, dangling-reference, and unused-entity checks. |
-| `graphkeeper append claim ...` | Concurrency-serially append a validating claim and link it into its producing run. Run `graphkeeper append claim --help` for installed syntax; see the [append command reference](docs/append-commands.md) for lifecycle constraints. |
-| `graphkeeper append run ...` | Concurrency-serially create a validating run record. It remains create-only; see the [append command reference](docs/append-commands.md). |
+| `graphkeeper append claim ...` | Concurrency-serially append a validating claim and link it into its producing run. Run `graphkeeper append claim --help` for installed syntax; see the [append command reference](https://github.com/anusbutt/Graph_Keeper/blob/main/docs/append-commands.md) for lifecycle constraints. |
+| `graphkeeper append run ...` | Concurrency-serially create a validating run record. It remains create-only; see the [append command reference](https://github.com/anusbutt/Graph_Keeper/blob/main/docs/append-commands.md). |
 | `graphkeeper close run --id <id> --ended <timestamp> --verdict <value>` | Concurrency-serially close one existing open run without replacing its accumulated provenance. |
 | `graphkeeper update` | Check npm's stable `latest` release and globally install one exact newer version. Repository files are never changed. |
 | `graphkeeper --help` | Print the supported command grammar and options. |
@@ -307,6 +321,6 @@ Use [GitHub Discussions](https://github.com/anusbutt/Graph_Keeper/discussions) f
 
 Use [GitHub Issues](https://github.com/anusbutt/Graph_Keeper/issues) for reproducible bugs and clearly bounded work. The [pinned welcome discussion](https://github.com/anusbutt/Graph_Keeper/discussions/6) explains the categories and how an accepted direction becomes an actionable issue.
 
-See [`CONTRIBUTING.md`](CONTRIBUTING.md) for the development workflow, extension points, and boundaries, [prepared contribution issues](docs/contributor-issues.md), [`SUPPORT.md`](.github/SUPPORT.md) for usage help, and [`SECURITY.md`](.github/SECURITY.md) for private vulnerability reporting. Version `0.5.0` is pre-1.0 and its API may change. Release ownership and the target version must be verified immediately before publishing; completing the repository release gates does not publish anything.
+See [`CONTRIBUTING.md`](CONTRIBUTING.md) for the development workflow, extension points, and boundaries, [prepared contribution issues](docs/contributor-issues.md), [`SUPPORT.md`](.github/SUPPORT.md) for usage help, and [`SECURITY.md`](.github/SECURITY.md) for private vulnerability reporting. Version `0.6.0` is pre-1.0 and its API may change. Release ownership and the target version must be verified immediately before publishing; completing the repository release gates does not publish anything.
 
 GraphKeeper is available under the [MIT License](LICENSE).

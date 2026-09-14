@@ -1,4 +1,4 @@
-import { readFile, realpath, stat } from 'node:fs/promises';
+import { readFile, stat } from 'node:fs/promises';
 import { join } from 'node:path';
 
 import { assertRealPathContained, resolveEvidencePath } from './paths.js';
@@ -76,9 +76,10 @@ export function createEvidenceInspector(
       } catch (error: unknown) {
         return { issues: [issue('unsafe', error instanceof Error ? error.message : String(error))] };
       }
+      let realTarget: string;
       try {
-        await realpath(evidenceRoot);
-        await assertRealPathContained(evidenceRoot, target);
+        await assertRealPathContained(repositoryRoot, evidenceRoot);
+        realTarget = await assertRealPathContained(evidenceRoot, target);
       } catch (error: unknown) {
         if (errorCode(error) === 'ENOENT') return { issues: [issue('missing', 'referenced evidence file does not exist')] };
         if (error instanceof Error && error.message.includes('escapes allowed root')) {
@@ -87,10 +88,10 @@ export function createEvidenceInspector(
         return { issues: [issue('unreadable', error instanceof Error ? error.message : String(error))] };
       }
       try {
-        const details = await stat(target);
+        const details = await stat(realTarget);
         if (!details.isFile()) return { issues: [issue('non_text', 'evidence target is not a regular file')] };
         if ((details.mode & 0o444) === 0) return { issues: [issue('unreadable', 'evidence file has no read permission')] };
-        const bytes = await readBytes(target);
+        const bytes = await readBytes(realTarget);
         let text: string;
         try {
           text = new TextDecoder('utf-8', { fatal: true }).decode(bytes);
