@@ -38,11 +38,16 @@ test('release README covers onboarding, operation, recovery, limits, and future 
 });
 
 test('append command reference documents the explicit create-claim-close lifecycle', async () => {
+  const readme = await readFile(join(projectRoot, 'README.md'), 'utf8');
   const reference = await readFile(join(projectRoot, 'docs', 'append-commands.md'), 'utf8');
   assert.match(reference, /create an open producing run.*`graphkeeper append run`/is);
   assert.match(reference, /close the existing run.*`graphkeeper close run`/is);
   assert.match(reference, /close run.*--id.*--ended.*--verdict/is);
   assert.match(reference, /append run.*remains create-only/is);
+  assert.match(readme, /lost updates.*same GraphKeeper files.*one worktree/is);
+  assert.match(readme, /separate Git branches.*worktrees.*normal Git merge semantics.*manual reconciliation/is);
+  assert.match(reference, /serialize concurrent writers.*one\s+worktree/is);
+  assert.match(reference, /does not.*merge worktrees automatically.*rejects invalid supersession forks/is);
   assert.doesNotMatch(reference, /no concurrency-safe CLI command.*closing an existing open run/is);
   assert.doesNotMatch(reference, /transition directly in\s+`graph\/runs\.json`/is);
 });
@@ -95,12 +100,12 @@ test('release version stays aligned across package, lockfile, CLI, README, and c
   const changelog = await readFile(join(projectRoot, 'CHANGELOG.md'), 'utf8');
   const version = manifest.version;
 
-  assert.equal(version, '0.5.0');
+  assert.equal(version, '0.6.0');
   assert.equal(lockfile.version, version);
   assert.equal(lockfile.packages?.['']?.version, version);
   assert.match(cli, new RegExp("const VERSION = '" + version?.replaceAll('.', '\\.') + "';"));
   assert.match(readme, new RegExp('Version\\s+`' + version?.replaceAll('.', '\\.') + '`'));
-  assert.match(changelog, new RegExp('## \\[' + version?.replaceAll('.', '\\.') + '\\] - 2026-08-22'));
+  assert.match(changelog, new RegExp('## \\[' + version?.replaceAll('.', '\\.') + '\\] - 2026-09-14'));
 });
 
 test('release carries the MIT terms for GraphKeeper contributors', async () => {

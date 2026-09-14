@@ -36,6 +36,9 @@ export function resolveContainedPath(root: string, relativePath: string): string
 
 export function resolveEvidencePath(repositoryRoot: string, evidencePath: string): string {
   if (!evidencePath.startsWith('evidence/')) throw new Error('Evidence path must start with evidence/');
+  if (evidencePath.includes('\\') || evidencePath.split('/').some((segment) => /^[A-Za-z]:/.test(segment))) {
+    throw new Error('Refusing unsafe path: ' + evidencePath);
+  }
   return resolveContainedPath(repositoryRoot, evidencePath);
 }
 

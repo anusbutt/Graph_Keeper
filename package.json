@@ -1,6 +1,6 @@
 {
   "name": "graphkeeper",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "Grounded, auditable memory for coding agents.",
   "homepage": "https://github.com/anusbutt/Graph_Keeper#readme",
   "bugs": {
@@ -47,7 +47,7 @@
     "test:performance": "npm run build && node scripts/run-tests.mjs dist/tests/performance",
     "package:smoke": "npm pack --dry-run",
     "prepack": "npm run validator:check && npm run build",
-    "release:verify": "npm run typecheck && npm run test:functional && npm run package:smoke",
+    "release:verify": "npm run typecheck && npm run test:functional && npm run test:onboarding && npm run package:smoke",
     "prepublishOnly": "npm run release:verify"
   },
   "engines": {

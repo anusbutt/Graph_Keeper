@@ -106,7 +106,14 @@ function isUtcTimestamp(value: unknown): value is string {
 }
 
 function hasSafeSegments(path: string): boolean {
-  return path.split('/').every((segment) => segment !== '' && segment !== '.' && segment !== '..');
+  return !path.includes('\\')
+    && !path.includes('\0')
+    && path.split('/').every((segment) => (
+      segment !== ''
+      && segment !== '.'
+      && segment !== '..'
+      && !/^[A-Za-z]:/.test(segment)
+    ));
 }
 
 function isEvidenceReference(value: unknown): value is string {

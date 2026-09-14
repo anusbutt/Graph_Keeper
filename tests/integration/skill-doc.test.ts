@@ -115,6 +115,11 @@ test('teaches the complete run and evidence lifecycle including interruption and
   assert.match(skill, /do not\s+invent.*claim/is);
   assert.match(skill, /committed evidence.*immutable/is);
   assert.match(skill, /concurrent.*unique run ID/is);
+  assert.match(skill, /lost updates.*same GraphKeeper files.*one worktree/is);
+  assert.match(skill, /separate Git branches.*worktrees.*normal Git merge/is);
+  assert.match(skill, /manual reconciliation.*competing\s+supersessions/is);
+  assert.match(skill, /rejects? invalid supersession forks/is);
+  assert.match(skill, /does not.*merge.*worktrees automatically/is);
   assert.match(skill, /create.*`graphkeeper append run`.*close.*`graphkeeper close run`/is);
 });
 

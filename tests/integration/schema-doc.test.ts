@@ -48,6 +48,7 @@ test('documents exact source variants, IDs, timestamps, flat objects, and eviden
 test('distinguishes fast hook checks, deep doctor checks, and behavioral guidance', async () => {
   const schema = await readFile(schemaUrl, 'utf8');
   assert.match(schema, /\[HOOK\].*reference shape/is);
+  assert.match(schema, /forward slashes.*no.*backslash.*Windows drive/is);
   assert.match(schema, /\[DOCTOR\].*file.*exist.*line range/is);
   assert.match(schema, /\[GUIDANCE\].*short.*canonical/is);
   assert.match(schema, /unknown fields.*reject/is);

@@ -284,7 +284,7 @@ function isUtcTimestamp(value) {
   return new Date(milliseconds).toISOString().replace(".000Z", "Z") === value;
 }
 function hasSafeSegments(path) {
-  return path.split("/").every((segment) => segment !== "" && segment !== "." && segment !== "..");
+  return !path.includes("\\") && !path.includes("\0") && path.split("/").every((segment) => segment !== "" && segment !== "." && segment !== ".." && !/^[A-Za-z]:/.test(segment));
 }
 function isEvidenceReference(value) {
   return typeof value === "string" && EVIDENCE_REF.test(value) && hasSafeSegments(value.split("#", 1)[0] ?? "");

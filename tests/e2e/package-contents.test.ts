@@ -67,6 +67,8 @@ test('release tarball contains every runtime asset and excludes development-only
   for (const excludedPrefix of [
     'src/',
     'tests/',
+    'docs/',
+    'benchmarks/',
     'specs/',
     'history/',
     '.github/',
@@ -91,6 +93,15 @@ test('release tarball contains every runtime asset and excludes development-only
   });
   assert.equal(unpacked.exitCode, 0, unpacked.stderr);
   const packageRoot = join(extracted, 'package');
+  const packagedReadme = await readFile(join(packageRoot, 'README.md'), 'utf8');
+  for (const target of [
+    'https://github.com/anusbutt/Graph_Keeper/blob/main/docs/append-commands.md',
+    'https://github.com/anusbutt/Graph_Keeper/blob/main/benchmarks/graphkeeper-memory-bench-v0.1.md',
+    'https://github.com/anusbutt/Graph_Keeper/blob/main/benchmarks/results/correction-history-prospector-2026-09-10/result.md',
+  ]) {
+    assert.match(packagedReadme, new RegExp(target.replaceAll('.', '\\.')));
+  }
+  assert.doesNotMatch(packagedReadme, /\]\((?:docs\/append-commands\.md|benchmarks\/)/);
   const help = await runProcess(process.execPath, [join(packageRoot, 'dist', 'src', 'cli.js'), '--help'], {
     cwd: packageRoot,
     timeoutMs: 10_000,

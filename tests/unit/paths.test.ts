@@ -40,6 +40,9 @@ test('resolves contained paths and rejects absolute or traversal paths', async (
     assert.throws(() => resolveContainedPath(fixture.root, fixture.root), /relative path/);
     assert.throws(() => resolveEvidencePath(fixture.root, 'graph/claims.json'), /evidence\//);
     assert.throws(() => resolveEvidencePath(fixture.root, 'evidence/a/../b'), /unsafe path/);
+    assert.throws(() => resolveEvidencePath(fixture.root, 'evidence/a\\b'), /unsafe path/);
+    assert.throws(() => resolveEvidencePath(fixture.root, 'evidence/C:/outside'), /unsafe path/);
+    assert.throws(() => resolveEvidencePath(fixture.root, 'evidence/\\\\server\\share'), /unsafe path/);
   } finally {
     await fixture.cleanup();
   }

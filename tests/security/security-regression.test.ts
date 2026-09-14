@@ -48,6 +48,26 @@ test('release security gate rejects traversal and evidence symlink escape', asyn
   assert.match(symlinkResult.stderr, /GK310.*leaves evidence\//);
 });
 
+test('release security gate rejects an evidence root symlink outside the repository', async (t) => {
+  const fixture = await createValidatorFixture();
+  t.after(fixture.cleanup);
+  const outsideRoot = await mkdtemp(join(tmpdir(), 'graphkeeper-release-evidence-root-'));
+  t.after(() => rm(outsideRoot, { recursive: true, force: true }));
+  await fixture.writeGraph();
+  await writeFile(join(outsideRoot, 'triage.log'), 'failure\nstack\n', 'utf8');
+  await rm(join(fixture.root, 'evidence'), { recursive: true, force: true });
+  await symlink(
+    outsideRoot,
+    join(fixture.root, 'evidence'),
+    process.platform === 'win32' ? 'junction' : 'dir',
+  );
+
+  const result = await doctor({ cwd: fixture.root });
+
+  assert.equal(result.exitCode, 1);
+  assert.match(result.stderr, /GK310.*leaves evidence\//);
+});
+
 test('release security gate keeps commands and malicious evidence inert in paths with spaces', async (t) => {
   const fixture = await createValidatorFixture('graphkeeper secure repo with spaces ');
   t.after(fixture.cleanup);

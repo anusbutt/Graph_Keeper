@@ -29,35 +29,33 @@ test('validator never executes stored commands or evidence contents', async (t) 
   await assert.rejects(access(marker));
 });
 
-test('validator rejects traversal and whitespace in evidence references as data', async (t) => {
-  const cases = [
-    {
-      entities: [validEntity],
-      claims: [{ ...validClaim, source: { ...validClaim.source, ref: 'evidence/../secret#L1-L1' } }],
-      runs: [{ ...validRun, evidence: ['evidence/../secret'] }],
-      code: 'GK120',
-    },
-    {
-      entities: [{ ...validEntity, source_docs: ['evidence/file name.log#L1-L2'] }],
-      claims: [validClaim],
-      runs: [validRun],
-      code: 'GK110',
-    },
-    {
-      entities: [validEntity],
-      claims: [validClaim],
-      runs: [{ ...validRun, evidence: ['evidence/../outside.log'] }],
-      code: 'GK130',
-    },
+test('validator rejects traversal, absolute, mixed-separator, drive, UNC, and whitespace evidence paths', async (t) => {
+  const unsafePaths = [
+    'evidence/../outside.log',
+    'evidence/nested\\..\\outside.log',
+    'evidence/nested\\file.log',
+    '/absolute/outside.log',
+    'C:\\absolute\\outside.log',
+    '\\\\server\\share\\outside.log',
+    'evidence/C:/absolute/outside.log',
+    'evidence/\\\\server\\share\\outside.log',
+    'evidence/file name.log',
   ];
 
-  for (const item of cases) {
+  for (const evidencePath of unsafePaths) {
     const fixture = await createValidatorFixture();
     try {
-      await fixture.writeGraph(item.entities, item.claims, item.runs);
+      const reference = evidencePath + '#L1-L1';
+      await fixture.writeGraph(
+        [{ ...validEntity, source_docs: [reference] }],
+        [{ ...validClaim, source: { ...validClaim.source, ref: reference } }],
+        [{ ...validRun, evidence: [evidencePath] }],
+      );
       const result = await runValidator(fixture, '--worktree');
       assert.equal(result.exitCode, 1);
-      assert.match(result.stderr, new RegExp(item.code));
+      assert.match(result.stderr, /GK110/, evidencePath);
+      assert.match(result.stderr, /GK120/, evidencePath);
+      assert.match(result.stderr, /GK130/, evidencePath);
     } finally {
       await fixture.cleanup();
     }

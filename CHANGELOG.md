@@ -5,6 +5,8 @@ versioning; while the package is below 1.0, minor releases may change public beh
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-09-14
+
 ### Added
 
 - `graphkeeper close run`, which atomically closes one existing open run with an end
@@ -17,6 +19,9 @@ versioning; while the package is below 1.0, minor releases may change public beh
 
 - The shipped agent skill and command documentation now direct agents to create runs
   with `append run`, add claims with `append claim`, and close runs with `close run`.
+- Evidence-path validation now rejects mixed or backslash separators and Windows
+  drive/UNC-style paths. `doctor` verifies that the real `evidence/` root remains
+  inside the repository and reads only the resolved contained target.
 
 ## [0.5.0] - 2026-08-22
 
@@ -83,14 +88,14 @@ versioning; while the package is below 1.0, minor releases may change public beh
 
 ### Notes
 
-- Across the nine registered adapters, only Codex and Claude Code have sustained,
-  benchmarked automatic skill invocation. A recorded Cursor benchmark
-  (`benchmarks/cursor-skill-invocation-2026-08-15`) showed automatic invocation failing
-  for Composer 2.5 in 2/2 runs (explicit `/graphkeeper` worked), and the Cursor,
-  OpenCode, Kilo Code, Windsurf, Gemini CLI, Kiro, and Antigravity destinations are
-  documented defaults rather than substitutes for each product's current skill layout.
-  GraphKeeper installs the skill file and reminder; whether each vendor's agent auto
-  invokes it is verified by real-product benchmark only for Codex and Claude Code.
+- Across the nine registered adapters, Codex, Claude Code, and Cursor have been
+  benchmarked in real products. Codex and Claude Code demonstrated sustained automatic
+  invocation. The recorded Cursor Composer 2.5 benchmark did not auto-invoke
+  GraphKeeper in 2/2 runs, although explicit invocation worked. OpenCode, Kilo Code,
+  Windsurf, Gemini CLI, Kiro, and Antigravity are registered and install GraphKeeper's
+  skill and guidance at their documented integration locations, but their real-product
+  invocation behavior has not yet been benchmarked. This does not establish whether
+  those agents will or will not auto-invoke GraphKeeper.
 
 ## [0.4.1] - 2026-08-14
 
