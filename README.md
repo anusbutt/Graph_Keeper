@@ -1,11 +1,6 @@
 # GraphKeeper
-Version `0.6.0`
 
-[![CI](https://github.com/anusbutt/Graph_Keeper/actions/workflows/ci.yml/badge.svg)](https://github.com/anusbutt/Graph_Keeper/actions/workflows/ci.yml)
-
-[![npm](https://img.shields.io/npm/v/graphkeeper.svg)](https://www.npmjs.com/package/graphkeeper)
-
-[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+Version `0.6.0` · [![CI](https://github.com/anusbutt/Graph_Keeper/actions/workflows/ci.yml/badge.svg)](https://github.com/anusbutt/Graph_Keeper/actions/workflows/ci.yml) [![npm](https://img.shields.io/npm/v/graphkeeper.svg)](https://www.npmjs.com/package/graphkeeper) [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 **Coding agents shouldn't just remember. They should be able to prove why they remember.**
 
